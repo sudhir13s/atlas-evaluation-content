@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theaiatlas.dev/schema/evaluation/benchmark.schema.json",
+  "title": "benchmark",
+  "allOf": [{ "$ref": "_shared.schema.json#/$defs/base" }],
+  "properties": {
+    "type": { "const": "benchmark" },
+    "name": { "type": "string", "description": "canonical benchmark name, e.g. MMLU" },
+    "category": {
+      "type": "string",
+      "description": "grouping shown in the UI",
+      "enum": [
+        "Knowledge & Academic Reasoning",
+        "Math & Logic",
+        "Code Generation",
+        "Instruction Following & Chat",
+        "Truthfulness & Safety",
+        "Agent & Tool Use",
+        "Multimodal",
+        "Frontier / Hardest"
+      ]
+    },
+    "description": { "type": "string", "description": "one-line summary of what the benchmark is" },
+    "what_is_it": { "type": "string", "description": "plain-English explanation" },
+    "why_people_use_it": { "type": "string", "description": "why this benchmark matters / what decision it informs" },
+    "examples": { "type": "array", "items": { "type": "string" }, "description": "sample question(s)/prompt(s)" },
+    "method": { "type": "string", "description": "evaluation methodology (few-shot/0-shot, judge, harness)" },
+    "metric": { "type": "string", "description": "the scoring metric, e.g. accuracy, pass@1, F1, ELO" },
+    "format": { "type": "string", "description": "prompt format, e.g. 5-shot, 0-shot CoT, multiple-choice" },
+    "saturation": { "type": "string", "enum": ["high", "medium", "low"], "description": "how close top models are to the ceiling" },
+    "limitations": { "type": "string", "description": "honest limitations, contamination, saturation" },
+    "citation": { "type": "string", "description": "canonical paper/site URL" }
+  },
+  "required": ["name", "category", "description", "method", "metric", "limitations"]
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "shared": "schema/_shared.schema.json",
+  "types": {
+    "benchmark": {
+      "folder": "benchmarks",
+      "schema": "schema/benchmark.schema.json",
+      "id_prefix": "benchmark/",
+      "sections": ["What It Tests", "How It Scores", "Format", "Limitations", "Example"]
+    },
+    "evaluation-dataset": {
+      "folder": "datasets",
+      "schema": "schema/evaluation-dataset.schema.json",
+      "id_prefix": "evaluation-dataset/",
+      "sections": ["What It Is", "How It Evaluates", "What It Looks For", "Known Issues"]
+    },
+    "leaderboard-entry": {
+      "folder": "leaderboards",
+      "schema": "schema/leaderboard-entry.schema.json",
+      "id_prefix": "leaderboard-entry/",
+      "sections": ["Notes"]
+    }
+  }
+}

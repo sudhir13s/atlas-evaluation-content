@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theaiatlas.dev/schema/evaluation/evaluation-dataset.schema.json",
+  "title": "evaluation-dataset",
+  "allOf": [{ "$ref": "_shared.schema.json#/$defs/base" }],
+  "properties": {
+    "type": { "const": "evaluation-dataset" },
+    "name": { "type": "string", "description": "dataset or harness name" },
+    "category": {
+      "type": "string",
+      "description": "what kind of evaluation artifact this is",
+      "enum": ["Harness", "Framework", "Dataset Suite", "Human Preference", "LLM-as-Judge", "Live / Contamination-Free"]
+    },
+    "size": { "type": "string", "description": "human-readable scale, e.g. '57 tasks / 15,908 questions'" },
+    "url": { "type": "string", "format": "uri", "description": "canonical repo/site URL" },
+    "description": { "type": "string", "description": "one-line summary" },
+    "what_it_tests": { "type": "string", "description": "capabilities it measures" },
+    "why_it_exists": { "type": "string", "description": "the problem it was built to solve" },
+    "how_to_use": { "type": "string", "description": "how a practitioner runs / consumes it" },
+    "known_issues": { "type": "string", "description": "limitations, biases, gotchas" }
+  },
+  "required": ["name", "category", "url", "description", "what_it_tests", "why_it_exists", "how_to_use", "known_issues"]
+}
