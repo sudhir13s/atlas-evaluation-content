@@ -17,19 +17,84 @@ format: "Same 4-way multiple-choice as MMLU; typically 0-shot or 5-shot."
 saturation: high
 limitations: "It corrects labels but keeps MMLU's 4-option multiple-choice format, so guessing headroom and the knowledge-only scope remain. Only 100 questions per subject are re-annotated, so per-subject estimates are noisy, and it inherits MMLU's contamination exposure."
 citation: "https://arxiv.org/abs/2406.04127"
-example:
-  task_type: "Undergraduate biology (item with a re-audited, verified answer key)"
-  input: "Which enzyme unwinds the DNA double helix at the replication fork? (A) DNA polymerase (B) Helicase (C) DNA ligase (D) Primase"
-  success:
-    answer: "(B) Helicase"
-    why: "Helicase breaks the hydrogen bonds between base pairs, separating the two strands at the fork."
-  failure:
-    answer: "(A) DNA polymerase"
-    why: "Polymerase is central to replication so it is a tempting pick, but it synthesizes the new strand — it does not unwind the helix."
-  checks: "Precise recall of enzyme roles, scored against a hand-verified key so the result reflects knowledge, not a faulty label."
-  scoring: "Exact-match accuracy on the selected option (over corrected labels)."
+worked_examples:
+  - task_type: "Undergraduate biology (re-audited, verified key)"
+    input: "Which enzyme unwinds the DNA double helix at the replication fork?"
+    options:
+      - "DNA polymerase"
+      - "Helicase"
+      - "DNA ligase"
+      - "Primase"
+    success:
+      answer: "B — Helicase"
+      why: "Helicase breaks the hydrogen bonds between base pairs, separating the two strands at the fork."
+    failure:
+      answer: "A — DNA polymerase"
+      why: "Polymerase is central to replication so it is a tempting pick, but it synthesizes the new strand — it does not unwind the helix."
+    checks: "Precise recall of enzyme roles, scored against a hand-verified key so the result reflects knowledge, not a faulty label."
+    scoring: "Exact-match accuracy on the selected option (over corrected labels)."
+  - task_type: "High-school chemistry (re-audited, verified key)"
+    input: "What is the pH of a neutral aqueous solution at 25 °C?"
+    options:
+      - "0"
+      - "7"
+      - "14"
+      - "1"
+    success:
+      answer: "B — 7"
+      why: "At 25 °C a neutral solution has [H⁺] = [OH⁻] = 10⁻⁷ M, giving pH = 7."
+    failure:
+      answer: "C — 14"
+      why: "14 is the pH of a strongly basic solution and the top of the ordinary scale — confusing the scale's endpoint with its neutral midpoint."
+    checks: "Knowing the neutral point of the pH scale and not conflating it with the basic extreme."
+    scoring: "Exact-match accuracy on the selected option (over corrected labels)."
+  - task_type: "US history (re-audited, verified key)"
+    input: "Which document, drafted in 1787, established the framework of the United States federal government?"
+    options:
+      - "The Declaration of Independence"
+      - "The U.S. Constitution"
+      - "The Articles of Confederation"
+      - "The Bill of Rights"
+    success:
+      answer: "B — The U.S. Constitution"
+      why: "Drafted at the 1787 Philadelphia Convention, it set up the three-branch federal structure of government."
+    failure:
+      answer: "C — The Articles of Confederation"
+      why: "The Articles (1781) were the earlier, weaker framework the Constitution replaced — a plausible but chronologically-off pick."
+    checks: "Matching a founding document to its date and role, and ordering it against its predecessor."
+    scoring: "Exact-match accuracy on the selected option (over corrected labels)."
+  - task_type: "Statistics (re-audited, verified key)"
+    input: "For a standard normal distribution, approximately what percentage of values fall within one standard deviation of the mean?"
+    options:
+      - "50%"
+      - "68%"
+      - "95%"
+      - "99.7%"
+    success:
+      answer: "B — 68%"
+      why: "The empirical (68–95–99.7) rule places about 68% of a normal distribution within ±1 standard deviation of the mean."
+    failure:
+      answer: "C — 95%"
+      why: "95% is the fraction within ±2 standard deviations, not ±1 — a swap of the empirical-rule tiers."
+    checks: "Recalling the 68–95–99.7 rule and mapping each percentage to the correct number of standard deviations."
+    scoring: "Exact-match accuracy on the selected option (over corrected labels)."
+  - task_type: "College medicine — virology (a subject the re-annotation flagged for key errors)"
+    input: "What type of nucleic acid makes up the genome packaged in a human immunodeficiency virus (HIV) particle?"
+    options:
+      - "Double-stranded DNA"
+      - "Single-stranded RNA"
+      - "Double-stranded RNA"
+      - "Single-stranded DNA"
+    success:
+      answer: "B — Single-stranded RNA"
+      why: "HIV is a retrovirus: its virion carries a positive-sense single-stranded RNA genome that reverse transcriptase later copies into DNA."
+    failure:
+      answer: "A — Double-stranded DNA"
+      why: "HIV does form a dsDNA provirus that integrates into the host genome, but that is the intermediate, not the packaged genome — conflating the provirus with the virion genome, exactly the kind of subtlety a verified key must get right."
+    checks: "Distinguishing a retrovirus's packaged genome from its DNA intermediate, against a hand-verified label."
+    scoring: "Exact-match accuracy on the selected option (over corrected labels)."
 tags: [knowledge, multiple-choice, data-quality, mmlu]
-updated: 2026-07-20
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2406.04127", title: "Are We Done with MMLU? (Gema et al., 2024)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/edinburgh-dawg/mmlu-redux", title: "MMLU-Redux dataset (Edinburgh DAWG)", trust: 0.9 }

@@ -18,17 +18,57 @@ format: "0-shot agentic: task instructions (which may include images and tables)
 saturation: low
 limitations: "The two splits measure different skills and are not one score — analysis is short-answer accuracy, modeling is a normalized performance gap — so 'DSBench score' must name the split. Data-analysis grading relies on a language-model semantic matcher (validated, but still an automated judge). It is data-science specific and English-centric, and the modeling split reuses public Kaggle competitions, so contamination pressure grows over time. Note: DeepSeek model cards list separate internal 'DSBench-FullStack' / 'DSBench-Hard' coding test sets — those are unrelated proprietary benchmarks, not this public data-science DSBench."
 citation: "https://arxiv.org/abs/2409.07703"
-example:
-  task_type: "Data analysis over a real spreadsheet (ModelOff-style)"
-  input: "Attached: an Excel workbook of election results where voter-district codes 105-194 are mapped to 9 named districts across several sheets. Question: 'How many voters are there in the Delta District?' Options A-I (values 113-121)."
-  success:
-    answer: "I. 121"
-    why: "The agent correctly resolves which district codes map to Delta and sums the voters across the relevant rows, matching the ground-truth answer."
-  failure:
-    answer: "H. 120"
-    why: "Off by one — the agent mishandles a boundary district code (includes or drops a row at the edge of the Delta mapping), so the aggregate is wrong and the answer does not semantically match the ground truth."
-  checks: "Whether an agent can read a real multi-table spreadsheet, apply a code-to-category mapping, and compute an exact aggregate over the right rows."
-  scoring: "Accuracy on the data-analysis split: a language-model matcher marks the final answer correct if it is semantically equivalent to the ground truth (the data-modeling split instead uses the Relative Performance Gap)."
+worked_examples:
+  - task_type: "Spreadsheet aggregate with a code mapping (data-analysis split)"
+    input: "Attached: an Excel workbook of election results where voter-district codes 105-194 map to 9 named districts across several sheets. Question: 'How many voters are there in the Delta District?' (multiple-choice values in the 113-121 range)."
+    success:
+      answer: "Load the workbook, resolve which district codes belong to Delta from the mapping sheet, sum the voter column across exactly those rows → 121."
+      why: "The agent correctly resolves the code-to-district mapping and aggregates the right rows, so the answer semantically matches the ground truth."
+    failure:
+      answer: "Returns 120 by including or dropping a boundary district code at the edge of the Delta mapping."
+      why: "Off-by-one: it mishandles a boundary code, so the aggregate is wrong and no longer semantically matches the ground truth."
+    checks: "Whether an agent reads a multi-table spreadsheet, applies a code-to-category mapping, and computes an exact aggregate over the right rows."
+    scoring: "Accuracy — a language-model matcher marks the final answer correct if it is semantically equivalent to the ground truth."
+  - task_type: "Cross-sheet join (data-analysis split)"
+    input: "Attached: a workbook with a Sales sheet (product_id, units) and a Products sheet (product_id, unit_price, category). Question: 'What is the total revenue from the Accessories category?'"
+    success:
+      answer: "Join Sales to Products on product_id, filter to category='Accessories', compute units × unit_price per row, and sum → the correct revenue total."
+      why: "It joins on the correct key and applies the category filter before summing, so the total matches ground truth."
+    failure:
+      answer: "Sum units × unit_price across ALL products (skipping the category filter), or join on the wrong column so prices misalign to products."
+      why: "Wrong join/filter: mismatching the key or dropping the Accessories filter yields a total that does not semantically match the ground truth."
+    checks: "Whether an agent correctly joins two tables on the right key and applies the stated filter before aggregating."
+    scoring: "Accuracy on the data-analysis split via the semantic-equivalence matcher."
+  - task_type: "Financial modeling formula (data-analysis split)"
+    input: "Attached: a ModelOff-style workbook with a company's revenue for 2019-2024. Question: 'What is the compound annual growth rate (CAGR) of revenue over the period?'"
+    success:
+      answer: "Read the first and last year's revenue, apply CAGR = (end/start)^(1/n) − 1 with n = 5 growth periods → the correct percentage."
+      why: "It uses the compound-growth formula with the right number of periods, matching the ground-truth CAGR."
+    failure:
+      answer: "Report the simple average of the year-over-year percentage changes as the 'growth rate.'"
+      why: "Wrong formula: averaging annual changes is not CAGR (it ignores compounding), so the figure does not match the ground truth."
+    checks: "Whether an agent selects the correct financial formula rather than a superficially similar averaging shortcut."
+    scoring: "Accuracy on the data-analysis split via the semantic-equivalence matcher."
+  - task_type: "End-to-end classification pipeline (data-modeling split)"
+    input: "A Kaggle-style task: train/test CSVs and a description for a binary churn-prediction competition scored by accuracy. Produce a submission.csv of predictions for the held-out test set."
+    success:
+      answer: "load → clean/impute → fit encoders and a scaler on the TRAIN split only → train a gradient-boosted classifier with cross-validation → predict on test → write submission.csv in the required id,prediction format."
+      why: "A leak-free pipeline in the correct submission format scores well above the weak baseline, giving a high Relative Performance Gap toward the best submission."
+    failure:
+      answer: "Fit the scaler and target encoding on the combined train+test data before splitting, then train and predict."
+      why: "Data leakage: fitting preprocessing on the test set inflates validation but generalizes poorly on the real held-out metric, so the competition score barely beats baseline and RPG stays near 0."
+    checks: "Whether an agent builds a leak-free end-to-end modeling pipeline and emits the exact submission format."
+    scoring: "Relative Performance Gap (RPG) — the normalized distance from a weak baseline (0) to the best leaderboard submission (1)."
+  - task_type: "Regression pipeline with submission format (data-modeling split)"
+    input: "A Kaggle-style house-price task scored by RMSE: train/test CSVs, a target column in train, and a sample_submission.csv with columns id,SalePrice. Produce predictions for the test set."
+    success:
+      answer: "log-transform the skewed target, engineer features, train a regularized regressor with CV, inverse-transform predictions, and write id,SalePrice for every test row matching sample_submission."
+      why: "Sound modeling plus a correctly-formatted submission for all test ids yields an RMSE well below baseline, so RPG moves toward 1."
+    failure:
+      answer: "Predict the training mean SalePrice for every row (or write a submission missing some test ids / with a mislabeled column)."
+      why: "Predicting a constant is no better than the weak baseline (RPG ≈ 0), and a malformed submission can score nothing at all — either way the normalized gap stays at the floor."
+    checks: "Whether an agent produces a genuinely predictive model AND a valid, complete submission file."
+    scoring: "Relative Performance Gap (RPG) computed from the competition's own RMSE metric, normalized across competitions."
 tags: [agent, data-science, code-generation, spreadsheet, kaggle, multimodal]
 updated: 2026-08-02
 sources:

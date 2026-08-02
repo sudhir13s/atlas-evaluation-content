@@ -18,19 +18,59 @@ format: "0-shot competition code generation, judged by full hidden test suites; 
 saturation: low
 limitations: "The 232-problem set is small and skewed toward hard olympiad/ICPC problems, so scores are low and noisy at the top. Full-testcase Accepted judging is strict — a correct algorithm that is too slow in one language (often Python) scores zero — which couples the metric to implementation/runtime, not just reasoning. Being drawn from published contests, older problems risk contamination, so the benchmark leans on difficulty rather than novelty for its signal."
 citation: "https://arxiv.org/abs/2506.16395"
-example:
-  task_type: "Olympiad/ICPC code generation (Python or C++)"
-  input: "ICPC-level: given a weighted tree of up to 200,000 nodes, answer queries for the maximum edge weight on the path between two nodes. Earn Accepted only if every hidden test passes within the time and memory limits."
-  success:
-    answer: "Binary-lifting (LCA) precomputation carrying a per-jump max, combined correctly at the node where the two paths meet."
-    why: "Handles every case, including when one query node is an ancestor of the other, earning an Accepted verdict."
-  failure:
-    answer: "The same binary-lifting approach but stopping one level short at the LCA, excluding the topmost edge."
-    why: "Off-by-one on the ancestor boundary: when u is the LCA of v, the path's top edge is skipped, giving Wrong Answer on the ancestor-pair hidden tests."
-  checks: "Precise boundary handling inside an otherwise-correct algorithm, since online-judge grading gives zero credit for a single wrong case."
-  scoring: "Solve rate / pass@1 - Accepted on all hidden tests vs Wrong Answer."
+worked_examples:
+  - task_type: "Tree path query (LCA)"
+    input: "ICPC-level: given a weighted tree of up to 200,000 nodes, answer queries for the maximum edge weight on the path between two nodes. Earn Accepted only if every hidden test passes within the time and memory limits."
+    success:
+      answer: "Binary-lifting (LCA) precomputation carrying a per-jump max, combined correctly at the node where the two paths meet."
+      why: "Handles every case, including when one query node is an ancestor of the other, earning an Accepted verdict."
+    failure:
+      answer: "The same binary-lifting approach but stopping one level short at the LCA, excluding the topmost edge."
+      why: "Off-by-one on the ancestor boundary: when u is the LCA of v, the path's top edge is skipped, giving Wrong Answer on the ancestor-pair hidden tests."
+    checks: "Precise boundary handling inside an otherwise-correct algorithm, since online-judge grading gives zero credit for a single wrong case."
+    scoring: "Solve rate / pass@1: Accepted on all hidden tests vs Wrong Answer."
+  - task_type: "Range-query data structure"
+    input: "NOI-level: process up to 300,000 mixed operations on an array of 300,000 integers — point updates and range-sum queries — within a 1-second limit."
+    success:
+      answer: "A Fenwick (binary indexed) tree giving O(log n) update and prefix-sum query, so range sum is `query(r) - query(l-1)`."
+      why: "Each of the 300,000 operations is O(log n), well inside the time limit, earning Accepted on the full hidden suite."
+    failure:
+      answer: "Recompute each range sum by iterating the subarray, `sum(a[l:r+1])`, with O(1) updates."
+      why: "The right answer, but O(n) per query is ~9x10^10 operations at the limits — Time Limit Exceeded on the large hidden tests (wrong data structure for the query load)."
+    checks: "Selecting a logarithmic data structure when linear scanning cannot meet the operation budget."
+    scoring: "Solve rate / pass@1: Accepted vs Time Limit Exceeded on the maximal case."
+  - task_type: "Language-runtime ceiling (Python vs C++)"
+    input: "NOI-level dynamic programming: an O(n·m) table with n, m up to 5,000 (2.5x10^7 states, each a few arithmetic ops), 1-second limit. Submittable in Python or C++."
+    success:
+      answer: "The same DP in C++ with a flat `vector<int>` / array, iterating the 2.5x10^7 states directly."
+      why: "C++'s per-operation constant clears 2.5x10^7 state transitions inside 1 second, earning Accepted."
+    failure:
+      answer: "The identical, algorithmically-correct DP written in idiomatic Python with nested lists."
+      why: "Correct algorithm, but Python's interpreter overhead on 2.5x10^7 inner iterations blows the 1-second limit — Time Limit Exceeded (language-dependent runtime, not a reasoning error)."
+    checks: "Whether the implementation's constant factor — including language choice — fits the time limit for a correct algorithm."
+    scoring: "Solve rate / pass@1: Accepted (C++) vs Time Limit Exceeded (Python)."
+  - task_type: "Weighted-graph shortest path"
+    input: "ICPC-level: on a graph of up to 100,000 nodes and 500,000 weighted edges (weights up to 10^9), find the shortest distance from a source to every node."
+    success:
+      answer: "Dijkstra with a binary heap, distances stored in 64-bit integers: pop the nearest unsettled node, relax its edges, O((V+E) log V)."
+      why: "Handles arbitrary non-negative weights and the 10^9·10^5 path magnitude without overflow, earning Accepted."
+    failure:
+      answer: "Plain breadth-first search counting edges (or Dijkstra accumulating distances in 32-bit ints)."
+      why: "BFS finds fewest-edges, not least-weight, so it is Wrong Answer on weighted graphs; the 32-bit variant overflows on long paths near 10^9·10^5 — either way a failing verdict (wrong algorithm / overflow)."
+    checks: "Matching the algorithm to weighted-graph semantics and sizing the accumulator to the value range."
+    scoring: "Solve rate / pass@1: Accepted vs Wrong Answer on weighted / large-distance tests."
+  - task_type: "Combinatorics under a modulus"
+    input: "NOI-level: count labeled structures and report the total modulo 998_244_353; intermediate counts exceed 10^18 for n up to 2x10^5."
+    success:
+      answer: "Carry the modulus through every step — precomputed factorials and modular inverses (Fermat) — so each multiply is `(a*b) % MOD`."
+      why: "No intermediate value leaves the modular range and division is done via modular inverse, so all hidden tests are Accepted."
+    failure:
+      answer: "Compute the exact counts and take `% MOD` only on the final result (in C++ with 64-bit `long long`)."
+      why: "The true counts exceed 10^18 and overflow `long long` long before the final modulus, corrupting the result — Wrong Answer on the large-n hidden tests (integer overflow from late modular reduction)."
+    checks: "Reducing modulo at every operation rather than once at the end, to stay within the integer range."
+    scoring: "Solve rate / pass@1: Accepted vs Wrong Answer from overflow."
 tags: [code-generation, competitive-programming, olympiad, pass-at-1]
-updated: 2026-07-20
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2506.16395", title: "OJBench: A Competition Level Code Benchmark For Large Language Models (2025)", trust: 0.95 }
   - { url: "https://github.com/He-Ren/OJBench", title: "OJBench GitHub repository", trust: 0.9 }

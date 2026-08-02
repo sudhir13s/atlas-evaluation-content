@@ -17,19 +17,59 @@ format: "0-shot function completion; unit-test execution."
 saturation: high
 limitations: "Only 164 problems, all small self-contained Python functions (avg ~7 lines) — too narrow to generalize to real engineering (no debugging, refactoring, multi-file context, or other languages). Saturated at 90%+ for frontier models. The stricter HumanEval+ adds many more tests and exposes solutions that pass the original but are subtly wrong."
 citation: "https://arxiv.org/abs/2107.03374"
-example:
-  task_type: "Python function completion"
-  input: "def second_largest(nums: list[int]) -> int: return the second-largest distinct value (the list has at least two distinct elements)."
-  success:
-    answer: "A single pass tracking the largest and second-largest values while skipping any value equal to the current max, so second_largest([10, 10, 5]) returns 5."
-    why: "Handles duplicates of the maximum, satisfying the distinct-value contract on every hidden test."
-  failure:
-    answer: "return sorted(nums)[-2]"
-    why: "On [10, 10, 5] the second element from the end is 10, not 5 - duplicates of the max break the naive sort-and-index."
-  checks: "Translating a spec into code that survives the duplicate-max edge case, not just the happy path."
-  scoring: "pass@1 on hidden unit tests (e.g. 8/8 vs 6/8)."
+worked_examples:
+  - task_type: "Array manipulation"
+    input: "def second_largest(nums: list[int]) -> int: return the second-largest distinct value (the list has at least two distinct elements)."
+    success:
+      answer: "A single pass tracking the largest and second-largest values while skipping any value equal to the current max, so second_largest([10, 10, 5]) returns 5."
+      why: "Handles duplicates of the maximum, satisfying the distinct-value contract on every hidden test."
+    failure:
+      answer: "return sorted(nums)[-2]"
+      why: "On [10, 10, 5] the second element from the end is 10, not 5 — duplicate maxima break the naive sort-and-index."
+    checks: "Translating a spec into code that survives the duplicate-max edge case, not just the happy path."
+    scoring: "pass@1 on hidden unit tests (e.g. 8/8 vs 6/8)."
+  - task_type: "String normalization"
+    input: "def is_palindrome(s: str) -> bool: return True if s reads the same forwards and backwards, ignoring case and non-alphanumeric characters."
+    success:
+      answer: "cleaned = [c.lower() for c in s if c.isalnum()]; return cleaned == cleaned[::-1]"
+      why: "Strips punctuation and normalizes case first, so 'A man, a plan, a canal: Panama' correctly returns True."
+    failure:
+      answer: "return s == s[::-1]"
+      why: "Passes bare lowercase inputs like 'racecar' but fails the mixed-case and punctuation edge cases ('RaceCar', 'A man, a plan...') the spec explicitly requires."
+    checks: "Honoring the full spec (case- and punctuation-insensitivity), not only the simplest input shape."
+    scoring: "pass@1 on hidden unit tests."
+  - task_type: "Numeric computation"
+    input: "def factorial(n: int) -> int: return n! for n >= 0, with factorial(0) == 1."
+    success:
+      answer: "result = 1; for i in range(1, n + 1): result *= i; return result"
+      why: "range(1, n + 1) includes n itself, so factorial(5) correctly returns 120 and factorial(0) returns 1."
+    failure:
+      answer: "result = 1; for i in range(1, n): result *= i; return result"
+      why: "Passes n = 0 and n = 1 but range(1, n) omits the final factor n (off-by-one), so factorial(5) returns 24 instead of 120."
+    checks: "Getting the loop bound right so the final multiplicand is not dropped."
+    scoring: "pass@1 on hidden unit tests."
+  - task_type: "Search algorithm"
+    input: "def binary_search(arr: list[int], target: int) -> int: return the index of target in an ascending-sorted list, or -1 if absent."
+    success:
+      answer: "lo, hi = 0, len(arr) - 1; while lo <= hi: mid = (lo + hi) // 2; ... ; return -1"
+      why: "The lo <= hi condition still checks the final single-element window, so binary_search([5], 5) returns 0."
+    failure:
+      answer: "Same loop but with the condition `while lo < hi`."
+      why: "Passes multi-element cases but exits before inspecting the last remaining element when lo == hi, so binary_search([5], 5) wrongly returns -1."
+    checks: "Using the loop condition that still examines the single-element boundary window."
+    scoring: "pass@1 on hidden unit tests."
+  - task_type: "Aggregation with empty input"
+    input: "def average(nums: list[float]) -> float: return the arithmetic mean of nums, or 0.0 for an empty list."
+    success:
+      answer: "return sum(nums) / len(nums) if nums else 0.0"
+      why: "The guard returns 0.0 for the empty list, avoiding division by zero while computing the mean otherwise."
+    failure:
+      answer: "return sum(nums) / len(nums)"
+      why: "Works for non-empty lists but raises ZeroDivisionError on the empty-list edge case the spec calls out."
+    checks: "Guarding the empty-input case before dividing by the length."
+    scoring: "pass@1 on hidden unit tests."
 tags: [code, python, execution, pass-at-k]
-updated: 2026-07-17
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2107.03374", title: "Evaluating Large Language Models Trained on Code (Chen et al., 2021)", trust: 0.95 }
   - { url: "https://arxiv.org/abs/2305.01210", title: "Is Your Code Generated by ChatGPT Really Correct? (EvalPlus / HumanEval+, Liu et al., 2023)", trust: 0.85 }
