@@ -17,19 +17,74 @@ format: "5-shot (Open LLM v1) or 0-shot, binary choice."
 saturation: high
 limitations: "Binary choice means a 50% random floor and a compressed dynamic range. Frontier models score in the high 80s/90s, so it is saturating. AfLite filtering reduces but does not eliminate spurious cues."
 citation: "https://arxiv.org/abs/1907.10641"
-example:
-  task_type: "Commonsense coreference (pronoun/blank resolution)"
-  input: "Fill the blank with the correct referent: 'The trophy doesn't fit into the brown suitcase because _ is too large.' (A) the trophy (B) the suitcase"
-  success:
-    answer: "(A) the trophy"
-    why: "The object that is 'too large' to fit must be the thing being inserted — the trophy."
-  failure:
-    answer: "(B) the suitcase"
-    why: "It flips the causal relation; the suitcase is the container, and a larger container would fit the trophy better, not worse. Swapping 'large' for 'small' is the twin item whose answer flips to the suitcase."
-  checks: "Resolving the referent from world knowledge and the causal cue, not surface word association."
-  scoring: "Exact-match accuracy on the selected referent."
+worked_examples:
+  - task_type: "Commonsense coreference — relative size"
+    input: "Fill the blank with the correct referent: 'The trophy doesn't fit into the brown suitcase because _ is too large.'"
+    options:
+      - "the trophy"
+      - "the suitcase"
+    success:
+      answer: "A — the trophy"
+      why: "The object that is 'too large' to fit must be the thing being inserted — the trophy."
+    failure:
+      answer: "B — the suitcase"
+      why: "It flips the causal relation; the suitcase is the container, and a larger container would fit the trophy better, not worse. Swapping 'large' for 'small' is the twin item whose answer flips to the suitcase."
+    checks: "Resolving the referent from world knowledge and the causal cue, not surface word association."
+    scoring: "Exact-match accuracy on the selected referent."
+  - task_type: "Commonsense coreference — authority and motive"
+    input: "Fill the blank with the correct referent: 'The city councilmen refused the demonstrators a permit because _ feared violence.'"
+    options:
+      - "the city councilmen"
+      - "the demonstrators"
+    success:
+      answer: "A — the city councilmen"
+      why: "The party with the authority to refuse a permit, acting out of fear of violence, is the councilmen."
+    failure:
+      answer: "B — the demonstrators"
+      why: "Swap 'feared' for 'advocated' and the answer flips to the demonstrators; choosing them here ignores who holds the permit-granting authority and the motive cue."
+    checks: "Assigning a motive to the agent whose role in the sentence makes it coherent."
+    scoring: "Exact-match accuracy on the selected referent."
+  - task_type: "Commonsense coreference — who needs the money"
+    input: "Fill the blank with the correct referent: 'Sarah lent money to Emma because _ was saving up for a new car.'"
+    options:
+      - "Sarah"
+      - "Emma"
+    success:
+      answer: "B — Emma"
+      why: "The person receiving the loan is the one saving up for the car and short of funds — Emma."
+    failure:
+      answer: "A — Sarah"
+      why: "It defaults to the grammatical subject of the main clause, ignoring that the borrower (Emma), not the lender, is the one saving up."
+    checks: "Overriding a subject-of-sentence bias with the causal logic of who needs the loan."
+    scoring: "Exact-match accuracy on the selected referent."
+  - task_type: "Commonsense coreference — weight and crossing"
+    input: "Fill the blank with the correct referent: 'The delivery truck could not cross the old bridge because _ was too heavy.'"
+    options:
+      - "the truck"
+      - "the bridge"
+    success:
+      answer: "A — the truck"
+      why: "The object whose weight prevents the crossing is the moving vehicle — the truck."
+    failure:
+      answer: "B — the bridge"
+      why: "Swap 'heavy' for 'weak' and the answer flips to the bridge; choosing the bridge here misreads which object the adjective 'heavy' describes."
+    checks: "Attaching the property in the clause to the physically sensible entity."
+    scoring: "Exact-match accuracy on the selected referent."
+  - task_type: "Commonsense coreference — spatial fit"
+    input: "Fill the blank with the correct referent: 'The pen would not fit inside the case because _ was too short.'"
+    options:
+      - "the pen"
+      - "the case"
+    success:
+      answer: "B — the case"
+      why: "If something is too short to hold the pen, it is the container failing to fit it — the case."
+    failure:
+      answer: "A — the pen"
+      why: "A shorter pen would fit into a case more easily, not less; picking the pen inverts the spatial relation the sentence describes."
+    checks: "Reasoning about containment: a too-short container fails to hold its contents."
+    scoring: "Exact-match accuracy on the selected referent."
 tags: [common-sense, coreference, multiple-choice]
-updated: 2026-07-17
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/1907.10641", title: "WinoGrande: An Adversarial Winograd Schema Challenge at Scale (Sakaguchi et al., 2019)", trust: 0.95 }
 related: [benchmark/hellaswag, benchmark/arc-challenge]

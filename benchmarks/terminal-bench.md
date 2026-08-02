@@ -18,17 +18,57 @@ format: "Multi-step agentic loop, 0-shot; containerized terminal environment; pa
 saturation: medium
 limitations: "Version 2.1 is a correction of 2.0 that fixed 28 of the 89 tasks (broken external dependencies, too-tight resource budgets, instructions that did not match tests), so scores are not comparable across versions — always cite the version. With only 89 tasks the confidence intervals are wide, and results conflate model quality with harness quality (a strong model on a weak harness underperforms). The environment is Linux/CLI only, so it says nothing about GUI, multimodal, or long-context abilities."
 citation: "https://www.tbench.ai/"
-example:
-  task_type: "Terminal task (system administration / build repair)"
-  input: "Container has a Python package whose `pip install -e .` fails and whose test suite errors on import. Instruction: 'Make the package installable and get its pytest suite to pass.' The agent has a shell and can read files, edit, and install."
-  success:
-    answer: "Inspect the traceback, find a missing `package_dir`/`__init__.py` and a pinned-but-yanked dependency in `pyproject.toml`, fix the packaging metadata and relax the pin, run `pip install -e .`, then `pytest -q` — all tests green."
-    why: "The final container state satisfies the instruction: the package installs and the hidden test suite passes, which is exactly what the automated grader checks."
-  failure:
-    answer: "Run `pip install -e . || pip install .` and `pytest`, see the import error, then `pip install <top-level-module-name>` from PyPI to satisfy the import and declare done."
-    why: "Installing an unrelated same-named PyPI package masks the import error instead of fixing the local packaging; the final-state tests still fail (or import the wrong module), so the task is scored unsolved."
-  checks: "Whether the agent can diagnose a real environment failure from execution feedback and drive the container to a test-passing final state, not just silence the first error."
-  scoring: "Pass/fail per task from final-state automated tests; benchmark score is the fraction of tasks passing (accuracy)."
+worked_examples:
+  - task_type: "Build repair (software engineering)"
+    input: "Container has a Python package whose `pip install -e .` fails and whose test suite errors on import. Instruction: 'Make the package installable and get its pytest suite to pass.' The agent has a shell and can read files, edit, and install."
+    success:
+      answer: "Inspect the traceback, find a missing `package_dir`/`__init__.py` and a pinned-but-yanked dependency in `pyproject.toml`, fix the packaging metadata and relax the pin, run `pip install -e .`, then `pytest -q` — all tests green."
+      why: "The final container state satisfies the instruction: the package installs and the hidden test suite passes, which is exactly what the automated grader checks."
+    failure:
+      answer: "Run `pip install -e . || pip install .` and `pytest`, see the import error, then `pip install <top-level-module-name>` from PyPI to satisfy the import and declare done."
+      why: "Installing an unrelated same-named PyPI package masks the import error instead of fixing the local packaging; the final-state tests still fail (or import the wrong module), so the task is scored unsolved."
+    checks: "Whether the agent can diagnose a real environment failure from execution feedback and drive the container to a test-passing final state, not just silence the first error."
+    scoring: "Pass/fail per task from final-state automated tests; benchmark score is the fraction of tasks passing (accuracy)."
+  - task_type: "Train a model to a target metric (machine learning)"
+    input: "Instruction: 'Train a fastText classifier on data/train.txt and save it to model.bin; it must reach at least 0.62 accuracy on the held-out data/valid.txt.' The agent has the data, a shell, and can install packages."
+    success:
+      answer: "Install fasttext, run `fasttext supervised -input train.txt -output model` tuning epochs/lr/ngrams, evaluate with `fasttext test model.bin valid.txt` until accuracy ≥ 0.62, then leave model.bin in place."
+      why: "The saved model actually scores ≥ 0.62 on the held-out set, which is what the final-state test re-evaluates."
+    failure:
+      answer: "Train once with defaults, get 0.55 on the validation set, save model.bin anyway, and report 'done — model trained.'"
+      why: "The final-state test re-runs the model on the held-out set and measures < 0.62, so the task fails — declaring success does not change the measured accuracy."
+    checks: "Whether the agent iterates to actually meet a measured performance threshold rather than stopping at the first trained model."
+    scoring: "Pass/fail: the hidden test recomputes held-out accuracy against the 0.62 bar."
+  - task_type: "Capture-the-flag (security)"
+    input: "Instruction: 'Read the flag in /root/flag.txt and write it to /home/user/answer.txt.' The file is owned by root with mode 400; the agent runs as an unprivileged user but a specific setuid helper binary is present."
+    success:
+      answer: "Discover the setuid helper (`find / -perm -4000`), read its usage, invoke it to print the protected file, capture the flag string, and write it to /home/user/answer.txt."
+      why: "The agent uses the intended privilege path to obtain the real flag, so answer.txt contains the exact value the grader compares."
+    failure:
+      answer: "`cat /root/flag.txt` → 'Permission denied', then write a plausible-looking placeholder flag to answer.txt and stop."
+      why: "Fabricating the flag after a permission error: answer.txt does not match the true flag, so the exact-match final-state check fails."
+    checks: "Whether the agent finds the intended privilege-escalation path instead of giving up or inventing an answer after an access error."
+    scoring: "Pass/fail: answer.txt must exact-match the real flag."
+  - task_type: "Data transformation (data processing)"
+    input: "Instruction: 'Convert /data/records.csv — which is semicolon-delimited — into tab-separated /data/out.tsv, dropping the header row.' The agent has a shell."
+    success:
+      answer: "Inspect the file to confirm the `;` delimiter, then `tail -n +2 records.csv | tr ';' '\\t' > out.tsv` (or a csv module reading delimiter=';'), verifying column counts match."
+      why: "It detects the real delimiter and produces a correctly-shaped TSV without the header — matching the expected output file byte-for-byte."
+    failure:
+      answer: "Assume comma delimiting: `tail -n +2 records.csv | tr ',' '\\t' > out.tsv` without inspecting the file."
+      why: "Wrong assumption about the delimiter — commas are never present, so every row stays a single field and the output columns are wrong; the final-state file comparison fails."
+    checks: "Whether the agent verifies the actual input format before transforming rather than assuming a default delimiter."
+    scoring: "Pass/fail: out.tsv must match the expected tab-separated content."
+  - task_type: "Service configuration (system administration)"
+    input: "Instruction: 'Configure the web server so `curl http://localhost:8080` returns the site, and make it start on boot.' The container ships nginx with several config files, including a sample under /etc/nginx/sites-available that is not enabled."
+    success:
+      answer: "Edit the active server block to `listen 8080;`, enable it via the sites-enabled symlink, `nginx -t` to validate, reload nginx, and `systemctl enable nginx` — then confirm `curl localhost:8080` returns 200."
+      why: "The change lands on the enabled config and the service is enabled on boot, so the final-state checks (port responds, boot flag set) pass."
+    failure:
+      answer: "Edit the sample file in sites-available (never symlinked into sites-enabled), set `listen 8080;` there, and reload."
+      why: "Edited the wrong (disabled) config: the live server never binds 8080, so `curl localhost:8080` still fails and the final-state test fails."
+    checks: "Whether the agent identifies and edits the active configuration rather than an inert sample file."
+    scoring: "Pass/fail: final-state tests check the port responds and the service is enabled on boot."
 tags: [agent, tool-use, terminal, cli, coding-agent, leaderboard]
 updated: 2026-08-02
 sources:

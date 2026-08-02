@@ -18,19 +18,59 @@ format: "Long-context, open-ended question answering over multi-document inputs 
 saturation: low
 limitations: "Only 100 questions, so scores carry real sampling noise and small differences are not meaningful. Being open-ended, grading depends on answer-matching and can penalize correct-but-differently-phrased responses. Text-only (no tables-as-images, no code repos), and the ~100k-token target does not probe the 500k-2M-token regime some models now advertise."
 citation: "https://artificialanalysis.ai/articles/announcing-aa-lcr"
-example:
-  task_type: "Multi-document long-context reasoning (~100k-token input)"
-  input: "Given four company annual reports and one industry report (~100k tokens total), answer: which business segment drove the largest year-over-year operating-margin change? The figure is printed in no single table."
-  success:
-    answer: "Cloud Services — its margin fell from 31% to 22% YoY, the largest swing, computed by pairing the revenue and cost-of-revenue lines from the segment tables in Report B (p.44) and Report C (p.51)."
-    why: "The answer is derived by locating revenue and cost figures scattered across two distant documents and computing the margins — no single passage states it."
-  failure:
-    answer: "Hardware — its revenue grew the most year over year, so it drove the largest margin change."
-    why: "Incorrect answer from a nearby, easy-to-retrieve passage: the model grabbed a headline revenue-growth number from one document instead of combining revenue and cost across documents to compute the actual margin change."
-  checks: "Whether a model integrates facts spread across several long documents through multi-step inference, versus retrieving one salient nearby number."
-  scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
+worked_examples:
+  - task_type: "Multi-document financial reasoning (~100k-token input)"
+    input: "Given four company annual reports and one industry report (~100k tokens total), answer: which business segment drove the largest year-over-year operating-margin change? The figure is printed in no single table."
+    success:
+      answer: "Cloud Services — its margin fell from 31% to 22% YoY, the largest swing, computed by pairing the revenue and cost-of-revenue lines from the segment tables in Report B (p.44) and Report C (p.51)."
+      why: "The answer is derived by locating revenue and cost figures scattered across two distant documents and computing the margins — no single passage states it."
+    failure:
+      answer: "Hardware — its revenue grew the most year over year, so it drove the largest margin change."
+      why: "Incorrect answer from a nearby, easy-to-retrieve passage: the model grabbed a headline revenue-growth number from one document instead of combining revenue and cost across documents to compute the actual margin change."
+    checks: "Whether a model integrates facts spread across several long documents through multi-step inference, versus retrieving one salient nearby number."
+    scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
+  - task_type: "Government-consultation aggregation (~100k-token input)"
+    input: "Across a set of ~40 government consultation responses (~100k tokens), which single policy position is endorsed by a majority of respondents once differently-worded phrasings of the same position are treated as equivalent?"
+    success:
+      answer: "A phased carbon levy with rebates for low-income households — 23 of the 40 responses back it, though it is variously called a 'graduated emissions charge', 'staged carbon fee', and 'progressive levy'; reconciling those labels gives the majority."
+      why: "Requires reading positions scattered across many documents, normalizing synonymous terminology, then counting — the majority is stated nowhere and only emerges from combining the responses."
+    failure:
+      answer: "An immediate flat carbon tax — it is the position argued most forcefully, in the longest and most detailed submission."
+      why: "Wrong passage weighting: the model latched onto the single most prominent submission instead of aggregating equivalent positions across all responses, so it reports a vocal minority as the majority."
+    checks: "Whether a model reconciles synonymous claims across many documents and aggregates them, rather than over-weighting one salient response."
+    scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
+  - task_type: "Cross-contract legal reasoning (~100k-token input)"
+    input: "Given three related commercial contracts and their amendments (~100k tokens), answer: under the current terms, may Party A subcontract delivery without Party B's consent? The controlling clause is not in the main agreement."
+    success:
+      answer: "No — the master agreement permits subcontracting freely, but Amendment 2 to the side letter (§4.3) later revoked that right and now requires Party B's written consent, which the main contract's silence does not override."
+      why: "Correct only by tracing the clause through a later amendment in a separate document and recognizing it supersedes the original term — combining two distant passages."
+    failure:
+      answer: "Yes — the master agreement's §12 expressly allows Party A to subcontract any obligation without restriction."
+      why: "Used the wrong passage: the model quoted the original master-agreement clause and missed that Amendment 2, in a different document, later revoked that freedom — it failed to combine the two distant provisions."
+    checks: "Whether a model tracks how a later amendment in a distant document overrides an original clause."
+    scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
+  - task_type: "Academic cross-study synthesis (~100k-token input)"
+    input: "Given five research papers on a drug's efficacy (~100k tokens), answer: is the primary finding consistently replicated, and what is the main methodological reason any study diverges?"
+    success:
+      answer: "Four of the five replicate the ~15% efficacy improvement; the outlier (Paper D) diverges because it used a 6-week follow-up window versus 12 weeks in the others — a difference stated in D's methods section and only meaningful when compared against the shared protocol described in Papers A and B."
+      why: "Requires confirming agreement across four documents and then explaining the outlier by cross-referencing its methods against the protocol defined in two other distant papers."
+    failure:
+      answer: "No, the finding does not replicate — Paper D reports a much weaker effect, so the results are inconsistent across the literature."
+      why: "Stopped at one passage: the model reported Paper D's diverging number without combining it with the other four papers or locating the follow-up-window difference that explains the discrepancy."
+    checks: "Whether a model both confirms a result across multiple documents and diagnoses an outlier by combining distant methodological details."
+    scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
+  - task_type: "Survey-report reconciliation (~100k-token input)"
+    input: "Given three market-survey reports covering overlapping regions (~100k tokens), answer: which product category shows the highest combined customer-satisfaction score across all regions, given each report weights regions differently?"
+    success:
+      answer: "Home appliances — after re-weighting each report's regional scores to a common population basis (weights given in Report A's appendix, scores in Reports B and C), its blended score of 8.4 edges out electronics at 8.1."
+      why: "Correct only by pulling the weighting scheme from one report and the per-region scores from two others, then recomputing on a common basis — the ranking is stated in none of them."
+    failure:
+      answer: "Electronics — it has the single highest satisfaction score, 8.9, reported in Report B's regional breakdown."
+      why: "Nearby-number error: the model took one report's unweighted regional high without re-weighting across all three reports, so it missed that home appliances lead on the combined, comparably-weighted basis."
+    checks: "Whether a model combines a weighting scheme and scores drawn from separate long documents instead of reporting one salient figure."
+    scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
 tags: [long-context, reasoning, multi-document, open-ended]
-updated: 2026-07-20
+updated: 2026-08-02
 sources:
   - { url: "https://artificialanalysis.ai/articles/announcing-aa-lcr", title: "Announcing Artificial Analysis Long Context Reasoning (AA-LCR)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/ArtificialAnalysis/AA-LCR", title: "ArtificialAnalysis/AA-LCR dataset (Hugging Face)", trust: 0.95 }

@@ -17,17 +17,82 @@ format: "5-shot multiple-choice (also reported 0-shot CoT for chat models)."
 saturation: high
 limitations: "Well-documented training-data contamination — many models have seen MMLU items during pre-training, inflating scores. A handful of questions have wrong gold answers. Frontier models cluster at 86–90%, so the top of the scale no longer discriminates; use MMLU-Pro or GPQA instead."
 citation: "https://arxiv.org/abs/2009.03300"
-example:
-  task_type: "Introductory psychology"
-  input: "Which of the following is an example of operant conditioning? (A) a dog salivating at the sound of a bell (B) a rat pressing a lever more often after it is rewarded with food (C) a child imitating a parent's gesture (D) a person blinking at a puff of air"
-  success:
-    answer: "(B) a rat pressing a lever more often after it is rewarded with food"
-    why: "Operant conditioning changes the frequency of a behavior through its consequences (reinforcement)."
-  failure:
-    answer: "(A) a dog salivating at the sound of a bell"
-    why: "That is classical (Pavlovian) conditioning — an involuntary response to an associated stimulus — the most common confusion with operant conditioning."
-  checks: "Discriminating operant from classical conditioning; selecting the correct option is the task."
-  scoring: "Exact-match accuracy on the selected option, macro-averaged across 57 subjects."
+worked_examples:
+  - task_type: "Introductory psychology"
+    input: "Which of the following is an example of operant conditioning?"
+    options:
+      - "a dog salivating at the sound of a bell"
+      - "a rat pressing a lever more often after it is rewarded with food"
+      - "a child imitating a parent's gesture"
+      - "a person blinking at a puff of air"
+    success:
+      answer: "B — a rat pressing a lever more often after it is rewarded with food"
+      why: "Operant conditioning changes the frequency of a behavior through its consequences (reinforcement)."
+    failure:
+      answer: "A — a dog salivating at the sound of a bell"
+      why: "That is classical (Pavlovian) conditioning — an involuntary response to an associated stimulus — the most common confusion with operant conditioning."
+    checks: "Discriminating operant from classical conditioning."
+    scoring: "Exact-match accuracy on the selected option, macro-averaged across 57 subjects."
+  - task_type: "College physics"
+    input: "A 2 kg object is lifted vertically 3 m at constant velocity near Earth's surface (g = 10 m/s²). How much work does gravity do on the object?"
+    options:
+      - "+60 J"
+      - "−60 J"
+      - "0 J"
+      - "+20 J"
+    success:
+      answer: "B — −60 J"
+      why: "Gravity points down while the displacement is up, so the work is negative: W = −mgh = −(2)(10)(3) = −60 J."
+    failure:
+      answer: "A — +60 J"
+      why: "Right magnitude, wrong sign — it ignores that gravity opposes the upward displacement. A sign error is the classic mistake on work-by-a-force items."
+    checks: "Applying W = F·d with the correct sign convention for a force opposing displacement."
+    scoring: "Exact-match accuracy on the selected option."
+  - task_type: "Professional law"
+    input: "In contract law, which of the following is valid consideration?"
+    options:
+      - "a promise to perform a pre-existing legal duty"
+      - "a bargained-for exchange of value between the parties"
+      - "a gift promised with nothing given in return"
+      - "past consideration for an act already completed"
+    success:
+      answer: "B — a bargained-for exchange of value between the parties"
+      why: "Consideration requires something of value bargained for by both sides; the mutual exchange is what makes the promise enforceable."
+    failure:
+      answer: "A — a promise to perform a pre-existing legal duty"
+      why: "The pre-existing duty rule says doing what you are already legally bound to do is not fresh consideration — a common trap that looks like a valid promise."
+    checks: "Recognizing the bargained-for-exchange requirement vs the pre-existing duty rule."
+    scoring: "Exact-match accuracy on the selected option."
+  - task_type: "High school biology"
+    input: "During aerobic cellular respiration, the majority of ATP is produced in which stage?"
+    options:
+      - "glycolysis"
+      - "the citric acid (Krebs) cycle"
+      - "oxidative phosphorylation (the electron transport chain)"
+      - "fermentation"
+    success:
+      answer: "C — oxidative phosphorylation (the electron transport chain)"
+      why: "The electron transport chain uses the NADH/FADH₂ from earlier stages to drive chemiosmotic ATP synthesis, yielding the large majority of the cell's ATP."
+    failure:
+      answer: "B — the citric acid (Krebs) cycle"
+      why: "The Krebs cycle produces only a small amount of ATP directly (GTP); it mainly supplies the electron carriers that oxidative phosphorylation then uses — a frequent mix-up."
+    checks: "Locating where the bulk of ATP is generated in aerobic respiration."
+    scoring: "Exact-match accuracy on the selected option."
+  - task_type: "World history"
+    input: "The Peace of Westphalia (1648) is most associated with establishing which principle of international relations?"
+    options:
+      - "the divine right of kings"
+      - "state sovereignty and non-interference in domestic affairs"
+      - "universal free trade between nations"
+      - "the abolition of the slave trade"
+    success:
+      answer: "B — state sovereignty and non-interference in domestic affairs"
+      why: "Westphalia ended the Thirty Years' War and is conventionally credited with the modern system of sovereign states that do not interfere in one another's internal affairs."
+    failure:
+      answer: "A — the divine right of kings"
+      why: "A real early-modern idea, but a different one; Westphalia is about relations between states, not the source of a monarch's authority."
+    checks: "Associating a landmark treaty with the correct political principle."
+    scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, multiple-choice, reasoning, contamination]
 updated: 2026-07-17
 sources:

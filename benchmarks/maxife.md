@@ -17,19 +17,59 @@ format: "Open-ended generation under one to three verifiable constraints per pro
 saturation: medium
 limitations: "Rule-based checks only cover mechanically verifiable constraints; the rest fall back on model-based judging, which inherits judge bias and language-dependent reliability. With 23 languages and a fixed instruction pool, coverage of any single language is shallow, and cross-lingual results depend on how the instruction and content languages are paired."
 citation: "https://arxiv.org/abs/2506.01776"
-example:
-  task_type: "Verifiable instruction following (Korean)"
-  input: "다음 질문에 정확히 세 개의 불릿으로, 한국어로만 답하세요: 재생 에너지의 장점은 무엇입니까? (Answer the following in exactly three bullet points, in Korean only: What are the advantages of renewable energy?)"
-  success:
-    answer: "Three bullet points, all written in Korean, listing valid advantages."
-    why: "Every verifiable constraint — bullet count and output language — is satisfied, and the content is correct."
-  failure:
-    answer: "A fluent, correct answer written as three bullets — but in English."
-    why: "Violates the 'respond in Korean only' output-language constraint; the content is right, but a verifiable constraint is broken — exactly the failure MaXIFE checks."
-  checks: "Obedience to mechanically-verifiable constraints (output language, bullet count) rather than just answer correctness."
-  scoring: "Instruction-following accuracy — the fraction of constraints the response satisfies."
+worked_examples:
+  - task_type: "Verifiable instruction following — output language (Korean)"
+    input: "다음 질문에 정확히 세 개의 불릿으로, 한국어로만 답하세요: 재생 에너지의 장점은 무엇입니까? (Answer in exactly three bullet points, in Korean only: what are the advantages of renewable energy?)"
+    success:
+      answer: "Three bullet points, all written in Korean, listing valid advantages."
+      why: "Every verifiable constraint — bullet count and output language — is satisfied, and the content is correct."
+    failure:
+      answer: "A fluent, correct answer written as three bullets — but in English."
+      why: "Violates the 'respond in Korean only' output-language constraint; the content is right, but a verifiable constraint is broken — exactly the failure MaXIFE checks."
+    checks: "Obedience to mechanically-verifiable constraints (output language, bullet count), not just answer correctness."
+    scoring: "Instruction-following accuracy — the fraction of constraints the response satisfies."
+  - task_type: "Verifiable instruction following — sentence count (Spanish)"
+    input: "Responde en exactamente cinco oraciones y sin usar ningún número: ¿cuáles son los beneficios del ejercicio? (Answer in exactly five sentences and without using any digits: what are the benefits of exercise?)"
+    success:
+      answer: "Exactly five sentences, no digits, each naming a valid benefit of exercise."
+      why: "Both verifiable constraints — the exact sentence count and the no-numerals rule — are satisfied."
+    failure:
+      answer: "A correct, fluent answer, but written in six sentences."
+      why: "Violates the exactly-five-sentence constraint; the content is right but a mechanically-checkable rule is broken, so the constraint scores as failed."
+    checks: "Honouring an exact-count formatting constraint in a high-resource language."
+    scoring: "Instruction-following accuracy — the fraction of constraints the response satisfies."
+  - task_type: "Verifiable instruction following — output format (Japanese)"
+    input: "次の質問にJSON形式で、キー \"pros\" と \"cons\" を用いて答えてください：リモートワークの利点と欠点は？ (Answer in JSON, using the keys \"pros\" and \"cons\": what are the pros and cons of remote work?)"
+    success:
+      answer: "A valid JSON object with \"pros\" and \"cons\" keys, each holding the relevant points."
+      why: "The output-format constraint — valid JSON with the two named keys — is satisfied and parses cleanly."
+    failure:
+      answer: "A well-written answer in plain prose paragraphs listing the pros and cons."
+      why: "Ignores the JSON-format constraint; a rule-based parser cannot load it, so the format constraint scores as violated despite correct content."
+    checks: "Producing a machine-parseable format on demand, not just correct prose."
+    scoring: "Instruction-following accuracy — the fraction of constraints the response satisfies."
+  - task_type: "Cross-lingual instruction following — English instruction, Arabic answer"
+    input: "Answer the following question in Arabic only (الإجابة بالعربية فقط): What is the capital of France?"
+    success:
+      answer: "باريس هي عاصمة فرنسا. (Paris is the capital of France.) — written entirely in Arabic."
+      why: "The cross-lingual output-language constraint (answer in Arabic) is met even though the instruction itself was in English."
+    failure:
+      answer: "Paris is the capital of France. — a correct answer, but written in English."
+      why: "Violates the 'answer in Arabic only' constraint; obeying an instruction whose language differs from the required output language is exactly the cross-lingual failure MaXIFE targets."
+    checks: "Following a language constraint across a language boundary between instruction and response."
+    scoring: "Instruction-following accuracy — the fraction of constraints the response satisfies."
+  - task_type: "Verifiable instruction following — forbidden word (French)"
+    input: "Explique l'utilité du recyclage sans jamais utiliser le mot « important ». (Explain the usefulness of recycling without ever using the word 'important'.)"
+    success:
+      answer: "A fluent explanation that conveys significance with words like « essentiel » or « crucial », never « important »."
+      why: "Respects the keyword-exclusion constraint while still answering correctly."
+    failure:
+      answer: "A correct explanation that uses the word « important » twice."
+      why: "Breaks the forbidden-word constraint; a rule-based scanner flags the banned word, so the constraint scores as violated even though the content is right."
+    checks: "Obeying an exclusion (banned-word) constraint while keeping the answer correct."
+    scoring: "Instruction-following accuracy — the fraction of constraints the response satisfies."
 tags: [multilingual, instruction-following, cross-lingual, generation]
-updated: 2026-07-20
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2506.01776", title: "MaXIFE: Multilingual and Cross-lingual Instruction Following Evaluation (ACL 2025)", trust: 0.95 }
   - { url: "https://aclanthology.org/2025.acl-long.698/", title: "MaXIFE — ACL Anthology (2025.acl-long.698)", trust: 0.95 }

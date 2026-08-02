@@ -17,19 +17,59 @@ format: "5–8-shot chain-of-thought; exact-match on the final number."
 saturation: high
 limitations: "Frontier models exceed 95%, so it is saturated. Chain-of-thought can inflate scores via pattern-matching that does not generalize to harder math. The GSM-Symbolic study showed accuracy drops when surface numbers/names are perturbed, revealing fragility. Only tests elementary arithmetic — says nothing about competition math."
 citation: "https://arxiv.org/abs/2110.14168"
-example:
-  task_type: "Grade-school math word problem"
-  input: "Tom reads 12 pages on Monday, twice as many on Tuesday, and 5 fewer than Tuesday on Wednesday. How many pages did he read in total?"
-  success:
-    answer: "55"
-    why: "Monday 12, Tuesday 2*12 = 24, Wednesday 24 - 5 = 19; total 12 + 24 + 19 = 55."
-  failure:
-    answer: "43"
-    why: "Attached the Wednesday clause to the wrong referent, computing 5 fewer than Monday (12 - 5 = 7) instead of Tuesday, giving 12 + 24 + 7 = 43."
-  checks: "Parsing the referent of each clause and chaining the arithmetic steps in order."
-  scoring: "Exact-match accuracy on the final numeric answer."
+worked_examples:
+  - task_type: "Multi-step word problem (referent parsing)"
+    input: "Tom reads 12 pages on Monday, twice as many on Tuesday, and 5 fewer than Tuesday on Wednesday. How many pages did he read in total?"
+    success:
+      answer: "55"
+      why: "Monday 12, Tuesday 2*12 = 24, Wednesday 24 - 5 = 19; total 12 + 24 + 19 = 55."
+    failure:
+      answer: "43"
+      why: "Attached the Wednesday clause to the wrong referent, computing 5 fewer than Monday (12 - 5 = 7) instead of Tuesday, giving 12 + 24 + 7 = 43."
+    checks: "Parsing the referent of each clause and chaining the arithmetic steps in order."
+    scoring: "Exact-match accuracy on the final numeric answer."
+  - task_type: "Money / order of operations"
+    input: "Notebooks cost $3 each. Maria buys 5 of them and pays with a $20 bill, using a $2 coupon on her purchase. How much change does she get?"
+    success:
+      answer: "7"
+      why: "Cost = 5*3 = 15, minus the $2 coupon = 13; change = 20 - 13 = 7."
+    failure:
+      answer: "5"
+      why: "Forgot to apply the $2 coupon, computing change as 20 - 15 = 5."
+    checks: "Applying every adjustment (discount before change) in the right order."
+    scoring: "Exact-match accuracy on the final numeric answer."
+  - task_type: "Rate and unit conversion"
+    input: "A car travels at 60 miles per hour. How far does it travel in 2 hours and 30 minutes?"
+    success:
+      answer: "150"
+      why: "2 hours 30 minutes = 2.5 hours; distance = 60 * 2.5 = 150 miles."
+    failure:
+      answer: "138"
+      why: "Converted 30 minutes to 0.30 hours instead of 0.5, computing 60 * 2.3 = 138."
+    checks: "Converting minutes to a fraction of an hour before multiplying by the rate."
+    scoring: "Exact-match accuracy on the final numeric answer."
+  - task_type: "Fractions of a whole"
+    input: "A pizza has 12 slices. John eats 1/3 of the pizza and Mary eats 1/4 of the pizza. How many slices are left?"
+    success:
+      answer: "5"
+      why: "John eats 12*(1/3) = 4 and Mary eats 12*(1/4) = 3; 7 eaten, so 12 - 7 = 5 remain."
+    failure:
+      answer: "6"
+      why: "Applied Mary's 1/4 to the 8 remaining slices instead of the original 12: (1/4)*8 = 2, giving 4 + 2 = 6 eaten and 6 left."
+    checks: "Taking each fraction of the original whole, not of the running remainder."
+    scoring: "Exact-match accuracy on the final numeric answer."
+  - task_type: "Percentages"
+    input: "A shirt costs $40. It is discounted 25%, then $5 in tax is added. What is the final price?"
+    success:
+      answer: "35"
+      why: "25% off leaves 40 * 0.75 = 30; adding $5 tax gives 30 + 5 = 35."
+    failure:
+      answer: "20"
+      why: "Read '25%' as a flat $25, subtracting 40 - 25 = 15 and adding $5 to get 20."
+    checks: "Interpreting a percentage discount as a proportion of the price, not a dollar amount."
+    scoring: "Exact-match accuracy on the final numeric answer."
 tags: [math, reasoning, chain-of-thought, word-problems]
-updated: 2026-07-17
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2110.14168", title: "Training Verifiers to Solve Math Word Problems (Cobbe et al., 2021)", trust: 0.95 }
   - { url: "https://arxiv.org/abs/2410.05229", title: "GSM-Symbolic: Understanding the Limitations of Mathematical Reasoning in LLMs (Mirzadeh et al., 2024)", trust: 0.85 }

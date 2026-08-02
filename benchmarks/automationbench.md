@@ -17,17 +17,57 @@ format: "0-shot agentic: natural-language task + a toolset of SaaS tool function
 saturation: low
 limitations: "Scores swing widely with the toolset and harness: the launch white paper reported the best frontier models below 10%, the public repository later showed top models near 30% (binary pass rate), and the Artificial Analysis (AA) partial-credit variant reports ~50% — so a number is meaningless without its toolset and metric. Environments are simulated rather than live SaaS, the official leaderboard uses a separate held-out private task set, and end-state grading cannot credit a sensible-but-different completion path or judge process quality."
 citation: "https://arxiv.org/abs/2604.18934"
-example:
-  task_type: "Cross-application business workflow (Salesforce + Slack + Sheets)"
-  input: "Environment: simulated Salesforce, Slack, and Google Sheets, seeded with many opportunities. Task: 'For every opportunity that is Closed Won with amount over $50,000, post a one-line summary to the #big-deals Slack channel and append a row to the Deals sheet. Company policy: only include opportunities owned by the North America team.' No endpoint list is given — discover the APIs yourself."
-  success:
-    answer: "Discover and query the Salesforce opportunities endpoint; filter to stage=Closed Won, amount>50000, owner_region=North America; for each match call Slack chat.postMessage to #big-deals and append the row to the Deals sheet."
-    why: "The end state matches every assertion — only the North-America, high-value Closed-Won deals are posted and logged — with no policy violation."
-  failure:
-    answer: "Query Closed Won opportunities over $50,000 and post/append all of them, including deals owned by the EMEA team."
-    why: "The Slack and Sheets calls succeed, but ignoring the North-America-only business rule trips a guardrail assertion, so the task scores 0 under the binary metric even though the mechanics worked."
-  checks: "Whether an agent can coordinate several SaaS apps, discover the needed REST endpoints on its own, and honor a layered business policy end-to-end."
-  scoring: "Programmatic end-state grading: binary Task Completed Correctly (all assertions pass, no guardrail violation), plus a 0.0-1.0 partial-credit share of satisfied assertions."
+worked_examples:
+  - task_type: "Cross-application workflow with policy (Sales — Salesforce + Slack + Sheets)"
+    input: "Environment: simulated Salesforce, Slack, and Google Sheets, seeded with many opportunities. Task: 'For every opportunity that is Closed Won with amount over $50,000, post a one-line summary to the #big-deals Slack channel and append a row to the Deals sheet. Company policy: only include opportunities owned by the North America team.' No endpoint list is given — discover the APIs yourself."
+    success:
+      answer: "Discover and query the Salesforce opportunities endpoint; filter to stage=Closed Won, amount>50000, owner_region=North America; for each match call Slack chat.postMessage to #big-deals and append the row to the Deals sheet."
+      why: "The end state matches every assertion — only the North-America, high-value Closed-Won deals are posted and logged — with no policy violation."
+    failure:
+      answer: "Query Closed Won opportunities over $50,000 and post/append all of them, including deals owned by the EMEA team."
+      why: "The Slack and Sheets calls succeed, but ignoring the North-America-only business rule trips a guardrail assertion, so the task scores 0 under the binary metric even though the mechanics worked."
+    checks: "Whether an agent coordinates several SaaS apps, discovers the needed REST endpoints on its own, and honors a layered business policy end-to-end."
+    scoring: "Programmatic end-state grading: binary Task Completed Correctly (all assertions pass, no guardrail violation), plus a 0.0-1.0 partial-credit share of satisfied assertions."
+  - task_type: "Autonomous endpoint discovery (Support — Zendesk + Slack)"
+    input: "Environment: simulated Zendesk and Slack. Task: 'For every OPEN ticket with priority=urgent, post a summary to #support-escalations and assign it to the on-call agent.' The agent must discover the right Zendesk endpoints itself."
+    success:
+      answer: "Explore the Zendesk API, find GET /tickets with a search/filter for status=open and priority=urgent, then for each result call Slack chat.postMessage to #support-escalations and PUT /tickets/{id} to set assignee=on-call."
+      why: "It discovers and queries the correct ticket-search endpoint, so the right urgent tickets are escalated and reassigned — every assertion holds."
+    failure:
+      answer: "Guess a plausible but wrong endpoint (GET /issues) that returns nothing, conclude there are no urgent tickets, and post nothing."
+      why: "Endpoint-discovery failure: querying the wrong resource yields an empty set, so no escalations happen and the end-state assertions all fail — the binary metric scores 0."
+    checks: "Whether an agent discovers the correct REST resource among many rather than guessing an endpoint name."
+    scoring: "Binary Task Completed Correctly; partial credit for the share of assertions satisfied."
+  - task_type: "Do-not-contact guardrail (Marketing — HubSpot + Gmail)"
+    input: "Environment: simulated HubSpot and Gmail. Task: 'Send the \"Spring Promo\" email to every contact tagged newsletter. Policy: never email a contact on the do-not-contact list, even if they carry the newsletter tag.' Discover the endpoints yourself."
+    success:
+      answer: "Query HubSpot for contacts tagged newsletter, subtract those flagged do_not_contact=true, then send the Spring Promo via Gmail only to the remaining contacts."
+      why: "Excluding do-not-contact records before sending satisfies the guardrail, so the set of sent emails matches ground truth exactly."
+    failure:
+      answer: "Send the Spring Promo to everyone tagged newsletter, including two contacts on the do-not-contact list."
+      why: "Guardrail violation: emailing a do-not-contact record trips a hard assertion, so the task scores 0 on the binary metric even though the emails sent successfully."
+    checks: "Whether an agent enforces an exclusion policy that overrides the primary selection criterion."
+    scoring: "Binary Task Completed Correctly — any do-not-contact email is an automatic guardrail failure."
+  - task_type: "Threshold filter (Finance — Google Sheets + Slack)"
+    input: "Environment: simulated Google Sheets (an invoices tab) and Slack. Task: 'For every invoice more than 30 days overdue, set its status to Overdue in the sheet and DM the account owner on Slack.' Discover the endpoints yourself."
+    success:
+      answer: "Read the invoices sheet, compute days_overdue = today − due_date, filter to > 30, update those rows' status to 'Overdue', and Slack DM each corresponding account owner."
+      why: "Using the correct 30-day threshold flags exactly the overdue invoices, so both the sheet and the DMs match ground truth."
+    failure:
+      answer: "Apply a > 60-day cutoff instead of > 30, flagging only the most severely overdue invoices and DMing a subset of owners."
+      why: "Wrong threshold: invoices between 31 and 60 days overdue are missed, so the sheet and DM assertions fail for those rows and the binary metric scores 0 (partial credit reflects the rows it did get right)."
+    checks: "Whether an agent applies the exact numeric threshold stated in the task."
+    scoring: "Binary Task Completed Correctly; 0.0-1.0 partial credit for the fraction of correctly-flagged rows."
+  - task_type: "Cross-system linkage (Operations — Salesforce + Jira)"
+    input: "Environment: simulated Salesforce and Jira. Task: 'For each Salesforce case flagged as an engineering escalation, create a Jira bug and write the new Jira issue key back onto the Salesforce case.' Discover the endpoints yourself."
+    success:
+      answer: "Query Salesforce for cases where escalation_type='engineering'; for each, POST a Jira issue (type=Bug) and capture the returned key; then PATCH the Salesforce case with jira_key=<key>."
+      why: "Both systems end consistent — a Jira bug exists for every escalation and each Salesforce case carries the correct linking key, satisfying all assertions."
+    failure:
+      answer: "Create the Jira bugs for every escalation but never write the issue keys back to Salesforce."
+      why: "Partial cross-system completion: the Jira side passes but the Salesforce link assertions fail, so the binary metric scores 0 (partial credit for the Jira-side assertions only)."
+    checks: "Whether an agent completes the full round trip across two systems, not just the first write."
+    scoring: "Binary Task Completed Correctly; partial credit for the share of assertions satisfied across both systems."
 tags: [agent, tool-use, workflow-automation, saas, api, zapier]
 updated: 2026-08-02
 sources:

@@ -17,19 +17,59 @@ format: "Sentence/segment-level translation, English source into each target lan
 saturation: medium
 limitations: "The authors rely on automatic metrics and explicitly leave human evaluation to future work, so rankings can shift under human judgement. It is English-source only (one direction), the segment count per language is modest (~960), and metric-based scores are sensitive to reference quality — especially for low-resource dialects."
 citation: "https://arxiv.org/abs/2502.12404"
-example:
-  task_type: "Machine translation (English to German, news domain)"
-  input: "Translate into German: 'The committee did not approve the new budget.'"
-  success:
-    answer: "'Der Ausschuss hat den neuen Haushalt nicht genehmigt.' (The committee did not approve the new budget.)"
-    why: "Fluent and faithful — the negation is preserved, so the meaning matches the source."
-  failure:
-    answer: "'Der Ausschuss hat den neuen Haushalt genehmigt.' (gloss: 'The committee approved the new budget.')"
-    why: "Drops the negation 'not', flipping the sentence to its opposite meaning — a critical mistranslation despite fluent output."
-  checks: "Meaning-preserving translation, including polarity/negation, scored automatically against a human reference."
-  scoring: "Automatic MT metrics — MetricX-24 (primary) and chrF; higher is better."
+worked_examples:
+  - task_type: "Machine translation — negation (English → German, news)"
+    input: "Translate into German: 'The committee did not approve the new budget.'"
+    success:
+      answer: "'Der Ausschuss hat den neuen Haushalt nicht genehmigt.' (The committee did not approve the new budget.)"
+      why: "Fluent and faithful — the negation is preserved, so the meaning matches the source."
+    failure:
+      answer: "'Der Ausschuss hat den neuen Haushalt genehmigt.' (gloss: 'The committee approved the new budget.')"
+      why: "Drops the negation 'not', flipping the sentence to its opposite meaning — a critical mistranslation despite fluent output."
+    checks: "Meaning-preserving translation, including polarity/negation, scored automatically against a human reference."
+    scoring: "Automatic MT metrics — MetricX-24 (primary) and chrF; higher is better."
+  - task_type: "Machine translation — register (English → French, speech/announcement)"
+    input: "Translate into French, as a formal public announcement: 'Please remain seated until the train has stopped.'"
+    success:
+      answer: "'Veuillez rester assis jusqu'à l'arrêt complet du train.' (Please remain seated until the train has completely stopped.)"
+      why: "Uses the formal register (veuillez) appropriate to a public announcement and preserves the meaning."
+    failure:
+      answer: "'Reste assis jusqu'à ce que le train s'arrête.' (gloss: 'Stay seated until the train stops' — casual tu-form.)"
+      why: "Correct meaning but the wrong register: the informal tu-imperative is inappropriate for a formal announcement, which the metrics penalize as an adequacy/register error."
+    checks: "Matching the source's formality register, not just its literal meaning."
+    scoring: "Automatic MT metrics — MetricX-24 (primary) and chrF; higher is better."
+  - task_type: "Machine translation — false friend (English → Spanish, news)"
+    input: "Translate into Spanish: 'The minister said the policy is actually working.'"
+    success:
+      answer: "'El ministro dijo que la política realmente está funcionando.' (The minister said the policy really is working.)"
+      why: "'realmente' conveys 'in fact', preserving the source's claim."
+    failure:
+      answer: "'El ministro dijo que la política actualmente está funcionando.' (gloss: 'the policy is currently working'.)"
+      why: "'actualmente' is a false friend meaning 'currently', not 'actually' — a mistranslation that shifts the meaning and lowers the MetricX-24 score."
+    checks: "Avoiding false-friend traps that silently change meaning."
+    scoring: "Automatic MT metrics — MetricX-24 (primary) and chrF; higher is better."
+  - task_type: "Machine translation — politeness register (English → Japanese, social/business)"
+    input: "Translate into Japanese, as a business email reply: 'Thank you for your email; I will reply by tomorrow.'"
+    success:
+      answer: "'メールをありがとうございます。明日までにご返信いたします。' (Thank you for your email; I will reply by tomorrow — polite keigo form.)"
+      why: "Uses the polite keigo register expected in business correspondence while rendering the message faithfully."
+    failure:
+      answer: "'メールありがとう。明日までに返事するね。' (gloss: 'Thanks for the mail, I'll reply by tomorrow' — casual form.)"
+      why: "The meaning is intact but the casual register is wrong for a business email; register mismatch is penalized as an adequacy/fluency error."
+    checks: "Producing the correct politeness level for the text's context, not merely the literal content."
+    scoring: "Automatic MT metrics — MetricX-24 (primary) and chrF; higher is better."
+  - task_type: "Machine translation — idiom (English → Chinese, literary/dialogue)"
+    input: "Translate into Chinese: 'Break a leg at your audition tonight!'"
+    success:
+      answer: "'祝你今晚试镜顺利！' (Wishing you a smooth audition tonight!)"
+      why: "Renders the idiom's intended meaning — good luck — which is what the source conveys."
+    failure:
+      answer: "'今晚试镜时把腿摔断！' (gloss: 'Break your leg at the audition tonight!' — literal.)"
+      why: "Translates the idiom word-for-word into a literal, alarming instruction, destroying the intended meaning — a mistranslation the metrics heavily penalize."
+    checks: "Translating idiomatic meaning rather than a misleading literal rendering."
+    scoring: "Automatic MT metrics — MetricX-24 (primary) and chrF; higher is better."
 tags: [multilingual, translation, machine-translation, generation]
-updated: 2026-07-20
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2502.12404", title: "WMT24++: Expanding the Language Coverage of WMT24 to 55 Languages & Dialects (Deutsch et al., 2025)", trust: 0.95 }
   - { url: "https://huggingface.co/papers/2502.12404", title: "WMT24++ paper page — Hugging Face", trust: 0.9 }

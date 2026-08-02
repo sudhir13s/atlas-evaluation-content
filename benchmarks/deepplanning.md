@@ -18,19 +18,59 @@ format: "Single-turn planning with tool-based information gathering against a sa
 saturation: low
 limitations: "Only two domains (travel and shopping), so it is a focused planning probe rather than a general agent test. Queries are synthesized, which can create a distribution shift from real user requests. It targets single-turn planning, not multi-turn interactive replanning with a user. Code-based checkers are exact and reproducible but only score the dimensions they encode."
 citation: "https://arxiv.org/abs/2601.18137"
-example:
-  task_type: "Long-horizon constrained planning (travel itinerary)"
-  input: "Plan a 3-day city itinerary under a fixed total budget. Query the sandbox database (tools) for transport, lodging, attractions, and dining; every venue must be visited within its business hours and travel times must connect."
-  success:
-    answer: "query_transport(...) → query_attractions(...) → query_dining(...), then submit a minute-level schedule where each hop's travel time connects, every venue falls inside its opening hours, days stay diverse, and total cost lands under budget."
-    why: "The plan is globally coherent — it passes every rule-based verifier (route consistency, time feasibility, business hours, cost accuracy, activity diversity)."
-  failure:
-    answer: "Picks four highly-rated attractions per day and a nice restaurant, but schedules two of them in the same 2–4pm slot and routes between venues 40km apart in 15 minutes; total cost also exceeds the budget by 12%."
-    why: "Locally plausible choices, globally invalid: double-booked time slot, infeasible travel time, and over-budget total — the code checkers fail it on time feasibility, route consistency, and cost accuracy."
-  checks: "Whether an agent produces a globally coherent plan under interlocking hard constraints, not just individually reasonable steps."
-  scoring: "Accuracy — fraction of tasks whose final plan passes all code-based constraint checks."
+worked_examples:
+  - task_type: "Long-horizon constrained planning (travel itinerary)"
+    input: "Plan a 3-day city itinerary under a fixed total budget. Query the sandbox database (tools) for transport, lodging, attractions, and dining; every venue must be visited within its business hours and travel times must connect."
+    success:
+      answer: "query_transport(...) → query_attractions(...) → query_dining(...), then submit a minute-level schedule where each hop's travel time connects, every venue falls inside its opening hours, days stay diverse, and total cost lands under budget."
+      why: "The plan is globally coherent — it passes every rule-based verifier (route consistency, time feasibility, business hours, cost accuracy, activity diversity)."
+    failure:
+      answer: "Picks four highly-rated attractions per day and a nice restaurant, but schedules two of them in the same 2–4pm slot and routes between venues 40km apart in 15 minutes; total cost also exceeds the budget by 12%."
+      why: "Locally plausible choices, globally invalid: double-booked time slot, infeasible travel time, and over-budget total — the code checkers fail it on time feasibility, route consistency, and cost accuracy."
+    checks: "Whether an agent produces a globally coherent plan under interlocking hard constraints, not just individually reasonable steps."
+    scoring: "Accuracy — fraction of tasks whose final plan passes all code-based constraint checks."
+  - task_type: "Constrained shopping cart (coupon-combination rules)"
+    input: "Assemble a cart matching stated brand and size preferences and a shipping deadline, applying coupons to minimize cost — matched against a ground-truth optimal cart. Rule: coupon A ('15% off') and coupon B ('$10 off') cannot be stacked on the same item."
+    success:
+      answer: "query_products(brand, size) → compare per-item the better of coupon A vs B → apply exactly one coupon per item → submit the cart whose total equals the ground-truth optimal."
+      why: "It respects the mutual-exclusion coupon rule while still minimizing cost, so the cart matches the ground-truth optimal within the checker's tolerance."
+    failure:
+      answer: "Stacks both coupon A and coupon B on the priciest item to push the total lower than the reference cart."
+      why: "Wrong action — violates the coupon-combination rule; the code checker invalidates the stack and the cart fails to match the ground-truth optimal."
+    checks: "Whether an agent optimizes cost while obeying discrete combination rules on discounts."
+    scoring: "Accuracy — cart must match the ground-truth optimal under the code checker."
+  - task_type: "Proactive information gathering (sandbox compliance)"
+    input: "Plan a day of sightseeing. All venues, prices, and opening hours must come from the sandbox database via tool queries — nothing may be invented."
+    success:
+      answer: "query_attractions(city) and query_dining(city) first, then build the schedule only from venues and hours returned by the sandbox."
+      why: "Every item in the plan traces to a sandbox record, so it passes the sandbox-compliance verifier."
+    failure:
+      answer: "Skips the queries and fills the itinerary from the model's own knowledge of the city's famous museums and their 'usual' hours."
+      why: "Acting without querying — the invented venues and hours are not in the sandbox, so the sandbox-compliance check fails even if the plan looks reasonable."
+    checks: "Whether an agent grounds its plan in tool-retrieved facts rather than parametric guesses."
+    scoring: "Accuracy — sandbox-compliance verifier must pass (all venues drawn from the database)."
+  - task_type: "Constrained shopping cart (shipping-time limit)"
+    input: "Buy a birthday gift matching a requested brand and size that must arrive within 3 days, minimizing cost. Query the sandbox for products and their shipping estimates."
+    success:
+      answer: "query_products(brand, size) → filter to items whose shipping estimate ≤ 3 days → pick the cheapest qualifying item → submit."
+      why: "It enforces the hard shipping-deadline constraint before optimizing price, matching the ground-truth cart."
+    failure:
+      answer: "Picks the cheapest matching item overall, which ships in 6 days, because it is $8 less than the fastest qualifying option."
+      why: "Wrong trade-off — optimizes cost while breaking the hard 3-day shipping constraint, so the checker fails the cart."
+    checks: "Whether an agent treats a delivery deadline as a hard filter, not a soft preference to trade against price."
+    scoring: "Accuracy — cart must satisfy the shipping-time constraint and match ground truth."
+  - task_type: "Per-day activity diversity (travel)"
+    input: "Plan a 2-day trip where each day must include a diverse mix of activity types (e.g. not two museums back-to-back), pulled from the sandbox and kept under budget."
+    success:
+      answer: "query_attractions(city) → schedule one museum, one outdoor site, and one dining spot per day, varying the type across slots so no day repeats a category."
+      why: "The per-day mix satisfies the activity-diversity verifier while staying inside time and cost budgets."
+    failure:
+      answer: "Fills day one with three top-rated art museums in a row because they are the highest-rated venues available."
+      why: "Violates the per-day activity-diversity constraint — locally optimal (highest ratings) but the diversity verifier fails the day."
+    checks: "Whether an agent satisfies a diversity constraint instead of greedily picking the highest-rated items."
+    scoring: "Accuracy — activity-diversity verifier must pass for every day."
 tags: [agent, planning, tool-use, long-horizon, constraints]
-updated: 2026-07-20
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2601.18137", title: "DeepPlanning: Benchmarking Long-Horizon Agentic Planning with Verifiable Constraints (Qwen Team, Alibaba, 2026)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/Qwen/DeepPlanning", title: "Qwen/DeepPlanning dataset (Hugging Face)", trust: 0.9 }

@@ -32,31 +32,40 @@
     "saturation": { "type": "string", "enum": ["high", "medium", "low"], "description": "how close top models are to the ceiling" },
     "limitations": { "type": "string", "description": "honest limitations, contamination, saturation" },
     "citation": { "type": "string", "description": "canonical paper/site URL" },
-    "example": {
-      "type": "object",
-      "description": "One worked, category-appropriate contrast: a success vs a plausible failure, so a reader sees exactly what the benchmark rewards. Panel labels + footer are derived from `category` in the UI.",
-      "required": ["task_type", "input", "success", "failure"],
-      "properties": {
-        "task_type": { "type": "string", "description": "subject/task label, e.g. 'College Physics' or 'Array manipulation'" },
-        "input": { "type": "string", "description": "the benchmark-style question/prompt the model receives (illustrative, representative of the benchmark's real format)" },
-        "success": {
-          "type": "object",
-          "required": ["answer", "why"],
-          "properties": {
-            "answer": { "type": "string", "description": "the correct / passing / safe / truthful response, as the benchmark would reward it" },
-            "why": { "type": "string", "description": "one concise reason it succeeds" }
-          }
-        },
-        "failure": {
-          "type": "object",
-          "required": ["answer", "why"],
-          "properties": {
-            "answer": { "type": "string", "description": "a PLAUSIBLE wrong/weak/unsafe/misleading response (never an obviously foolish one)" },
-            "why": { "type": "string", "description": "the exact reason it fails / loses points under this benchmark's scoring" }
-          }
-        },
-        "checks": { "type": "string", "description": "one sentence: the capability this success-vs-failure contrast demonstrates" },
-        "scoring": { "type": "string", "description": "how the benchmark scores this item, e.g. 'exact-match accuracy', 'pass@1 over hidden tests', 'LLM-judge rubric', 'chrF/MetricX'" }
+    "worked_examples": {
+      "type": "array",
+      "description": "3-5 category-appropriate worked examples, shown as a navigable carousel. Each is one success-vs-plausible-failure contrast; the UI derives panel labels + footer from `category` + `metric`. Author DISTINCT examples (different sub-tasks, difficulties, or failure modes), not variations of one.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["task_type", "input", "success", "failure"],
+        "properties": {
+          "task_type": { "type": "string", "description": "subject/task label, e.g. 'College Physics' or 'Array manipulation'" },
+          "input": { "type": "string", "description": "the question STEM / task prompt WITHOUT the answer options (options go in `options`)" },
+          "options": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "answer choices for a multiple-choice item, in order; the UI renders them lettered (A, B, C, ...). Omit for non-MCQ tasks (code, translation, agents, ...)."
+          },
+          "success": {
+            "type": "object",
+            "required": ["answer", "why"],
+            "properties": {
+              "answer": { "type": "string", "description": "the correct / passing / safe / truthful response. For MCQ, start with the letter, e.g. 'B — a rat pressing a lever'." },
+              "why": { "type": "string", "description": "one concise reason it succeeds" }
+            }
+          },
+          "failure": {
+            "type": "object",
+            "required": ["answer", "why"],
+            "properties": {
+              "answer": { "type": "string", "description": "a PLAUSIBLE wrong/weak/unsafe/misleading response (never an obviously foolish one)" },
+              "why": { "type": "string", "description": "the exact reason it fails / loses points under this benchmark's scoring" }
+            }
+          },
+          "checks": { "type": "string", "description": "one sentence: the capability this contrast demonstrates" },
+          "scoring": { "type": "string", "description": "how the benchmark scores this item, e.g. 'exact-match accuracy', 'pass@1 over hidden tests', 'LLM-judge rubric', 'chrF/MetricX'" }
+        }
       }
     }
   },

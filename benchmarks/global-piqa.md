@@ -17,19 +17,74 @@ format: "2-way multiple-choice (goal + two candidate solutions); 0-shot."
 saturation: medium
 limitations: "Because it is two-choice, random guessing already scores 50%, so absolute numbers look high; the signal is the *gap* between high- and low-resource languages. Hand authoring by volunteers means per-language set sizes and difficulty vary, and coverage, while broad, is still uneven across the 116 varieties."
 citation: "https://arxiv.org/abs/2510.24081"
-example:
-  task_type: "Physical commonsense (Swahili)"
-  input: "Lengo (goal): Kufanya ugali uwe mnene ili uweze kukatwa vipande. (Make the ugali stiff enough to cut into pieces.) Chagua kitendo sahihi: (A) Ongeza unga wa mahindi taratibu ukikoroga. (Add maize flour gradually while stirring.) (B) Mimina maji zaidi ndani na uache uchemke. (Pour in more water and let it boil.)"
-  success:
-    answer: "(A) Add maize flour gradually while stirring."
-    why: "Stirring in more flour is exactly how ugali is thickened; the physical action matches the local dish."
-  failure:
-    answer: "(B) Pour in more water and let it boil."
-    why: "Adding water makes ugali runnier, not stiffer — the model reasons from a generic 'boil to reduce' default and misses the culturally-specific preparation."
-  checks: "Everyday physical reasoning grounded in a local, culturally-specific setup rather than generic textbook physics."
-  scoring: "Accuracy (% correct); random baseline is 50%."
+worked_examples:
+  - task_type: "Physical commonsense (Swahili)"
+    input: "Lengo (goal): Kufanya ugali uwe mnene ili uweze kukatwa vipande. (Make the ugali stiff enough to cut into pieces.) Chagua kitendo sahihi: (Choose the correct action.)"
+    options:
+      - "Ongeza unga wa mahindi taratibu ukikoroga. (Add maize flour gradually while stirring.)"
+      - "Mimina maji zaidi ndani na uache uchemke. (Pour in more water and let it boil.)"
+    success:
+      answer: "A — Add maize flour gradually while stirring"
+      why: "Stirring in more flour is exactly how ugali is thickened; the physical action matches the local dish."
+    failure:
+      answer: "B — Pour in more water and let it boil"
+      why: "Adding water makes ugali runnier, not stiffer — the model reasons from a generic 'boil to reduce' default and misses the culturally-specific preparation."
+    checks: "Everyday physical reasoning grounded in a local, culturally-specific setup rather than generic textbook physics."
+    scoring: "Accuracy (% correct); random baseline is 50%."
+  - task_type: "Physical commonsense (Hindi)"
+    input: "लक्ष्य (goal): रोटी को फुलाना। (Puff up a roti flatbread.) सही क्रिया चुनें: (Choose the correct action.)"
+    options:
+      - "रोटी को थोड़ी देर सीधे आँच पर रखें। (Place the roti directly on the open flame for a moment.)"
+      - "रोटी को पानी में डुबो दें। (Soak the roti in water.)"
+    success:
+      answer: "A — Place the roti directly on the open flame for a moment"
+      why: "Direct heat flashes the roti's moisture to steam, which puffs it up — the standard local technique."
+    failure:
+      answer: "B — Soak the roti in water"
+      why: "Water makes it soggy and it never puffs; a generic 'add water' default that misses the flame method."
+    checks: "Culinary physical reasoning tied to a regional cooking method, not a generic action."
+    scoring: "Accuracy (% correct); random baseline is 50%."
+  - task_type: "Physical commonsense (Spanish)"
+    input: "Objetivo (goal): Evitar que el guacamole se ponga marrón. (Keep the guacamole from turning brown.) Elige la acción correcta: (Choose the correct action.)"
+    options:
+      - "Agregar jugo de limón y mezclar. (Add lime/lemon juice and mix.)"
+      - "Agregar azúcar y dejarlo al sol. (Add sugar and leave it in the sun.)"
+    success:
+      answer: "A — Add lime/lemon juice and mix"
+      why: "The acid and vitamin C in citrus slow the oxidation that browns avocado — the everyday kitchen fix."
+    failure:
+      answer: "B — Add sugar and leave it in the sun"
+      why: "Sugar does nothing for oxidation and sun/heat speeds browning — a wrong guess that misses the culinary chemistry."
+    checks: "Grasping the physical cause of browning and the local remedy, not a random pantry action."
+    scoring: "Accuracy (% correct); random baseline is 50%."
+  - task_type: "Physical commonsense (Vietnamese)"
+    input: "Mục tiêu (goal): Làm mềm bánh tráng để cuốn gỏi cuốn. (Soften rice paper to roll fresh spring rolls.) Chọn hành động đúng: (Choose the correct action.)"
+    options:
+      - "Nhúng nhanh bánh tráng vào nước ấm. (Dip the rice paper briefly in warm water.)"
+      - "Cho bánh tráng vào dầu nóng để chiên. (Put the rice paper in hot oil to fry.)"
+    success:
+      answer: "A — Dip the rice paper briefly in warm water"
+      why: "A quick dip hydrates and softens the rice paper so it can be rolled — the standard preparation for fresh rolls."
+    failure:
+      answer: "B — Put the rice paper in hot oil to fry"
+      why: "Frying makes it crisp and brittle (that is for fried rolls) — the opposite of softening for fresh rolls."
+    checks: "Matching the physical action to the specific dish's preparation, not a generic 'cook it' default."
+    scoring: "Accuracy (% correct); random baseline is 50%."
+  - task_type: "Physical commonsense (Arabic)"
+    input: "الهدف (goal): تحويل اللبن الزبادي إلى لبنة. (Turn yogurt into labneh, i.e. strained yogurt.) اختر الإجراء الصحيح: (Choose the correct action.)"
+    options:
+      - "تصفية اللبن في قماش لإزالة الماء ومصل اللبن. (Strain the yogurt through cloth to drain off the whey/water.)"
+      - "إضافة المزيد من الماء وتحريكه. (Add more water and stir.)"
+    success:
+      answer: "A — Strain the yogurt through cloth to drain off the whey"
+      why: "Draining the whey through cloth thickens yogurt into labneh — the traditional method."
+    failure:
+      answer: "B — Add more water and stir"
+      why: "Adding water thins it further, the opposite of thickening — a generic misread of the goal."
+    checks: "Reasoning about a culturally-specific food transformation, not a generic mixing action."
+    scoring: "Accuracy (% correct); random baseline is 50%."
 tags: [multilingual, commonsense, reasoning, culture, physical]
-updated: 2026-07-20
+updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2510.24081", title: "Global PIQA: Evaluating Physical Commonsense Reasoning Across 100+ Languages and Cultures (2025)", trust: 0.95 }
   - { url: "https://github.com/mrlbenchmarks/global-piqa", title: "mrlbenchmarks/global-piqa — official repository", trust: 0.9 }
