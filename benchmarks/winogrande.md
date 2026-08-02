@@ -17,6 +17,17 @@ format: "5-shot (Open LLM v1) or 0-shot, binary choice."
 saturation: high
 limitations: "Binary choice means a 50% random floor and a compressed dynamic range. Frontier models score in the high 80s/90s, so it is saturating. AfLite filtering reduces but does not eliminate spurious cues."
 citation: "https://arxiv.org/abs/1907.10641"
+example:
+  task_type: "Commonsense coreference (pronoun/blank resolution)"
+  input: "Fill the blank with the correct referent: 'The trophy doesn't fit into the brown suitcase because _ is too large.' (A) the trophy (B) the suitcase"
+  success:
+    answer: "(A) the trophy"
+    why: "The object that is 'too large' to fit must be the thing being inserted — the trophy."
+  failure:
+    answer: "(B) the suitcase"
+    why: "It flips the causal relation; the suitcase is the container, and a larger container would fit the trophy better, not worse. Swapping 'large' for 'small' is the twin item whose answer flips to the suitcase."
+  checks: "Resolving the referent from world knowledge and the causal cue, not surface word association."
+  scoring: "Exact-match accuracy on the selected referent."
 tags: [common-sense, coreference, multiple-choice]
 updated: 2026-07-17
 sources:

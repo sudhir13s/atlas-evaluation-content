@@ -17,6 +17,17 @@ format: "10-way multiple-choice, chain-of-thought; run few-shot (inherits the MM
 saturation: medium
 limitations: "Translations are LLM-generated then expert-reviewed rather than fully human-authored, so subtle translationese can remain. It is a translation of English-origin questions (no culturally-native content), and like MMLU-Pro its 10-option chain-of-thought format makes scores sensitive to answer parsing and prompt template."
 citation: "https://arxiv.org/abs/2503.10497"
+example:
+  task_type: "Advanced reasoning MCQ (Swahili, economics)"
+  input: "Kwa nini kampuni katika ushindani wa kimonopoli hupata faida sifuri ya kiuchumi kwa muda mrefu? (Why does a monopolistically competitive firm earn zero economic profit in the long run?) — chagua jibu bora kati ya chaguo kumi. (choose the best answer among ten options.)"
+  success:
+    answer: "Because free entry of new firms erodes profits until price equals average total cost."
+    why: "Names the actual long-run zero-profit driver — entry competing away profit — reasoned correctly in-language."
+  failure:
+    answer: "Because the firm sets marginal revenue equal to marginal cost."
+    why: "MR = MC sets the profit-maximizing output level, not the zero-profit condition; a plausible in-language distractor and a reasoning error, not a translation error."
+  checks: "Reasoning through a distractor-hardened question in a lower-resource language, not mere fact recall."
+  scoring: "Accuracy (% correct)."
 tags: [multilingual, knowledge, reasoning, multiple-choice]
 updated: 2026-07-20
 sources:

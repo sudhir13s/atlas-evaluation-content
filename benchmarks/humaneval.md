@@ -17,6 +17,17 @@ format: "0-shot function completion; unit-test execution."
 saturation: high
 limitations: "Only 164 problems, all small self-contained Python functions (avg ~7 lines) — too narrow to generalize to real engineering (no debugging, refactoring, multi-file context, or other languages). Saturated at 90%+ for frontier models. The stricter HumanEval+ adds many more tests and exposes solutions that pass the original but are subtly wrong."
 citation: "https://arxiv.org/abs/2107.03374"
+example:
+  task_type: "Python function completion"
+  input: "def second_largest(nums: list[int]) -> int: return the second-largest distinct value (the list has at least two distinct elements)."
+  success:
+    answer: "A single pass tracking the largest and second-largest values while skipping any value equal to the current max, so second_largest([10, 10, 5]) returns 5."
+    why: "Handles duplicates of the maximum, satisfying the distinct-value contract on every hidden test."
+  failure:
+    answer: "return sorted(nums)[-2]"
+    why: "On [10, 10, 5] the second element from the end is 10, not 5 - duplicates of the max break the naive sort-and-index."
+  checks: "Translating a spec into code that survives the duplicate-max edge case, not just the happy path."
+  scoring: "pass@1 on hidden unit tests (e.g. 8/8 vs 6/8)."
 tags: [code, python, execution, pass-at-k]
 updated: 2026-07-17
 sources:

@@ -17,6 +17,17 @@ format: "10-shot (Open LLM v1) or 0-shot, 4-way multiple-choice."
 saturation: high
 limitations: "Near-saturated: frontier models exceed 95%, matching or beating the ~95.6% human baseline, so it no longer separates strong models. The adversarial filtering was tuned against 2019-era models and does not hold against modern ones. A few items have noisy labels."
 citation: "https://arxiv.org/abs/1905.07830"
+example:
+  task_type: "Commonsense sentence completion (physical/temporal)"
+  input: "Context: 'A woman sits at a table with a lump of clay and begins to mold it with her hands. She...' Pick the most plausible continuation: (A) rolls it flat and cuts it into strips with a knife. (B) sets the wet, unshaped clay into a hot kiln and instantly lifts out a finished, glazed pot. (C) folds the wooden table in half and slips it into her pocket. (D) turns into a clay statue herself."
+  success:
+    answer: "(A) rolls it flat and cuts it into strips with a knife."
+    why: "It follows the physical activity — a real next step in working soft clay by hand."
+  failure:
+    answer: "(B) sets the wet, unshaped clay into a hot kiln and instantly lifts out a finished, glazed pot."
+    why: "It shares pottery vocabulary and reads fluently, but violates process and timing — wet clay is shaped and dried before firing, and firing is not instant. This is the adversarially-filtered distractor built to look statistically plausible to weaker models."
+  checks: "Rejecting a topically-fluent but physically impossible continuation using everyday process knowledge, not word overlap."
+  scoring: "Exact-match accuracy on the selected ending (highest-likelihood option)."
 tags: [common-sense, multiple-choice, completion]
 updated: 2026-07-17
 sources:

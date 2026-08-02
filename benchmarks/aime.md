@@ -17,6 +17,17 @@ format: "0-shot CoT; integer exact-match."
 saturation: low
 limitations: "Very small per exam (15 problems), so single-run scores are extremely noisy — averaging over many samples and multiple exams is essential. Integer-only answers mean a right number from wrong reasoning still counts. Once a year's exam is public it becomes contaminable, so only post-cutoff editions are trustworthy."
 citation: "https://maa.org/maa-invitational-competitions/"
+example:
+  task_type: "Competition math (integer answer 0-999)"
+  input: "The sum of the first n positive integers is a three-digit number whose three digits are all identical. Find n."
+  success:
+    answer: "36"
+    why: "n(n+1)/2 = 666 = 111*6; clearing the fraction gives n(n+1) = 1332 = 36*37, so n = 36."
+  failure:
+    answer: "25"
+    why: "Dropped the factor of 2 when clearing the fraction, solving n(n+1) = 666 instead of 1332, then rounded n = 25.3 down to 25 (whose sum 325 is not a repdigit)."
+  checks: "Sustained multi-step reasoning with correct algebraic manipulation, not merely landing on a plausible integer."
+  scoring: "Exact-match on the integer answer (0-999); avg@k over sampled attempts."
 tags: [math, competition, frontier, reasoning]
 updated: 2026-07-17
 sources:

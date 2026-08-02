@@ -17,6 +17,17 @@ format: "0-shot, programmatic verification."
 saturation: medium
 limitations: "Only measures verifiable-constraint following, not answer quality — a model can satisfy every format rule while giving a useless answer. Coverage of instruction types is finite. 'Loose' vs 'strict' scoring (which tolerates minor formatting like markdown wrappers) can differ by several points."
 citation: "https://arxiv.org/abs/2311.07911"
+example:
+  task_type: "Verifiable instruction following (format + forbidden word)"
+  input: "Write a summary of the water cycle in exactly two paragraphs, and do not use the word 'water'."
+  success:
+    answer: "Moisture evaporates from oceans and lakes, rising as vapor that cools and condenses into clouds.\n\nThose clouds release rain and snow, which flows across land and returns to the sea, restarting the cycle."
+    why: "Exactly two paragraphs and the forbidden word never appears — both deterministic verifiers pass."
+  failure:
+    answer: "Water evaporates from oceans and lakes, rising as vapor that condenses into clouds.\n\nThe clouds release precipitation, which flows across land and returns to the sea to begin again."
+    why: "✓ exactly two paragraphs, ✓ accurate and well-written, ✗ the first sentence uses the forbidden word 'Water' — the 'do not use the word water' constraint is violated."
+  checks: "Literal adherence to explicit, machine-checkable output constraints, independent of answer quality."
+  scoring: "Instruction-following accuracy — fraction of constraints satisfied (prompt-level counts the prompt only if all pass)."
 tags: [instruction-following, formatting, deterministic]
 updated: 2026-07-17
 sources:

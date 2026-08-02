@@ -17,6 +17,17 @@ format: "5-shot CoT, 10-way multiple-choice."
 saturation: medium
 limitations: "Newer, so less contamination data exists — but it is not immune. The 10-option format and CoT dependence make scores sensitive to answer-parsing and prompt template. Still knowledge-centric, so it under-tests generation, tool use, and long-context skills."
 citation: "https://arxiv.org/abs/2406.01574"
+example:
+  task_type: "College physics (quantum mechanics)"
+  input: "In quantum mechanics, which statement best describes the Born rule? (representative options from a 10-choice item) (A) It gives the probability of a measurement outcome as the squared modulus of the corresponding wavefunction amplitude. (B) It determines the allowed energy levels of a bound state. (C) It sets the commutation relation between position and momentum. (D) It describes the deterministic time evolution of the wavefunction. ... (J) ..."
+  success:
+    answer: "(A) probability equals the squared modulus of the amplitude."
+    why: "The Born rule maps |ψ|² (the squared amplitude) to the probability density of a measurement outcome."
+  failure:
+    answer: "(B) It determines the allowed energy levels of a bound state."
+    why: "That is the time-independent Schrödinger equation's eigenvalue problem, not the Born rule — a plausible mix-up of two core quantum-mechanics results."
+  checks: "Distinguishing closely-related quantum-mechanics principles under a 10-option format that penalizes shallow keyword matching."
+  scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, multiple-choice, reasoning]
 updated: 2026-07-17
 sources:

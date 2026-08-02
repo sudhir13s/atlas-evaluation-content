@@ -17,6 +17,17 @@ format: "Sentence/segment-level translation, English source into each target lan
 saturation: medium
 limitations: "The authors rely on automatic metrics and explicitly leave human evaluation to future work, so rankings can shift under human judgement. It is English-source only (one direction), the segment count per language is modest (~960), and metric-based scores are sensitive to reference quality — especially for low-resource dialects."
 citation: "https://arxiv.org/abs/2502.12404"
+example:
+  task_type: "Machine translation (English to German, news domain)"
+  input: "Translate into German: 'The committee did not approve the new budget.'"
+  success:
+    answer: "'Der Ausschuss hat den neuen Haushalt nicht genehmigt.' (The committee did not approve the new budget.)"
+    why: "Fluent and faithful — the negation is preserved, so the meaning matches the source."
+  failure:
+    answer: "'Der Ausschuss hat den neuen Haushalt genehmigt.' (gloss: 'The committee approved the new budget.')"
+    why: "Drops the negation 'not', flipping the sentence to its opposite meaning — a critical mistranslation despite fluent output."
+  checks: "Meaning-preserving translation, including polarity/negation, scored automatically against a human reference."
+  scoring: "Automatic MT metrics — MetricX-24 (primary) and chrF; higher is better."
 tags: [multilingual, translation, machine-translation, generation]
 updated: 2026-07-20
 sources:

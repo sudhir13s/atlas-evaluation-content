@@ -17,6 +17,17 @@ format: "Same 4-way multiple-choice as MMLU; typically 0-shot or 5-shot."
 saturation: high
 limitations: "It corrects labels but keeps MMLU's 4-option multiple-choice format, so guessing headroom and the knowledge-only scope remain. Only 100 questions per subject are re-annotated, so per-subject estimates are noisy, and it inherits MMLU's contamination exposure."
 citation: "https://arxiv.org/abs/2406.04127"
+example:
+  task_type: "Undergraduate biology (item with a re-audited, verified answer key)"
+  input: "Which enzyme unwinds the DNA double helix at the replication fork? (A) DNA polymerase (B) Helicase (C) DNA ligase (D) Primase"
+  success:
+    answer: "(B) Helicase"
+    why: "Helicase breaks the hydrogen bonds between base pairs, separating the two strands at the fork."
+  failure:
+    answer: "(A) DNA polymerase"
+    why: "Polymerase is central to replication so it is a tempting pick, but it synthesizes the new strand — it does not unwind the helix."
+  checks: "Precise recall of enzyme roles, scored against a hand-verified key so the result reflects knowledge, not a faulty label."
+  scoring: "Exact-match accuracy on the selected option (over corrected labels)."
 tags: [knowledge, multiple-choice, data-quality, mmlu]
 updated: 2026-07-20
 sources:

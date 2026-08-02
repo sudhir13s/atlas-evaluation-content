@@ -17,6 +17,17 @@ format: "Open-ended generation with chain-of-thought; answer extracted and match
 saturation: low
 limitations: "The hardest tier is far from solved — leading reasoning models sit around 40% at the top level — but that also means most of the discriminating signal is concentrated in a few hard problems per language. As a parallel translated set it measures reasoning-in-language, not culturally-native math, and answer extraction on free-form solutions adds some grading noise."
 citation: "https://arxiv.org/abs/2504.18428"
+example:
+  task_type: "Multilingual math reasoning (Swahili)"
+  input: "Ni nambari ngapi kamili chanya chini ya 100 zinazogawanywa na 3 au 5? (How many positive integers less than 100 are divisible by 3 or 5?)"
+  success:
+    answer: "Correct reasoning: multiples of 3 = 33, of 5 = 19, of 15 = 6, so 33 + 19 − 6 = 46 by inclusion–exclusion."
+    why: "Applies inclusion–exclusion and subtracts the double-counted multiples of 15 — the same steps that succeed in English."
+  failure:
+    answer: "Wrong step: computes 33 + 19 = 52, omitting the overlap."
+    why: "Skips the inclusion–exclusion correction and double-counts the six multiples of 15; the identical slip should not appear just because the language changed — which is what PolyMATH checks."
+  checks: "Reasoning consistency across languages — the derivation must hold identically whatever language the problem is posed in."
+  scoring: "Accuracy (% correct)."
 tags: [multilingual, math, reasoning, generation]
 updated: 2026-07-20
 sources:

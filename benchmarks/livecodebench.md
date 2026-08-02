@@ -18,6 +18,17 @@ format: "0-shot code generation from a natural-language problem statement, judge
 saturation: medium
 limitations: "Scores depend heavily on which date window is used — comparing models on different cutoffs is invalid, and only problems after each model's cutoff are truly contamination-free. Competitive-programming problems skew toward algorithmic puzzles, so results do not transfer directly to real-world software engineering. Hidden-test judging can miss edge cases, and self-consistency/sampling settings (pass@1 vs avg@k, temperature) shift reported numbers."
 citation: "https://arxiv.org/abs/2403.07974"
+example:
+  task_type: "Competitive-programming code generation (from a natural-language statement)"
+  input: "Given an array of up to 100,000 integers and a target k, count the pairs (i, j) with i < j and a[i] + a[j] = k. Time limit 1 second."
+  success:
+    answer: "One pass with a hash map of seen values, adding the count of each element's complement in O(n)."
+    why: "Passes every hidden test within the time limit, including the maximal n = 100,000 case."
+  failure:
+    answer: "A nested double loop checking every pair in O(n^2)."
+    why: "Correct on the small sample cases but Time Limit Exceeded on the n = 100,000 hidden test (about 10^10 operations)."
+  checks: "Choosing an algorithm that meets the complexity budget, not merely one that is logically correct."
+  scoring: "pass@1 - all hidden tests within limits vs Time Limit Exceeded on the large case."
 tags: [code-generation, competitive-programming, contamination-free, pass-at-1]
 updated: 2026-07-20
 sources:

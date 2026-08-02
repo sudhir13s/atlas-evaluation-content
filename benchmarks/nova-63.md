@@ -17,6 +17,17 @@ format: "Multiple-choice; native-language questions, no cross-language translati
 saturation: low
 limitations: "Coverage is deep (63 disciplines) but breadth is 14 languages, so it is not a long-tail low-resource test like INCLUDE or Global PIQA. Native sourcing means questions are not parallel across languages, so a per-language score reflects both that language's difficulty mix and the model's ability — cross-language gaps must be read with that caveat."
 citation: "https://aclanthology.org/2025.emnlp-main.364/"
+example:
+  task_type: "Native-language exam MCQ (Chinese law)"
+  input: "根据《中华人民共和国民法典》，男性的法定结婚年龄是多少周岁？(Under the Civil Code of the People's Republic of China, what is the legal minimum marriage age for men?) (A) 18 (B) 20 (C) 21 (D) 22"
+  success:
+    answer: "(D) 22"
+    why: "The PRC Civil Code sets the minimum marriage age at 22 for men — knowledge native to Chinese law, sourced from a Chinese-authored exam."
+  failure:
+    answer: "(A) 18"
+    why: "Picks the near-universal Western legal-adult default instead of the PRC-specific statute; strong English knowledge does not carry the local rule — the native-knowledge gap NOVA-63 isolates."
+  checks: "Expert knowledge as it exists in a language's own academic and legal tradition, not Western-default recall."
+  scoring: "Accuracy (% correct)."
 tags: [multilingual, knowledge, reasoning, multiple-choice, native]
 updated: 2026-07-20
 sources:

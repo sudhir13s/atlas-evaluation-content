@@ -17,6 +17,17 @@ format: "25-shot (Open LLM v1) or 0-shot multiple-choice."
 saturation: high
 limitations: "Now saturated for frontier models (95%+), so it no longer discriminates at the top. The Easy partition is meaningless for modern models. Scores depend on the shot count, so v1-era 25-shot numbers are not comparable to 0-shot numbers."
 citation: "https://arxiv.org/abs/1803.05457"
+example:
+  task_type: "Grade-school science reasoning (thermal equilibrium)"
+  input: "A student places a cup of hot water and a cup of cold water in the same room and leaves them for two hours. Which statement is true afterward? (A) The hot water is still noticeably warmer than the cold water. (B) Both cups have reached about the same room temperature. (C) The cold water is now warmer than the hot water. (D) Both cups have frozen solid."
+  success:
+    answer: "(B) Both cups have reached about the same room temperature."
+    why: "Heat flows from the hot water to the room and from the room to the cold water until both reach thermal equilibrium, so their temperatures converge."
+  failure:
+    answer: "(A) The hot water is still noticeably warmer than the cold water."
+    why: "It assumes the hotter cup 'keeps' its extra energy; in reality the cup loses heat to the room until equilibrium erases the difference."
+  checks: "Multi-step causal reasoning about thermal equilibrium rather than surface word association."
+  scoring: "Exact-match accuracy on the selected option."
 tags: [reasoning, science, multiple-choice]
 updated: 2026-07-17
 sources:

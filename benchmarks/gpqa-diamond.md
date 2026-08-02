@@ -17,6 +17,17 @@ format: "4-way multiple-choice; zero-shot (or few-shot) chain-of-thought."
 saturation: medium
 limitations: "Only 198 questions, so a handful of items swings the score and confidence intervals are wide. It covers just biology, physics, and chemistry, is multiple-choice (recognition, not derivation), and frontier reasoning models are climbing past ~85%, eroding its headroom."
 citation: "https://arxiv.org/abs/2311.12022"
+example:
+  task_type: "Graduate physics (atomic electric-dipole selection rules)"
+  input: "For an electric-dipole (E1) transition in atomic hydrogen, which of the following is allowed? (A) 2s → 1s (B) 2p → 1s (C) 3d → 1s (D) 3s → 2s"
+  success:
+    answer: "(B) 2p → 1s"
+    why: "E1 transitions require Δl = ±1 with a parity change; 2p → 1s has Δl = -1 and opposite parity, so it is allowed."
+  failure:
+    answer: "(A) 2s → 1s"
+    why: "It assumes any large energy drop to the ground state radiates, but Δl = 0 violates the E1 rule — 2s is metastable, not E1-allowed."
+  checks: "Applying specific quantum selection rules by reasoning through the quantum numbers, which web search cannot shortcut."
+  scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, reasoning, science, multiple-choice, frontier, google-proof]
 updated: 2026-07-20
 sources:

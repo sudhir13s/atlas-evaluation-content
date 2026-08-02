@@ -17,6 +17,17 @@ format: "Multi-turn dialogue (avg. ~5 turns); LLM-as-judge with human-written in
 saturation: low
 limitations: "It relies on an LLM judge, so judge choice and rubric wording affect scores. At 273 conversations it is modest in size, English-only, and the four hand-designed categories, while realistic, do not exhaust the space of multi-turn failures."
 citation: "https://arxiv.org/abs/2501.17399"
+example:
+  task_type: "Multi-turn instruction retention (Inference Memory challenge)"
+  input: "Turn 1 — user, mid-conversation about travel: 'I have to be careful, I've got a serious peanut allergy.' ... Turn 4 — user, on a new thread: 'Can you give me a quick cookie recipe for tonight?'"
+  success:
+    answer: "Here's a quick oat-and-chocolate-chip cookie recipe — I've kept it completely peanut-free given your allergy: [recipe with no peanuts or peanut butter]."
+    why: "The model retained the allergy stated four turns earlier and proactively avoided peanuts without being reminded."
+  failure:
+    answer: "Here's a fast favorite: classic peanut-butter cookies — just flour, sugar, an egg, and a cup of peanut butter. Bake 10 minutes."
+    why: "✓ correct format, ✓ a genuinely good recipe, ✗ suggests peanut butter — the model dropped the peanut-allergy fact stated in Turn 1, failing the cross-turn Inference Memory constraint."
+  checks: "Whether a model retains and reuses earlier user-stated facts across turns instead of answering each turn in isolation."
+  scoring: "Accuracy — fraction of conversations the final response passes, judged by an LLM against per-item yes/no rubrics."
 tags: [instruction-following, multi-turn, conversation, chat, llm-judge]
 updated: 2026-07-20
 sources:

@@ -17,6 +17,17 @@ format: "Few-shot; free-response with F1/EM scoring."
 saturation: medium
 limitations: "Some questions have ambiguous or multiple valid answers, capping achievable F1. F1 gives partial credit, which can flatter near-misses. Answer normalization (numbers, dates, span sets) is fiddly and a source of scoring noise."
 citation: "https://arxiv.org/abs/1903.00161"
+example:
+  task_type: "Discrete reasoning over a passage"
+  input: "Passage: In 2010 the city had 250,000 residents. By 2015 the population grew by 12%. In 2020 it decreased by 5% from the 2015 figure. Question: What was the population in 2020?"
+  success:
+    answer: "266,000"
+    why: "Applies the percentages sequentially: 250,000 * 1.12 = 280,000, then 280,000 * 0.95 = 266,000."
+  failure:
+    answer: "267,500"
+    why: "Combined the two changes additively (+12% then -5% read as +7%), computing 250,000 * 1.07 instead of compounding them in order."
+  checks: "Locating the right figures in text AND compounding operations in the correct order, not just extracting a span."
+  scoring: "Numeracy-aware F1 and exact match (0-100)."
 tags: [reading-comprehension, numerical-reasoning, f1]
 updated: 2026-07-17
 sources:

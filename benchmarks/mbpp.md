@@ -17,6 +17,17 @@ format: "3-shot or 0-shot; unit-test execution."
 saturation: high
 limitations: "Problems are basic and self-contained, so MBPP works better as a competence floor than a discriminator between strong models (frontier models score 85%+). The raw split has some noisy descriptions and weak tests; use the sanitized subset. Python-only and small-function-only, like HumanEval."
 citation: "https://arxiv.org/abs/2108.07732"
+example:
+  task_type: "Basic Python function synthesis"
+  input: "Write a function tile_ways(n) that counts the ways to tile a 2xn board with 2x1 tiles. asserts: tile_ways(3) == 3, tile_ways(4) == 5, tile_ways(5) == 8."
+  success:
+    answer: "An iterative Fibonacci recurrence with base cases tile_ways(0) = 1 and tile_ways(1) = 1."
+    why: "Produces 1, 1, 2, 3, 5, 8 for n = 0..5, passing all three asserts."
+  failure:
+    answer: "The same recurrence but with base case tile_ways(0) = 0."
+    why: "Shifts the whole sequence, so tile_ways(4) returns 3 instead of 5 (and tile_ways(3) returns 2), failing the asserts."
+  checks: "Getting the recurrence base case right, where an off-by-one seed corrupts every later value."
+  scoring: "pass@1 on the provided asserts (e.g. 3/3 vs 1/3)."
 tags: [code, python, execution, pass-at-k]
 updated: 2026-07-17
 sources:

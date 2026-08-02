@@ -17,6 +17,17 @@ format: "Multi-turn interactive dialogue with tool use in a simulated real-world
 saturation: low
 limitations: "Scoring uses a rubric-based LLM evaluator, which is more flexible than exact match but introduces judge subjectivity and cost. The domains are life-services (food, retail, travel), so results do not transfer to coding, science, or web-research agents. The simulated user is an LLM, and the environments — though richly annotated — are synthetic, so real deployment behavior may differ."
 citation: "https://arxiv.org/abs/2509.26490"
+example:
+  task_type: "Cross-scenario interactive agent (travel + food-delivery + in-store)"
+  input: "User: 'I land in Kyoto Friday evening — find a well-reviewed ramen place near my hotel for that night, and have breakfast groceries delivered to the hotel for Saturday morning. Keep it under ¥8,000 total.' (66 tools available; no domain-specific policy scaffolding.)"
+  success:
+    answer: "resolve_hotel_location() → search_restaurants(near=hotel, cuisine='ramen', open_friday_evening=true) → reserve() → order_groceries(deliver_to=hotel, window='Sat AM') → running total kept under ¥8,000, asking the user to clarify the arrival time when it's under-specified."
+    why: "The agent chains travel, in-store, and delivery tools over a long horizon, respects the shared budget and time/location context, and clarifies ambiguity instead of guessing."
+  failure:
+    answer: "search_restaurants(cuisine='ramen') → reserves a top-rated spot across the city from the hotel, then reports done — never places the grocery order and never sums the cost against the ¥8,000 budget."
+    why: "Incorrect action: ignored the spatial constraint (restaurant not near the hotel), dropped the second sub-task (groceries), and never enforced the budget — a reasoning/interaction failure the rubric penalizes."
+  checks: "Whether an agent composes tools across domains over a long horizon while tracking shifting intent, location, time, and budget."
+  scoring: "Success rate — long-horizon trajectory graded by a rubric-based sliding-window evaluator that credits diverse valid solution paths."
 tags: [agent, tool-use, multi-turn, interactive, real-world]
 updated: 2026-07-20
 sources:
