@@ -31,7 +31,34 @@
     "format": { "type": "string", "description": "prompt format, e.g. 5-shot, 0-shot CoT, multiple-choice" },
     "saturation": { "type": "string", "enum": ["high", "medium", "low"], "description": "how close top models are to the ceiling" },
     "limitations": { "type": "string", "description": "honest limitations, contamination, saturation" },
-    "citation": { "type": "string", "description": "canonical paper/site URL" }
+    "citation": { "type": "string", "description": "canonical paper/site URL" },
+    "example": {
+      "type": "object",
+      "description": "One worked, category-appropriate contrast: a success vs a plausible failure, so a reader sees exactly what the benchmark rewards. Panel labels + footer are derived from `category` in the UI.",
+      "required": ["task_type", "input", "success", "failure"],
+      "properties": {
+        "task_type": { "type": "string", "description": "subject/task label, e.g. 'College Physics' or 'Array manipulation'" },
+        "input": { "type": "string", "description": "the benchmark-style question/prompt the model receives (illustrative, representative of the benchmark's real format)" },
+        "success": {
+          "type": "object",
+          "required": ["answer", "why"],
+          "properties": {
+            "answer": { "type": "string", "description": "the correct / passing / safe / truthful response, as the benchmark would reward it" },
+            "why": { "type": "string", "description": "one concise reason it succeeds" }
+          }
+        },
+        "failure": {
+          "type": "object",
+          "required": ["answer", "why"],
+          "properties": {
+            "answer": { "type": "string", "description": "a PLAUSIBLE wrong/weak/unsafe/misleading response (never an obviously foolish one)" },
+            "why": { "type": "string", "description": "the exact reason it fails / loses points under this benchmark's scoring" }
+          }
+        },
+        "checks": { "type": "string", "description": "one sentence: the capability this success-vs-failure contrast demonstrates" },
+        "scoring": { "type": "string", "description": "how the benchmark scores this item, e.g. 'exact-match accuracy', 'pass@1 over hidden tests', 'LLM-judge rubric', 'chrF/MetricX'" }
+      }
+    }
   },
   "required": ["name", "category", "description", "method", "metric", "limitations"]
 }

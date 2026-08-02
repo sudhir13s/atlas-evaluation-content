@@ -17,6 +17,17 @@ format: "3-shot chain-of-thought."
 saturation: medium
 limitations: "Highly heterogeneous — averaging across very different tasks can hide that a model fails badly on a few. Chain-of-thought is essentially required, so scores conflate reasoning ability with prompt formatting. Some tasks are small, adding variance."
 citation: "https://arxiv.org/abs/2210.09261"
+example:
+  task_type: "Logical deduction (multi-step ordering)"
+  input: "Four books A, B, C, D sit in a row. A is to the left of B. C is to the right of B. D is to the left of A. What is the left-to-right order? (A) D, A, B, C (B) A, B, C, D (C) A, D, B, C (D) D, B, A, C"
+  success:
+    answer: "(A) D, A, B, C"
+    why: "Chaining the three constraints gives D < A < B < C, the only ordering that satisfies all of them."
+  failure:
+    answer: "(C) A, D, B, C"
+    why: "It honors A<B and C rightmost but places D to the right of A, violating 'D is to the left of A' — a partial-constraint slip."
+  checks: "Composing several constraints into one consistent ordering via chain-of-thought, not partial constraint satisfaction."
+  scoring: "Exact-match accuracy on the selected option, averaged across the 23 tasks."
 tags: [reasoning, chain-of-thought, mixed-format]
 updated: 2026-07-17
 sources:

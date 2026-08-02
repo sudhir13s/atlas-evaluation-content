@@ -17,6 +17,17 @@ format: "5-shot multiple-choice (also reported 0-shot CoT for chat models)."
 saturation: high
 limitations: "Well-documented training-data contamination — many models have seen MMLU items during pre-training, inflating scores. A handful of questions have wrong gold answers. Frontier models cluster at 86–90%, so the top of the scale no longer discriminates; use MMLU-Pro or GPQA instead."
 citation: "https://arxiv.org/abs/2009.03300"
+example:
+  task_type: "Introductory psychology"
+  input: "Which of the following is an example of operant conditioning? (A) a dog salivating at the sound of a bell (B) a rat pressing a lever more often after it is rewarded with food (C) a child imitating a parent's gesture (D) a person blinking at a puff of air"
+  success:
+    answer: "(B) a rat pressing a lever more often after it is rewarded with food"
+    why: "Operant conditioning changes the frequency of a behavior through its consequences (reinforcement)."
+  failure:
+    answer: "(A) a dog salivating at the sound of a bell"
+    why: "That is classical (Pavlovian) conditioning — an involuntary response to an associated stimulus — the most common confusion with operant conditioning."
+  checks: "Discriminating operant from classical conditioning; selecting the correct option is the task."
+  scoring: "Exact-match accuracy on the selected option, macro-averaged across 57 subjects."
 tags: [knowledge, multiple-choice, reasoning, contamination]
 updated: 2026-07-17
 sources:

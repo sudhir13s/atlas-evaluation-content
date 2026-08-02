@@ -18,6 +18,17 @@ format: "0-shot: the model receives the user query plus JSON function schemas an
 saturation: medium
 limitations: "AST matching rewards calls that match a reference signature, so it can miss semantically-correct-but-differently-structured calls and cannot fully judge open-ended agentic reasoning. The web-search track depends on a live third-party search API, adding non-determinism. Category weighting is a design choice that shifts rankings, and the leaderboard evolves (v1 to v4), so cross-version scores are not comparable."
 citation: "https://gorilla.cs.berkeley.edu/leaderboard.html"
+example:
+  task_type: "Function calling (correct tool + typed arguments)"
+  input: "Schemas available: get_weather(location, unit), book_flight(origin, destination, date). Request: 'What's the weather in Paris in celsius, and book me a flight there from London next Friday?'"
+  success:
+    answer: "get_weather(location=\"Paris\", unit=\"celsius\") ; book_flight(origin=\"London\", destination=\"Paris\", date=\"2026-08-07\")"
+    why: "Both functions are selected, argument names match the schema, and unit is the schema-valid \"celsius\"."
+  failure:
+    answer: "get_weather(location=\"Paris\", unit=\"C\") ; book_flight(origin=\"London\", destination=\"Paris\", date=\"2026-08-07\")"
+    why: "Wrong argument value: unit=\"C\" is a hallucinated enum — the schema expects \"celsius\", so the AST matcher marks the call incorrect even though the function and other args are right."
+  checks: "Whether a model maps a natural-language request onto correctly-structured, correctly-typed function calls."
+  scoring: "Overall accuracy via deterministic AST matching against a reference call signature (v4 composite: Agentic 40% + Multi-Turn 30% + Live 10% + Non-Live 10% + Hallucination 10%)."
 tags: [agent, tool-use, function-calling, leaderboard]
 updated: 2026-07-20
 sources:

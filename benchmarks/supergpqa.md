@@ -17,6 +17,17 @@ format: "Multiple-choice with an average of ~9.67 options (up to 10); zero-shot,
 saturation: low
 limitations: "New (Feb 2025) so contamination is limited but not zero. Many-option distractors make answer parsing and prompt template matter. Some long-tail subfields have thin coverage, and it remains a knowledge-and-reasoning multiple-choice test — no generation, tools, or long context."
 citation: "https://arxiv.org/abs/2502.14739"
+example:
+  task_type: "Graduate materials science (high-temperature creep mechanisms)"
+  input: "In a fine-grained metal held at high homologous temperature under low applied stress, which mechanism dominates creep deformation? (representative options from a ~10-choice item) (A) Nabarro-Herring diffusional creep (lattice diffusion) (B) Dislocation (power-law) creep (C) Grain-boundary sliding (D) Dislocation glide ... (J) ..."
+  success:
+    answer: "(A) Nabarro-Herring diffusional creep"
+    why: "At high temperature and low stress, stress-directed vacancy diffusion through the crystal lattice governs deformation."
+  failure:
+    answer: "(B) Dislocation (power-law) creep"
+    why: "Dislocation creep is the most familiar mechanism, but it dominates at higher stresses; in the specified low-stress regime it is not rate-controlling."
+  checks: "Reasoning about the specific temperature/stress regime rather than recalling the best-known mechanism, with ~10 options defeating eliminate-then-guess."
+  scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, multiple-choice, reasoning, graduate-level, frontier]
 updated: 2026-07-20
 sources:

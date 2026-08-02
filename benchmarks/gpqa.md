@@ -17,6 +17,17 @@ format: "0-shot CoT multiple-choice (4 options)."
 saturation: low
 limitations: "Small dataset (448 total / 198 Diamond), so scores have wide confidence intervals. Experts occasionally disagree on gold answers. As a headline frontier metric it is now heavily optimized for, and reasoning models have begun climbing it fast — watch for contamination as it ages."
 citation: "https://arxiv.org/abs/2311.12022"
+example:
+  task_type: "Graduate-level multiple-choice science (Google-proof)"
+  input: "In quantum chromodynamics the proton weighs ~938 MeV/c^2, yet its three valence quarks have a combined bare mass of only ~9 MeV/c^2. What accounts for ~99% of the proton's mass? (A) the Higgs mechanism (B) QCD binding energy - the gluon field and virtual quark-antiquark pairs (C) electromagnetic self-energy (D) the relativistic kinetic mass of the valence quarks"
+  success:
+    answer: "(B) QCD binding energy"
+    why: "The dynamical energy of the confined gluon field and sea quarks, confirmed by first-principles lattice-QCD, supplies almost all nucleon mass; the bare quark masses contribute only ~1%."
+  failure:
+    answer: "(A) the Higgs mechanism"
+    why: "A sophisticated near-miss: the Higgs mechanism sets the quarks' small bare masses but not the emergent mass of the bound state - it conflates the origin of quark mass with the origin of hadron mass."
+  checks: "It separates models that grasp emergent, dynamical QCD mass from those that pattern-match 'mass' to 'Higgs' - a distinction only expert-level physics reasoning reliably makes."
+  scoring: "Accuracy (% correct) on GPQA Diamond."
 tags: [frontier, science, multiple-choice, reasoning]
 updated: 2026-07-17
 sources:

@@ -17,6 +17,17 @@ format: "5–8-shot chain-of-thought; exact-match on the final number."
 saturation: high
 limitations: "Frontier models exceed 95%, so it is saturated. Chain-of-thought can inflate scores via pattern-matching that does not generalize to harder math. The GSM-Symbolic study showed accuracy drops when surface numbers/names are perturbed, revealing fragility. Only tests elementary arithmetic — says nothing about competition math."
 citation: "https://arxiv.org/abs/2110.14168"
+example:
+  task_type: "Grade-school math word problem"
+  input: "Tom reads 12 pages on Monday, twice as many on Tuesday, and 5 fewer than Tuesday on Wednesday. How many pages did he read in total?"
+  success:
+    answer: "55"
+    why: "Monday 12, Tuesday 2*12 = 24, Wednesday 24 - 5 = 19; total 12 + 24 + 19 = 55."
+  failure:
+    answer: "43"
+    why: "Attached the Wednesday clause to the wrong referent, computing 5 fewer than Monday (12 - 5 = 7) instead of Tuesday, giving 12 + 24 + 7 = 43."
+  checks: "Parsing the referent of each clause and chaining the arithmetic steps in order."
+  scoring: "Exact-match accuracy on the final numeric answer."
 tags: [math, reasoning, chain-of-thought, word-problems]
 updated: 2026-07-17
 sources:

@@ -17,6 +17,17 @@ format: "Single-turn prompts, each carrying one or more verifiable output constr
 saturation: low
 limitations: "Only constraints that a Python function can verify are in scope, so it tests format/structure compliance, not semantic quality or helpfulness. At 300 prompts it is small, and 'loose' vs 'strict' accuracy can differ by several points, so the reported variant matters."
 citation: "https://arxiv.org/abs/2507.02833"
+example:
+  task_type: "Verifiable instruction following (stacked output constraints)"
+  input: "Explain photosynthesis. Every sentence must contain exactly one word in all capital letters, and the response must end with the exact phrase: That is all."
+  success:
+    answer: "Plants use SUNLIGHT to turn water and carbon dioxide into sugar. This reaction releases OXYGEN as a byproduct. That is all."
+    why: "Every sentence carries exactly one all-caps word and the response ends with the required phrase byte-for-byte — the Python verifier passes both checks."
+  failure:
+    answer: "Plants use SUNLIGHT to turn water and carbon dioxide into sugar. The GREEN pigment CHLOROPHYLL captures the light. This reaction releases OXYGEN as a byproduct. That is all."
+    why: "✓ correct topic, ✓ ends with 'That is all.', ✗ the second sentence has two all-caps words (GREEN and CHLOROPHYLL) — the 'exactly one all-caps word per sentence' constraint is violated."
+  checks: "Whether precise, held-out instruction-following generalizes to constraints the model was not trained to game."
+  scoring: "Prompt-level loose accuracy — the prompt counts only if every constraint is satisfied."
 tags: [instruction-following, verifiable, constraints, chat]
 updated: 2026-07-20
 sources:

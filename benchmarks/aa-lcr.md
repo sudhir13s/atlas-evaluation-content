@@ -18,6 +18,17 @@ format: "Long-context, open-ended question answering over multi-document inputs 
 saturation: low
 limitations: "Only 100 questions, so scores carry real sampling noise and small differences are not meaningful. Being open-ended, grading depends on answer-matching and can penalize correct-but-differently-phrased responses. Text-only (no tables-as-images, no code repos), and the ~100k-token target does not probe the 500k-2M-token regime some models now advertise."
 citation: "https://artificialanalysis.ai/articles/announcing-aa-lcr"
+example:
+  task_type: "Multi-document long-context reasoning (~100k-token input)"
+  input: "Given four company annual reports and one industry report (~100k tokens total), answer: which business segment drove the largest year-over-year operating-margin change? The figure is printed in no single table."
+  success:
+    answer: "Cloud Services — its margin fell from 31% to 22% YoY, the largest swing, computed by pairing the revenue and cost-of-revenue lines from the segment tables in Report B (p.44) and Report C (p.51)."
+    why: "The answer is derived by locating revenue and cost figures scattered across two distant documents and computing the margins — no single passage states it."
+  failure:
+    answer: "Hardware — its revenue grew the most year over year, so it drove the largest margin change."
+    why: "Incorrect answer from a nearby, easy-to-retrieve passage: the model grabbed a headline revenue-growth number from one document instead of combining revenue and cost across documents to compute the actual margin change."
+  checks: "Whether a model integrates facts spread across several long documents through multi-step inference, versus retrieving one salient nearby number."
+  scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
 tags: [long-context, reasoning, multi-document, open-ended]
 updated: 2026-07-20
 sources:

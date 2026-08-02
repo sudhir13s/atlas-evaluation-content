@@ -18,6 +18,17 @@ format: "Zero-shot, 4-way multiple-choice over long contexts (8k-2M words)."
 saturation: medium
 limitations: "Multiple-choice with four options means a 25% guessing floor and sensitivity to option ordering and answer parsing. The very long contexts make evaluation expensive and force truncation on models with smaller windows, confounding comparisons. Being reasoning-over-choices, it under-tests long-form generation and faithful citation."
 citation: "https://arxiv.org/abs/2412.15204"
+example:
+  task_type: "Long-context single-document QA (4-way multiple choice over a full novel)"
+  input: "Context: the entire text of a novel (tens of thousands of words). Question: Which explanation best accounts for the protagonist's decision to abandon the inheritance in the final chapter? (A) … (B) … (C) … (D) …"
+  success:
+    answer: "(C) — a promise made to her dying mother in Chapter 2, reinforced by the guilt she voices in Chapter 19, which together explain the final-chapter choice."
+    why: "The correct option requires integrating a setup introduced early with its payoff far later — reasoning across chapters, not locating one passage."
+  failure:
+    answer: "(B) — she abandons the inheritance because of the argument with her brother described just before the final chapter."
+    why: "Incorrect answer from a locally plausible nearby passage: the distractor paraphrases the most recent scene, but the model missed that the true cause was set up chapters earlier and never combined the two distant passages."
+  checks: "Whether a model reasons over information separated by long spans of context rather than picking the answer nearest the question."
+  scoring: "Accuracy over 4-option questions (25% random baseline); the parsed letter is compared to the gold answer."
 tags: [long-context, reasoning, multiple-choice]
 updated: 2026-07-20
 sources:

@@ -17,6 +17,17 @@ format: "4-way multiple-choice in Chinese; answer-only or few-shot chain-of-thou
 saturation: high
 limitations: "Released in 2023 and now largely saturated — strong bilingual models exceed 90%, well above GPT-4's original ~68.7%. Exam-sourced questions raise contamination risk, and the multiple-choice format tests recognition, not Chinese generation or long-form reasoning."
 citation: "https://arxiv.org/abs/2305.08322"
+example:
+  task_type: "College advanced mathematics (item presented in Chinese; shown here in English)"
+  input: "Evaluate the definite integral ∫₀^π sin(x) dx. (A) 0 (B) 1 (C) 2 (D) -2"
+  success:
+    answer: "(C) 2"
+    why: "The antiderivative is -cos(x); [-cos x]₀^π = (-cos π) - (-cos 0) = 1 + 1 = 2."
+  failure:
+    answer: "(D) -2"
+    why: "It uses +cos(x) as the antiderivative instead of -cos(x), flipping the sign to give cos π - cos 0 = -2 — a classic sign error."
+  checks: "Correct calculus reasoning on a Chinese-language exam item; decoding the language is not enough, the answer turns on the math."
+  scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, multiple-choice, chinese, multilingual, reasoning]
 updated: 2026-07-20
 sources:

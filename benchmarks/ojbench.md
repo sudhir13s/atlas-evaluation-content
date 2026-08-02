@@ -18,6 +18,17 @@ format: "0-shot competition code generation, judged by full hidden test suites; 
 saturation: low
 limitations: "The 232-problem set is small and skewed toward hard olympiad/ICPC problems, so scores are low and noisy at the top. Full-testcase Accepted judging is strict — a correct algorithm that is too slow in one language (often Python) scores zero — which couples the metric to implementation/runtime, not just reasoning. Being drawn from published contests, older problems risk contamination, so the benchmark leans on difficulty rather than novelty for its signal."
 citation: "https://arxiv.org/abs/2506.16395"
+example:
+  task_type: "Olympiad/ICPC code generation (Python or C++)"
+  input: "ICPC-level: given a weighted tree of up to 200,000 nodes, answer queries for the maximum edge weight on the path between two nodes. Earn Accepted only if every hidden test passes within the time and memory limits."
+  success:
+    answer: "Binary-lifting (LCA) precomputation carrying a per-jump max, combined correctly at the node where the two paths meet."
+    why: "Handles every case, including when one query node is an ancestor of the other, earning an Accepted verdict."
+  failure:
+    answer: "The same binary-lifting approach but stopping one level short at the LCA, excluding the topmost edge."
+    why: "Off-by-one on the ancestor boundary: when u is the LCA of v, the path's top edge is skipped, giving Wrong Answer on the ancestor-pair hidden tests."
+  checks: "Precise boundary handling inside an otherwise-correct algorithm, since online-judge grading gives zero credit for a single wrong case."
+  scoring: "Solve rate / pass@1 - Accepted on all hidden tests vs Wrong Answer."
 tags: [code-generation, competitive-programming, olympiad, pass-at-1]
 updated: 2026-07-20
 sources:

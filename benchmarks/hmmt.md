@@ -18,6 +18,17 @@ format: "0-shot final-answer math; single numeric or closed-form answer per prob
 saturation: high
 limitations: "Small problem sets (~30 per sitting) mean high variance — one problem is ~3 percentage points. Only the final answer is graded, so a right answer from flawed reasoning still counts and proof-based rounds are excluded. Contamination is reduced but not zero: some problems resemble prior contest items, and once a sitting is public it can leak into future training data, so freshness must be tracked by date."
 citation: "https://matharena.ai/"
+example:
+  task_type: "Competition math (single numeric answer)"
+  input: "Find the number of positive integers n < 100 such that n^2 + n + 1 is divisible by 3."
+  success:
+    answer: "33"
+    why: "n^2 + n + 1 mod 3 equals 0 only when n is congruent to 1 mod 3; among 1..99 those are 1, 4, ..., 97, i.e. 33 values."
+  failure:
+    answer: "66"
+    why: "When checking n congruent to 2 mod 3, dropped the +1 constant (2^2 + 2 = 6, congruent to 0) instead of 2^2 + 2 + 1 = 7, wrongly counting that residue class too and doubling to 66."
+  checks: "Correct residue-class casework with exact modular arithmetic, where a single dropped term flips the count."
+  scoring: "Accuracy (final answer matches gold), averaged over 4 runs per problem."
 tags: [math, competition-math, reasoning, final-answer]
 updated: 2026-07-20
 sources:

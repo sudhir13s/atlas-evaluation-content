@@ -17,6 +17,17 @@ format: "Agentic patch generation; test-suite execution."
 saturation: low
 limitations: "Expensive and complex to run (per-issue Docker environments). Requires an agent scaffold, so scores reflect the whole system (model + tools + prompt), not the model alone. Python-only. Some issues have under-specified tests; the Verified subset addresses part of this. Contamination is possible for issues predating training cutoffs."
 citation: "https://arxiv.org/abs/2310.06770"
+example:
+  task_type: "Repository bug-fix patch (real GitHub issue)"
+  input: "Django issue: QuerySet.bulk_create() silently ignores update_conflicts=True on backends that do not support it. Produce a patch that makes it fail loudly, and make the added regression test pass."
+  success:
+    answer: "A patch in django/db/models/query.py that raises NotSupportedError when the backend lacks supports_update_conflicts, plus the accompanying regression test."
+    why: "Turns the fail-to-pass test green while keeping every pass-to-pass test green."
+  failure:
+    answer: "A patch that emits warnings.warn(...) instead of raising."
+    why: "The fail-to-pass test asserts NotSupportedError is raised; a warning does not raise, so that test still fails and the issue counts unresolved."
+  checks: "Navigating a large repo to the right fix and matching the exact tested behavior, not an approximation of it."
+  scoring: "% resolved - fail-to-pass and pass-to-pass all green vs fail-to-pass still failing."
 tags: [code, agentic, real-world, patch, execution]
 updated: 2026-07-17
 sources:

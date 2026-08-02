@@ -18,6 +18,17 @@ format: "Single-turn planning with tool-based information gathering against a sa
 saturation: low
 limitations: "Only two domains (travel and shopping), so it is a focused planning probe rather than a general agent test. Queries are synthesized, which can create a distribution shift from real user requests. It targets single-turn planning, not multi-turn interactive replanning with a user. Code-based checkers are exact and reproducible but only score the dimensions they encode."
 citation: "https://arxiv.org/abs/2601.18137"
+example:
+  task_type: "Long-horizon constrained planning (travel itinerary)"
+  input: "Plan a 3-day city itinerary under a fixed total budget. Query the sandbox database (tools) for transport, lodging, attractions, and dining; every venue must be visited within its business hours and travel times must connect."
+  success:
+    answer: "query_transport(...) → query_attractions(...) → query_dining(...), then submit a minute-level schedule where each hop's travel time connects, every venue falls inside its opening hours, days stay diverse, and total cost lands under budget."
+    why: "The plan is globally coherent — it passes every rule-based verifier (route consistency, time feasibility, business hours, cost accuracy, activity diversity)."
+  failure:
+    answer: "Picks four highly-rated attractions per day and a nice restaurant, but schedules two of them in the same 2–4pm slot and routes between venues 40km apart in 15 minutes; total cost also exceeds the budget by 12%."
+    why: "Locally plausible choices, globally invalid: double-booked time slot, infeasible travel time, and over-budget total — the code checkers fail it on time feasibility, route consistency, and cost accuracy."
+  checks: "Whether an agent produces a globally coherent plan under interlocking hard constraints, not just individually reasonable steps."
+  scoring: "Accuracy — fraction of tasks whose final plan passes all code-based constraint checks."
 tags: [agent, planning, tool-use, long-horizon, constraints]
 updated: 2026-07-20
 sources:

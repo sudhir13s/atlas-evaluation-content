@@ -17,6 +17,17 @@ format: "2-way multiple-choice (goal + two candidate solutions); 0-shot."
 saturation: medium
 limitations: "Because it is two-choice, random guessing already scores 50%, so absolute numbers look high; the signal is the *gap* between high- and low-resource languages. Hand authoring by volunteers means per-language set sizes and difficulty vary, and coverage, while broad, is still uneven across the 116 varieties."
 citation: "https://arxiv.org/abs/2510.24081"
+example:
+  task_type: "Physical commonsense (Swahili)"
+  input: "Lengo (goal): Kufanya ugali uwe mnene ili uweze kukatwa vipande. (Make the ugali stiff enough to cut into pieces.) Chagua kitendo sahihi: (A) Ongeza unga wa mahindi taratibu ukikoroga. (Add maize flour gradually while stirring.) (B) Mimina maji zaidi ndani na uache uchemke. (Pour in more water and let it boil.)"
+  success:
+    answer: "(A) Add maize flour gradually while stirring."
+    why: "Stirring in more flour is exactly how ugali is thickened; the physical action matches the local dish."
+  failure:
+    answer: "(B) Pour in more water and let it boil."
+    why: "Adding water makes ugali runnier, not stiffer — the model reasons from a generic 'boil to reduce' default and misses the culturally-specific preparation."
+  checks: "Everyday physical reasoning grounded in a local, culturally-specific setup rather than generic textbook physics."
+  scoring: "Accuracy (% correct); random baseline is 50%."
 tags: [multilingual, commonsense, reasoning, culture, physical]
 updated: 2026-07-20
 sources:

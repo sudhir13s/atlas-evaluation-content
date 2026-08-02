@@ -17,6 +17,17 @@ format: "4-way multiple-choice, one correct option; typically run 0-shot or 5-sh
 saturation: high
 limitations: "It is a translation of English-origin MMLU, so it carries MMLU's US/Western cultural framing and any of MMLU's original label errors into every language — it measures multilingual knowledge recall, not culturally-native knowledge. High-resource languages are near-saturated; the signal now lives in the low-resource tail (e.g. Yoruba, Swahili)."
 citation: "https://huggingface.co/datasets/openai/MMMLU"
+example:
+  task_type: "Knowledge MCQ (Yoruba)"
+  input: "Ẹ̀kọ́ Monroe (the Monroe Doctrine) ní pàtàkì dá lórí kín? (The Monroe Doctrine was primarily concerned with what?) (A) Ìtakò ìjọba amúnisìn Yúróòpù ní Amẹ́ríkà. (Opposing further European colonization in the Americas.) (B) Ìṣòwò òmìnira pẹ̀lú Britain. (Free trade with Britain.) (C) Ìparí ẹrú. (The abolition of slavery.) (D) Ìtànkálẹ̀ sí ìwọ̀-oòrùn. (Westward expansion.)"
+  success:
+    answer: "(A) Opposing further European colonization in the Americas."
+    why: "Correct on the identical human-translated item — the same question English models get right."
+  failure:
+    answer: "(D) Westward expansion."
+    why: "Conflates the Monroe Doctrine with Manifest Destiny; a plausible distractor. Scoring this wrong in Yoruba but right in English reveals a language gap, not a knowledge gap."
+  checks: "Language competence isolated from question difficulty — the item is by construction identical across all 14 languages."
+  scoring: "Accuracy (% correct)."
 tags: [multilingual, knowledge, multiple-choice, translation]
 updated: 2026-07-20
 sources:

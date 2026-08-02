@@ -17,6 +17,17 @@ format: "4-shot chain-of-thought; boxed-answer exact/equivalence match."
 saturation: low
 limitations: "Requires LaTeX parsing and mathematical-equivalence checking, so scoring is sensitive to formatting (e.g. 1/2 vs 0.5 vs \\frac{1}{2}) and answer-extraction bugs cause under-counting. Reasoning models have climbed sharply, and contamination of competition problems is plausible. Level-5 problems dominate the difficulty signal."
 citation: "https://arxiv.org/abs/2103.03874"
+example:
+  task_type: "Competition math (boxed answer)"
+  input: "Find the number of positive integers n <= 1000 such that 15n is a perfect square."
+  success:
+    answer: "8"
+    why: "15 = 3*5, so n must supply the missing factors: n = 15m^2, giving 15n = (15m)^2. Then 15m^2 <= 1000 requires m^2 <= 66.7, so m <= 8, i.e. 8 values."
+  failure:
+    answer: "9"
+    why: "Rounded sqrt(66.7) up to 9, including m = 9, but 15 * 9^2 = 1215 > 1000, so that boundary case does not qualify."
+  checks: "The algebraic insight n = 15m^2 plus a correct integer bound, where an off-by-one on the boundary over-counts."
+  scoring: "Accuracy on the final answer under mathematical-equivalence checking."
 tags: [math, competition, reasoning, chain-of-thought]
 updated: 2026-07-17
 sources:

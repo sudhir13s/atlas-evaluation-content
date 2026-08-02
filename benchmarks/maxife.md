@@ -17,6 +17,17 @@ format: "Open-ended generation under one to three verifiable constraints per pro
 saturation: medium
 limitations: "Rule-based checks only cover mechanically verifiable constraints; the rest fall back on model-based judging, which inherits judge bias and language-dependent reliability. With 23 languages and a fixed instruction pool, coverage of any single language is shallow, and cross-lingual results depend on how the instruction and content languages are paired."
 citation: "https://arxiv.org/abs/2506.01776"
+example:
+  task_type: "Verifiable instruction following (Korean)"
+  input: "다음 질문에 정확히 세 개의 불릿으로, 한국어로만 답하세요: 재생 에너지의 장점은 무엇입니까? (Answer the following in exactly three bullet points, in Korean only: What are the advantages of renewable energy?)"
+  success:
+    answer: "Three bullet points, all written in Korean, listing valid advantages."
+    why: "Every verifiable constraint — bullet count and output language — is satisfied, and the content is correct."
+  failure:
+    answer: "A fluent, correct answer written as three bullets — but in English."
+    why: "Violates the 'respond in Korean only' output-language constraint; the content is right, but a verifiable constraint is broken — exactly the failure MaXIFE checks."
+  checks: "Obedience to mechanically-verifiable constraints (output language, bullet count) rather than just answer correctness."
+  scoring: "Instruction-following accuracy — the fraction of constraints the response satisfies."
 tags: [multilingual, instruction-following, cross-lingual, generation]
 updated: 2026-07-20
 sources:

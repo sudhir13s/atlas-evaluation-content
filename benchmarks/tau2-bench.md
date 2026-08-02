@@ -17,6 +17,17 @@ format: "Multi-turn dialogue with tool use, agent and user acting on a shared en
 saturation: low
 limitations: "The user is an LLM simulator; its behavior — though constrained by tools and observable state — is not a real human, so results depend on the simulator's fidelity. The headline dual-control results center on the Telecom domain (the framework also carries airline and retail from τ-bench), so it is customer-service-shaped and does not test coding, research, or open web agents. Compositional task generation can produce uneven difficulty."
 citation: "https://arxiv.org/abs/2506.07982"
+example:
+  task_type: "Dual-control customer-service agent (Telecom domain)"
+  input: "User: 'My mobile data has stopped working.' The agent has read/diagnostic tools on the shared state; only the user's device tools can toggle settings like the APN or airplane mode."
+  success:
+    answer: "diagnose_line(user_id) → identify APN misconfiguration → instruct user: 'Please open Settings → Mobile Data → reset the APN, then toggle airplane mode off and on' → recheck_connection() to confirm the shared state now shows data restored."
+    why: "The agent recognizes the fix needs the user's tools, guides the user through the steps, then verifies the shared world state before declaring success."
+  failure:
+    answer: "diagnose_line(user_id) → attempts reset_apn() on its own side (a tool the agent does not control) and replies 'Your data is fixed now' without rechecking the shared state."
+    why: "Wrong action / wrong actor: the agent tried to perform a user-only step itself and declared success without verifying the shared state — so mobile data is still down."
+  checks: "Whether an agent can guide a user to take actions it cannot perform itself and confirm the outcome in a shared environment."
+  scoring: "pass^k — probability of solving the task across all k independent trials; each trial checked by comparing final world state to the annotated goal plus action and communication checks."
 tags: [agent, tool-use, multi-turn, user-simulation, customer-service]
 updated: 2026-07-20
 sources:

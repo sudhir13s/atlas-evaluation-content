@@ -17,6 +17,17 @@ format: "4-way multiple-choice, questions in their original language; run 0-shot
 saturation: medium
 limitations: "Sourcing from real exams means uneven subject and difficulty distribution across the 44 languages, so per-language scores are not strictly comparable. It is knowledge-recall-centric (little generation or tool use), and because questions are native rather than parallel, it measures a different thing than a translated set like MMMLU — the two are complementary, not interchangeable."
 citation: "https://arxiv.org/abs/2411.19799"
+example:
+  task_type: "Regional-knowledge MCQ (Turkish driving exam)"
+  input: "Türkiye'de yerleşim yeri içinde otomobiller için azami hız sınırı kaç km/s'dir? (In Turkey, what is the maximum speed limit for cars within a built-up area?) (A) 30 (B) 50 (C) 70 (D) 90"
+  success:
+    answer: "(B) 50 km/h"
+    why: "Turkish Highway Traffic Law sets the in-town car limit at 50 km/h — a fact local to that country's rules."
+  failure:
+    answer: "(A) 30 km/h"
+    why: "Picks a value shaped by Western residential/school-zone defaults instead of the country-specific Turkish statute — the regional-knowledge gap INCLUDE isolates."
+  checks: "Genuinely local, region-explicit knowledge versus Western-default recall dressed up in the target language."
+  scoring: "Accuracy (% correct)."
 tags: [multilingual, knowledge, regional, multiple-choice, culture]
 updated: 2026-07-20
 sources:
