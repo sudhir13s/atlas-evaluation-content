@@ -14,8 +14,10 @@
         "Math & Logic",
         "Code Generation",
         "Instruction Following & Chat",
+        "Long Context",
         "Truthfulness & Safety",
         "Agent & Tool Use",
+        "Multilingual",
         "Multimodal",
         "Frontier / Hardest"
       ]
