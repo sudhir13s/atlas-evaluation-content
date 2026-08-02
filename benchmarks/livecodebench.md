@@ -1,0 +1,63 @@
+---
+id: benchmark/livecodebench
+type: benchmark
+slug: livecodebench
+schema_version: 1.0
+title: "LiveCodeBench v6"
+name: LiveCodeBench v6
+category: Code Generation
+description: "Contamination-free coding benchmark of competitive-programming problems, date-stamped so models are tested only on problems published after their training cutoff; v6 spans May 2023-Apr 2025 (1,055 problems)."
+what_is_it: "LiveCodeBench is a continuously updated coding benchmark built from problems on LeetCode, AtCoder, and Codeforces. Every problem carries a release date, so evaluators can score a model only on problems published after its training cutoff — making the test contamination-free by construction. Release v6 covers May 2023 through April 2025 and contains 1,055 problems."
+why_people_use_it: "Static coding benchmarks leak into training data and inflate scores. LiveCodeBench's date-windowing lets you measure a model on genuinely unseen problems, so it is the standard live, contamination-controlled coding leaderboard. It also goes beyond generation to test self-repair, code execution, and test-output prediction."
+examples:
+  - "A Codeforces-style problem published after a model's cutoff: given a natural-language statement and constraints, generate a program that passes all hidden tests within the time limit (code-generation scenario)."
+  - "Test-output prediction: given a function and an input, predict the exact output without executing the code."
+method: "For code generation, the model reads a problem statement and produces a full solution, which is run against a hidden test suite; a problem counts as solved only if all tests pass. Evaluated on a date-filtered window (v6: May 2023-Apr 2025, 1,055 problems). Contamination is avoided by scoring only problems released after the model's training cutoff."
+metric: "pass@1 (primary; fraction of problems solved on the first sample); pass@5 also reported."
+format: "0-shot code generation from a natural-language problem statement, judged by hidden tests; plus self-repair, test-output-prediction, and code-execution scenarios."
+saturation: medium
+limitations: "Scores depend heavily on which date window is used — comparing models on different cutoffs is invalid, and only problems after each model's cutoff are truly contamination-free. Competitive-programming problems skew toward algorithmic puzzles, so results do not transfer directly to real-world software engineering. Hidden-test judging can miss edge cases, and self-consistency/sampling settings (pass@1 vs avg@k, temperature) shift reported numbers."
+citation: "https://arxiv.org/abs/2403.07974"
+tags: [code-generation, competitive-programming, contamination-free, pass-at-1]
+updated: 2026-07-20
+sources:
+  - { url: "https://arxiv.org/abs/2403.07974", title: "LiveCodeBench: Holistic and Contamination Free Evaluation of Large Language Models for Code (Jain et al., 2024)", trust: 0.95 }
+  - { url: "https://livecodebench.github.io/", title: "LiveCodeBench project site", trust: 0.9 }
+  - { url: "https://github.com/LiveCodeBench/LiveCodeBench", title: "LiveCodeBench GitHub (release version details)", trust: 0.95 }
+related: [benchmark/ojbench, benchmark/humaneval]
+---
+
+## What It Tests
+Real coding ability on fresh competitive-programming problems, free of training-data contamination.
+Problems come from periodic contests on LeetCode, AtCoder, and Codeforces, each tagged with a release
+date. The headline code-generation scenario asks the model to write a complete, correct program from
+a natural-language statement; three further scenarios — self-repair, code execution, and test-output
+prediction — probe related code-reasoning skills.
+
+## How It Scores
+pass@1 is the primary metric: the fraction of problems the model solves on its first attempt, where
+"solved" means the generated program passes the entire hidden test suite. pass@5 is also reported.
+The decisive design choice is the date window — release v6 spans May 2023 to April 2025 (1,055
+problems), and a model is scored only on problems published after its training cutoff, so a high score
+cannot come from memorized solutions. Earlier releases (v1-v5) cover progressively shorter windows
+(v1: 400 problems through March 2024; v5: 880 through January 2025).
+
+## Format
+Zero-shot code generation: the model receives the problem statement and constraints and returns a
+full program, executed against hidden tests under time/memory limits. The auxiliary scenarios reuse
+the same problems to test self-repair (fix a failing solution), code execution (predict runtime
+behavior), and test-output prediction (predict an output without running code).
+
+## Limitations
+Because the score is defined over a date window, numbers are only comparable when the window and each
+model's cutoff match; only post-cutoff problems are genuinely uncontaminated. The problems are
+algorithmic contest puzzles, so strong scores do not guarantee real-world software-engineering skill.
+Hidden-test judging can still admit solutions that miss untested edge cases, and the sampling protocol
+(pass@1 vs avg@k, temperature, number of samples) materially changes reported results.
+
+## Example
+A Codeforces problem released after a model's training cutoff gives a statement, input/output format,
+and constraints. The model must output a complete program that reads input, computes the answer within
+the time limit, and passes every hidden test. Partial correctness earns nothing — a solution that is
+right on samples but times out on a large hidden case is not counted, which is why pass@1 on the
+post-cutoff window is a demanding signal.
