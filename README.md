@@ -1,4 +1,4 @@
-# ai-evaluation-content
+# atlas-evaluation-content
 
 Portable, reusable reference knowledge about **AI evaluation** — benchmarks, the datasets and
 harnesses that run them, and a representative model-vs-benchmark leaderboard. Authored as Markdown
@@ -7,9 +7,9 @@ agents. This repo is **content only**: no code, no build step, no framework lock
 vendor it (as a git submodule or a plain checkout) and render it however it likes.
 
 It is the `evaluation` domain of a reference library
-(`ai-models-content`, `ai-hardware-content`, `ai-evaluation-content`, `ai-licenses-content`,
-`ai-frameworks-content`), all following the same
-[content-repo standard](https://github.com/sudhir13s/TheAIAtlas/blob/main/docs/standards/content-repo-standard.md).
+(`atlas-models-content`, `atlas-evaluation-content`, `atlas-frameworks-content`,
+`atlas-hardware-content`, `atlas-news-content`, `atlas-practices-content`, `atlas-research-content`), all following the same
+[content-repo standard](https://github.com/sudhir13s/TheAIAtlas/blob/main/docs/content-repo-standard.md).
 
 ## What's inside
 
@@ -23,9 +23,9 @@ It is the `evaluation` domain of a reference library
 
 ```bash
 # Vendor it
-git clone https://github.com/sudhir13s/ai-evaluation-content.git
+git clone https://github.com/sudhir13s/atlas-evaluation-content.git
 # or as a submodule of your project
-git submodule add https://github.com/sudhir13s/ai-evaluation-content.git content/evaluation-src
+git submodule add https://github.com/sudhir13s/atlas-evaluation-content.git content/evaluation-src
 ```
 
 Every content file is a Markdown file with YAML frontmatter (the structured fields) and a Markdown
