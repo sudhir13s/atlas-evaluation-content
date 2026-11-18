@@ -75,7 +75,7 @@ sources:
   - { url: "https://arxiv.org/abs/2512.12730", title: "NL2Repo-Bench: Towards Long-Horizon Repository Generation Evaluation of Coding Agents", trust: 0.95 }
   - { url: "https://arxiv.org/html/2512.12730v2", title: "NL2Repo-Bench (arXiv HTML, full paper)", trust: 0.95 }
   - { url: "https://huggingface.co/papers/2512.12730", title: "NL2Repo-Bench — Hugging Face paper page", trust: 0.85 }
-related: [benchmark/swe-bench, benchmark/deepswe, benchmark/livecodebench, benchmark/humaneval, benchmark/mbpp]
+related: [benchmark/swe-bench, benchmark/livecodebench, benchmark/humaneval, benchmark/mbpp]
 ---
 
 ## What It Tests

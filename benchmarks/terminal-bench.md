@@ -76,7 +76,7 @@ sources:
   - { url: "https://www.laude.org/updates/terminal-bench", title: "Terminal-Bench — Laude Institute", trust: 0.9 }
   - { url: "https://snorkel.ai/leaderboard/terminal-bench-2-1/", title: "Terminal-Bench 2.1: LLM Terminal Agent Benchmark (Snorkel AI)", trust: 0.85 }
   - { url: "https://snorkel.ai/blog/terminal-bench-2-0-raising-the-bar-for-ai-agent-evaluation/", title: "Terminal-Bench 2.0: Raising the bar for AI agent evaluation (Snorkel AI)", trust: 0.85 }
-related: [benchmark/swe-bench, benchmark/bfcl-v4, benchmark/tau2-bench, benchmark/deepswe]
+related: [benchmark/swe-bench, benchmark/bfcl-v4, benchmark/tau2-bench]
 ---
 
 ## What It Tests
