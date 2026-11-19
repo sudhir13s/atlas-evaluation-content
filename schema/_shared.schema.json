@@ -29,7 +29,14 @@
         "id": { "$ref": "#/$defs/id" },
         "type": {
           "type": "string",
-          "enum": ["benchmark", "evaluation-dataset", "score-sheet"]
+          "enum": [
+            "benchmark",
+            "evaluation-dataset",
+            "score-sheet",
+            "leaderboard",
+            "evaluation-framework",
+            "evaluation-metric"
+          ]
         },
         "slug": { "$ref": "#/$defs/slug" },
         "schema_version": { "type": ["string", "number"] },

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theaiatlas.dev/schema/evaluation/evaluation-framework.schema.json",
+  "title": "evaluation-framework",
+  "allOf": [{ "$ref": "_shared.schema.json#/$defs/base" }],
+  "unevaluatedProperties": false,
+  "properties": {
+    "type": { "const": "evaluation-framework" },
+    "name": { "type": "string", "minLength": 1, "description": "the framework's own name, e.g. Ragas" },
+    "maintainer": { "type": "string", "minLength": 1, "description": "who maintains it, as the source names them" },
+    "repository_url": { "type": "string", "format": "uri", "description": "address of the source repository" },
+    "docs_url": { "type": "string", "format": "uri", "description": "address of the documentation" },
+    "license": { "type": "string", "minLength": 1, "description": "licence of the code, as an SPDX identifier when it has one" },
+    "scope": {
+      "type": "string",
+      "enum": ["application", "agent", "model"],
+      "description": "what the framework evaluates: a whole LLM application, an agent, or a model"
+    },
+    "metrics": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^evaluation-metric/[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "description": "IDs of the evaluation-metric records the framework implements"
+    },
+    "languages": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "programming languages the framework can be used from"
+    }
+  },
+  "required": ["name", "maintainer", "repository_url", "license", "scope", "languages"]
+}

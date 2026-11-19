@@ -5,6 +5,26 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Schema 2.1 (leaderboards, evaluation frameworks and metrics; additive)
+
+- **Added** the `leaderboard` type (`leaderboards/`, `leaderboard/<slug>`): an outside leaderboard
+  as a thing. `name`, `maintainer`, `url`, `update_cadence` are required; optional `tagline`,
+  `ranks`, `benchmarks[]` (`benchmark/<slug>`), `coverage`, `data_licence`, `free_access` and
+  `score_origin` (self-reported, independent, mixed). Body sections: What It Ranks, How To Read
+  It, Caveats. 6 records, copied word for word from the `LEADERBOARDS` constant of the Evals page.
+- **Added** the `evaluation-framework` type (`frameworks/`, `evaluation-framework/<slug>`): a tool
+  that evaluates LLM applications or agents. `name`, `maintainer`, `repository_url`, `license`,
+  `scope` (application, agent, model) and `languages[]` are required; optional `docs_url` and
+  `metrics[]` (`evaluation-metric/<slug>`). Body sections: What It Is, When To Use, How It Works,
+  Limitations, References. No records yet.
+- **Added** the `evaluation-metric` type (`metrics/`, `evaluation-metric/<slug>`): `name`,
+  `category` (retrieval, generation, agent, classification, ranking, safety), `range` (`{min,
+  max}`, null for an open bound), `direction`, `needs_reference_answer` and `needs_judge_model`
+  are required; optional `related_metrics[]`. Body sections: What It Measures, How It Is Computed,
+  When To Use, Failure Modes, References. No records yet.
+- **Added** the three types to the shared `type` enum, their templates, and `meta.json` /
+  `registry.json` entries; all three schemas reject unknown fields.
+
 ### Schema 2.0 (score sheets; breaking)
 
 - **Added** the `score-sheet` type (`scores/`, `score-sheet/<model-slug>`): `model` (a
@@ -40,3 +60,4 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 - **1.0** — initial schema for the three evaluation content types.
 - **2.0** — `leaderboard-entry` replaced by `score-sheet` (breaking).
+- **2.1** — `leaderboard`, `evaluation-framework` and `evaluation-metric` types.
