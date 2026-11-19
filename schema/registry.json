@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "shared": "schema/_shared.schema.json",
   "types": {
     "benchmark": {
@@ -14,11 +14,12 @@
       "id_prefix": "evaluation-dataset/",
       "sections": ["What It Is", "How It Evaluates", "What It Looks For", "Known Issues"]
     },
-    "leaderboard-entry": {
-      "folder": "leaderboards",
-      "schema": "schema/leaderboard-entry.schema.json",
-      "id_prefix": "leaderboard-entry/",
-      "sections": ["Notes"]
+    "score-sheet": {
+      "folder": "scores",
+      "schema": "schema/score-sheet.schema.json",
+      "id_prefix": "score-sheet/",
+      "sections": [],
+      "optional_sections": ["Notes"]
     }
   }
 }

@@ -31,9 +31,9 @@ so no separate index is needed and none can fall out of sync.
 - **Frontmatter** carries the structured data (all fields the schema defines). Parse it as YAML.
 - **Body** carries prose under `##` headings matching the type's required `sections`. Reference
   data (metrics, scores, examples) is in frontmatter, not prose.
-- **Links** (`related`) are **IDs** of the form `<type>/<slug>`. A `leaderboard-entry`'s
-  `model_slug` and a `benchmark` referenced by a dataset resolve the same way — by matching `id` or
-  `slug`. Resolve them to files by matching.
+- **Links** (`related`) are **IDs** of the form `<type>/<slug>`. A `score-sheet`'s `model` and
+  each score's `benchmark`, and a `benchmark` referenced by a dataset, resolve the same way — by
+  matching `id`. The `model` ID points into the models repo.
 
 ## 4. Validate
 
@@ -48,8 +48,8 @@ so no separate index is needed and none can fall out of sync.
    to today's date.
 3. Fill the type-specific frontmatter fields (schema `required` first) and every required body
    section in order.
-4. For a `leaderboard-entry`, set `self_reported` honestly and cite the exact report each number
-   came from; for a `benchmark`, never omit `method`, `metric`, or `limitations`.
+4. For a `score-sheet`, copy each value exactly, state its `scale`, set `self_reported` honestly
+   and cite the exact report each number came from; for a `benchmark`, never omit `method`, `metric`, or `limitations`.
 5. Validate (step 4 above). Do not introduce code files — this repo is content-only.
 6. Follow open-source-first sourcing: cite sources in `sources[]`; never copy paywalled text.
 
@@ -59,5 +59,6 @@ so no separate index is needed and none can fall out of sync.
 - No `.js` / `.ts` / `.mjs` / `package.json` / build scripts anywhere.
 - All links are IDs, never titles.
 - A benchmark score never appears without its method and limitations.
-- Leaderboard numbers are vendor-reported unless a file states an independent re-run.
+- Score values are vendor-reported unless the score states an independent re-run, and are never
+  rescaled.
 - Frontmatter must pass the type schema before a change is complete.

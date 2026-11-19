@@ -11,7 +11,7 @@ this file is the `evaluation`-domain instance.
   `mmlu`, `swe-bench`, `lm-evaluation-harness`, `llama-3-1-70b-instruct`.
 - The file name is `<slug>.md` and **must equal** the `slug` frontmatter field.
 - A file lives in the folder mapped to its `type` in `schema/registry.json`
-  (`benchmark` → `benchmarks/`, `evaluation-dataset` → `datasets/`, `leaderboard-entry` → `leaderboards/`).
+  (`benchmark` → `benchmarks/`, `evaluation-dataset` → `datasets/`, `score-sheet` → `scores/`).
 
 ## IDs
 
@@ -30,7 +30,8 @@ examples) so it stays machine-parseable; the body carries explanation.
 - `tags`: lowercase, hyphen-separated.
 - `updated`: ISO date (`YYYY-MM-DD`).
 - `sources[]`: `{ url, title, trust }` — `trust` in `[0,1]`. Open-source-first; cite, do not copy.
-- `schema_version`: the `major.minor` the file was authored against (currently `1.0`).
+- `schema_version`: the `major.minor` the file was authored against. The repo is at `2.0`; `benchmark` and `evaluation-dataset` files were authored
+  against `1.0` and stay valid, because their types did not change.
 
 ## Body sections
 
@@ -49,15 +50,20 @@ examples) so it stays machine-parseable; the body carries explanation.
   LLM-as-judge set like MT-Bench, a live/contamination-free suite like LiveBench). Carries `category`,
   `url`, `what_it_tests`, `why_it_exists`, `how_to_use`, `known_issues`.
   Body sections: What It Is → How It Evaluates → What It Looks For → Known Issues.
-- **leaderboard-entry** — one model's row. Carries `model_slug`, `model_name`, `organization`,
-  `params_b`, `license`, and the five score fields (`mmlu`, `humaneval`, `gsm8k`, `truthfulqa`,
-  `arc_challenge`) plus optional per-score `*_caveat` strings. `self_reported` states whether the
-  numbers are the vendor's own. The consumer computes the row `average`. Body section: Notes (source
-  of each number, and which benchmarks the vendor did not publish).
+- **score-sheet** — all reported scores of one model. The slug equals the model slug
+  (`score-sheet/<model-slug>`). Carries `model` (a `model/<slug>` ID from the models repo) and
+  `scores`, a list of `{ benchmark, value, scale, source, observed_on }` where `benchmark` is a
+  `benchmark/<slug>` ID. Optional per score: `self_reported`, `method`, `note`. Optional body
+  section: Notes (which report a number came from and which benchmarks the vendor did not publish).
+  - `value` is copied exactly as the source states it and is **never rescaled**; `scale` says how
+    to read it: `percent` (0 to 100) or `fraction` (0 to 1).
+  - `source` is the address where the value was published; `observed_on` is the date the Atlas
+    recorded it when the source gives none.
+  - The same benchmark may appear twice when two sources report different values.
 
 ## Sourcing
 
 Open-source-first, zero plagiarism. Prefer open papers, official model/technical reports, the
 benchmark's own paper, and Papers-with-Code. Reference paywalled material only as a cited pointer,
-never as copied text. Leaderboard scores are **vendor-reported** and marked `self_reported: true`
-unless the file states an independent re-run. Record everything in `sources[]`.
+never as copied text. Scores are **vendor-reported** and marked `self_reported: true`
+unless the score states an independent re-run. Record everything in `sources[]`.
