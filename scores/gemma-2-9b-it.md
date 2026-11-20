@@ -12,6 +12,12 @@ scores:
   source: https://arxiv.org/abs/2408.00118
   observed_on: '2026-07-17'
   self_reported: true
+- benchmark: benchmark/gpqa-diamond
+  value: 0.274621
+  scale: fraction
+  source: https://epoch.ai/benchmarks
+  observed_on: '2025-01-27'
+  self_reported: false
 - benchmark: benchmark/gsm8k
   value: 0.686
   scale: fraction
@@ -54,13 +60,15 @@ tags:
 - gqa
 - instruct
 - sliding-window
-updated: '2026-11-19'
+updated: '2026-11-20'
 sources:
 - url: https://arxiv.org/abs/2408.00118
   title: https://arxiv.org/abs/2408.00118
 - url: https://huggingface.co/google/gemma-2-9b-it
   title: gemma-2-9b-it model card (Hugging Face)
   trust: 0.85
+- url: https://epoch.ai/benchmarks
+  title: Epoch AI, "Capabilities & benchmarking" (epoch.ai/benchmarks), CC BY 4.0; credit Epoch AI as the source.
 ---
 
 ## Notes

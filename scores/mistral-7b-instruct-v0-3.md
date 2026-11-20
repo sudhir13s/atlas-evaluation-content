@@ -12,6 +12,12 @@ scores:
   source: https://arxiv.org/abs/2310.06825
   observed_on: '2026-07-17'
   self_reported: true
+- benchmark: benchmark/gpqa-diamond
+  value: 0.151831
+  scale: fraction
+  source: https://epoch.ai/benchmarks
+  observed_on: '2025-01-27'
+  self_reported: false
 - benchmark: benchmark/gsm8k
   value: 52.0
   scale: percent
@@ -46,7 +52,7 @@ tags:
 - gqa
 - instruct
 - apache-2-0
-updated: '2026-11-19'
+updated: '2026-11-20'
 sources:
 - url: https://arxiv.org/abs/2310.06825
   title: Mistral 7B (Jiang et al., 2023)
@@ -54,6 +60,8 @@ sources:
 - url: https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3
   title: Mistral-7B-Instruct-v0.3 model card (Hugging Face)
   trust: 0.8
+- url: https://epoch.ai/benchmarks
+  title: Epoch AI, "Capabilities & benchmarking" (epoch.ai/benchmarks), CC BY 4.0; credit Epoch AI as the source.
 ---
 
 ## Notes

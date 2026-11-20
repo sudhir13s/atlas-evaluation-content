@@ -12,6 +12,12 @@ scores:
   source: https://arxiv.org/abs/2412.15115
   observed_on: '2026-07-17'
   self_reported: true
+- benchmark: benchmark/gpqa-diamond
+  value: 0.491477
+  scale: fraction
+  source: https://epoch.ai/benchmarks
+  observed_on: '2025-01-27'
+  self_reported: false
 - benchmark: benchmark/gsm8k
   value: 0.958
   scale: fraction
@@ -62,7 +68,7 @@ tags:
 - instruct
 - multilingual
 - frontier
-updated: '2026-11-19'
+updated: '2026-11-20'
 sources:
 - url: https://qwenlm.github.io/blog/qwen2.5-llm/
   title: https://qwenlm.github.io/blog/qwen2.5-llm/
@@ -72,6 +78,8 @@ sources:
 - url: https://huggingface.co/Qwen/Qwen2.5-72B-Instruct
   title: Qwen2.5-72B-Instruct model card (Hugging Face)
   trust: 0.85
+- url: https://epoch.ai/benchmarks
+  title: Epoch AI, "Capabilities & benchmarking" (epoch.ai/benchmarks), CC BY 4.0; credit Epoch AI as the source.
 ---
 
 ## Notes

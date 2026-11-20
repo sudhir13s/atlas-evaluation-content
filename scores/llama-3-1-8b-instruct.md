@@ -12,6 +12,12 @@ scores:
   source: https://arxiv.org/abs/2407.21783
   observed_on: '2026-07-17'
   self_reported: true
+- benchmark: benchmark/gpqa-diamond
+  value: 0.269571
+  scale: fraction
+  source: https://epoch.ai/benchmarks
+  observed_on: '2026-08-27'
+  self_reported: false
 - benchmark: benchmark/gsm8k
   value: 0.845
   scale: fraction
@@ -53,13 +59,15 @@ tags:
 - dense
 - gqa
 - instruct
-updated: '2026-11-19'
+updated: '2026-11-20'
 sources:
 - url: https://arxiv.org/abs/2407.21783
   title: https://arxiv.org/abs/2407.21783
 - url: https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct
   title: Llama-3.1-8B-Instruct model card (Hugging Face)
   trust: 0.85
+- url: https://epoch.ai/benchmarks
+  title: Epoch AI, "Capabilities & benchmarking" (epoch.ai/benchmarks), CC BY 4.0; credit Epoch AI as the source.
 ---
 
 ## Notes

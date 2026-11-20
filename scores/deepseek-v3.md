@@ -12,6 +12,12 @@ scores:
   source: https://arxiv.org/abs/2412.19437
   observed_on: '2026-07-17'
   self_reported: true
+- benchmark: benchmark/gpqa-diamond
+  value: 0.565341
+  scale: fraction
+  source: https://epoch.ai/benchmarks
+  observed_on: '2025-01-27'
+  self_reported: false
 - benchmark: benchmark/gsm8k
   value: 0.893
   scale: fraction
@@ -54,13 +60,15 @@ tags:
 - mla
 - frontier
 - fp8
-updated: '2026-11-19'
+updated: '2026-11-20'
 sources:
 - url: https://huggingface.co/deepseek-ai/DeepSeek-V3
   title: https://huggingface.co/deepseek-ai/DeepSeek-V3
 - url: https://arxiv.org/abs/2412.19437
   title: DeepSeek-V3 Technical Report (DeepSeek-AI, 2024)
   trust: 0.9
+- url: https://epoch.ai/benchmarks
+  title: Epoch AI, "Capabilities & benchmarking" (epoch.ai/benchmarks), CC BY 4.0; credit Epoch AI as the source.
 ---
 
 ## Notes
