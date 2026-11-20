@@ -28,7 +28,7 @@ It is the `evaluation` domain of a reference library
 # Vendor it
 git clone https://github.com/sudhir13s/atlas-evaluation-content.git
 # or as a submodule of your project
-git submodule add https://github.com/sudhir13s/atlas-evaluation-content.git content/evaluation-src
+git submodule add https://github.com/sudhir13s/atlas-evaluation-content.git content/atlas-evaluation-content
 ```
 
 Every content file is a Markdown file with YAML frontmatter (the structured fields) and a Markdown
