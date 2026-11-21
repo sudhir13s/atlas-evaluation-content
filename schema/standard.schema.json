@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theaiatlas.dev/schema/evaluation/standard.schema.json",
+  "title": "standard",
+  "allOf": [{ "$ref": "_shared.schema.json#/$defs/base" }],
+  "unevaluatedProperties": false,
+  "properties": {
+    "type": { "const": "standard" },
+    "issuer": { "type": "string", "minLength": 1, "description": "the body that issues it, as it names itself" },
+    "kind": {
+      "type": "string",
+      "enum": ["standard", "framework", "regulation", "guidance"],
+      "description": "what sort of document it is"
+    },
+    "version": { "type": "string", "minLength": 1, "description": "version or edition as the issuer names it, when it has one" },
+    "published": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "publication date the issuer gives, when stated" },
+    "status": { "type": "string", "minLength": 1, "description": "status as the issuer states it, when stated" },
+    "url": { "type": "string", "format": "uri", "description": "the issuer's own page for it" },
+    "applies_to": { "type": "string", "minLength": 1, "description": "one sentence: what or whom it applies to" }
+  },
+  "required": ["issuer", "kind", "url", "applies_to"]
+}

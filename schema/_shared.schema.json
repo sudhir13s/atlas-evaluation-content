@@ -34,8 +34,8 @@
             "evaluation-dataset",
             "score-sheet",
             "leaderboard",
-            "evaluation-framework",
-            "evaluation-metric"
+            "evaluation-metric",
+            "standard"
           ]
         },
         "slug": { "$ref": "#/$defs/slug" },

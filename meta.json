@@ -2,8 +2,8 @@
   "name": "atlas-evaluation-content",
   "domain": "evaluation",
   "title": "AI Evaluation — reference knowledge",
-  "schema_version": "2.2",
-  "description": "Portable, reusable reference knowledge for AI evaluation: benchmark cards (what each tests, how it scores, its metric, format, and known limitations/contamination), the underlying evaluation datasets and harnesses (lm-evaluation-harness, HELM, OpenAI Evals, LMArena, and more), and one score sheet per model listing its reported benchmark values with scale, source and date. Content only — Markdown + JSON Schema + docs, zero code.",
+  "schema_version": "3.0",
+  "description": "Portable, reusable reference knowledge for AI evaluation: benchmark cards (what each tests, how it scores, its metric, format, and known limitations/contamination), the underlying evaluation datasets and harnesses (lm-evaluation-harness, HELM, OpenAI Evals, LMArena, and more), and one score sheet per model listing its reported benchmark values with scale, source and date, the metrics used to score LLM applications, and the standards and frameworks that govern AI systems. Content only — Markdown + JSON Schema + docs, zero code.",
   "entrypoints": {
     "human": "README.md",
     "agent": "AGENTS.md",
@@ -15,8 +15,8 @@
     "evaluation-dataset",
     "score-sheet",
     "leaderboard",
-    "evaluation-framework",
-    "evaluation-metric"
+    "evaluation-metric",
+    "standard"
   ],
   "license": "CC-BY-4.0",
   "standard": "https://github.com/sudhir13s/TheAIAtlas/blob/main/docs/content-repo-standard.md"

@@ -12,8 +12,7 @@ this file is the `evaluation`-domain instance.
 - The file name is `<slug>.md` and **must equal** the `slug` frontmatter field.
 - A file lives in the folder mapped to its `type` in `schema/registry.json`
   (`benchmark` → `benchmarks/`, `evaluation-dataset` → `datasets/`, `score-sheet` → `scores/`,
-  `leaderboard` → `leaderboards/`, `evaluation-framework` → `frameworks/`,
-  `evaluation-metric` → `metrics/`).
+  `leaderboard` → `leaderboards/`, `evaluation-metric` → `metrics/`, `standard` → `standards/`).
 
 ## IDs
 
@@ -32,7 +31,7 @@ examples) so it stays machine-parseable; the body carries explanation.
 - `tags`: lowercase, hyphen-separated.
 - `updated`: ISO date (`YYYY-MM-DD`).
 - `sources[]`: `{ url, title, trust }` — `trust` in `[0,1]`. Open-source-first; cite, do not copy.
-- `schema_version`: the `major.minor` the file was authored against. The repo is at `2.2`; `benchmark` and `evaluation-dataset` files were authored
+- `schema_version`: the `major.minor` the file was authored against. The repo is at `3.0`; `benchmark` and `evaluation-dataset` files were authored
   against `1.0` and stay valid, because their types did not change.
 
 ## Body sections
@@ -66,15 +65,21 @@ examples) so it stays machine-parseable; the body carries explanation.
   `maintainer`, `url`, `update_cadence`. Optional: `tagline`, `ranks`, `benchmarks` (`benchmark/<slug>`
   IDs the board reports), `coverage`, `data_licence`, `free_access`, `score_origin` (`self-reported`,
   `independent` or `mixed`). Body sections: What It Ranks → How To Read It → Caveats.
-- **evaluation-framework** — a tool that evaluates LLM applications or agents. Required: `name`,
-  `maintainer`, `repository_url`, `license`, `scope` (`application`, `agent` or `model`),
-  `languages`. Optional: `docs_url`, `metrics` (`evaluation-metric/<slug>` IDs). Body sections:
-  What It Is → When To Use → How It Works → Limitations → References.
-- **evaluation-metric** — one metric. Required: `name`, `category` (`retrieval`, `generation`,
-  `agent`, `classification`, `ranking`, `safety`), `range` (`{min, max}`, `null` for an open
-  bound), `direction` (`higher-is-better` or `lower-is-better`), `needs_reference_answer`,
-  `needs_judge_model`. Optional: `related_metrics`. Body sections: What It Measures → How It Is
-  Computed → When To Use → Failure Modes → References.
+- **evaluation-metric** — one metric, as its defining source (paper or tool documentation)
+  defines it. Required: `name`, `category` (`retrieval`, `generation`, `agent`, `classification`,
+  `ranking`, `safety`), `measures` (one sentence: what a high score means), `needs` (what must be
+  supplied), `judged_by` (`code`, `model` or `human`), `direction` (`higher-is-better` or
+  `lower-is-better`), `defined_in` (`{title, url}`). Optional: `range` (`{min, max}`, `null` for an
+  open bound; only when the source states it), `implemented_by` (`framework/<slug>` IDs whose docs
+  implement it as defined), `related_metrics`. A tool-specific name is written "as defined by
+  <tool>". Body sections: What It Measures → How It Is Computed → Limits (only limits the source
+  or a cited paper states).
+- **standard** — a standard, framework, regulation or guidance document that governs AI systems.
+  Required: `issuer`, `kind` (`standard`, `framework`, `regulation`, `guidance`), `url` (the
+  issuer's own page), `applies_to`. Optional: `version`, `published`, `status`, each only as the
+  issuer states it. Body sections: What It Is → Structure (parts by the issuer's own names) → Why
+  It Matters For LLM Applications. Paywalled texts are described only from the issuer's public
+  page; no legal advice or compliance claims.
 
 ## Sourcing
 

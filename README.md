@@ -19,8 +19,8 @@ It is the `evaluation` domain of a reference library
 | `evaluation-dataset` | `datasets/` | The underlying datasets and harnesses (lm-evaluation-harness, HELM, OpenAI Evals, LMArena, …): what they are, how they evaluate, what signal they isolate |
 | `score-sheet` | `scores/` | One model's reported benchmark values, each with its scale, source and date, and marked self-reported or independent |
 | `leaderboard` | `leaderboards/` | An outside leaderboard (LMArena, Artificial Analysis, …): who runs it, what it ranks, how to read it and where it misleads |
-| `evaluation-framework` | `frameworks/` | A tool that evaluates LLM applications or agents: scope, licence, the metrics it implements |
-| `evaluation-metric` | `metrics/` | A metric: what it measures, its range and direction, whether it needs a reference answer or a judge model |
+| `evaluation-metric` | `metrics/` | A metric: what a high score means, what it needs, what judges it, its defining source and the tools that implement it |
+| `standard` | `standards/` | A standard, framework, regulation or guidance for AI systems (OWASP, NIST, ISO/IEC, EU AI Act, MITRE ATLAS): issuer, structure, and why it matters for LLM applications |
 
 ## Quick start
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": "2.2",
+  "schema_version": "3.0",
   "shared": "schema/_shared.schema.json",
   "types": {
     "benchmark": {
@@ -27,17 +27,17 @@
       "id_prefix": "leaderboard/",
       "sections": ["What It Ranks", "How To Read It", "Caveats"]
     },
-    "evaluation-framework": {
-      "folder": "frameworks",
-      "schema": "schema/evaluation-framework.schema.json",
-      "id_prefix": "evaluation-framework/",
-      "sections": ["What It Is", "When To Use", "How It Works", "Limitations", "References"]
-    },
     "evaluation-metric": {
       "folder": "metrics",
       "schema": "schema/evaluation-metric.schema.json",
       "id_prefix": "evaluation-metric/",
-      "sections": ["What It Measures", "How It Is Computed", "When To Use", "Failure Modes", "References"]
+      "sections": ["What It Measures", "How It Is Computed", "Limits"]
+    },
+    "standard": {
+      "folder": "standards",
+      "schema": "schema/standard.schema.json",
+      "id_prefix": "standard/",
+      "sections": ["What It Is", "Structure", "Why It Matters For LLM Applications"]
     }
   }
 }

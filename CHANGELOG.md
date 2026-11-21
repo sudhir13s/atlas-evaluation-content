@@ -5,6 +5,31 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Schema 3.0 (evaluation metrics reshaped; standards added)
+
+- **Changed (breaking, for `evaluation-metric` only)** the `evaluation-metric` type, which had no
+  records. Added required `measures` (one sentence: what a high score means), `needs[]` (what must
+  be supplied to compute it), `judged_by` (`code`, `model` or `human`: what decides the score in
+  the defining source) and `defined_in` (`{title, url}` of the defining paper or documentation);
+  added optional `implemented_by[]` (`framework/<slug>` IDs from the frameworks repo). Removed
+  `needs_reference_answer` and `needs_judge_model`, which `needs` and `judged_by` replace. `range`
+  became optional: it is written only when the defining source states one. Body sections are now
+  What It Measures, How It Is Computed, Limits.
+- **Added** 13 `evaluation-metric` records: context precision, context recall, faithfulness and
+  answer relevancy (as defined by Ragas), mean reciprocal rank, normalized discounted cumulative
+  gain, exact match, ROUGE, BERTScore, attack success rate (HarmBench), StrongREJECT score, task
+  success rate (WebArena) and AST accuracy (Berkeley Function-Calling Leaderboard).
+- **Added** the `standard` type (`standards/`, `standard/<slug>`): a standard, framework,
+  regulation or guidance document that governs AI systems. `issuer`, `kind` (standard, framework,
+  regulation, guidance), `url` and `applies_to` are required; optional `version`, `published` and
+  `status`, each as the issuer states it. Body sections: What It Is, Structure, Why It Matters For
+  LLM Applications. 5 records: OWASP Top 10 for LLM Applications (2025), NIST AI Risk Management
+  Framework with its Generative AI Profile, the EU AI Act and MITRE ATLAS.
+- **Added** `standard` to the shared `type` enum, `meta.json` and `registry.json`, with a template.
+- **Removed** the `evaluation-framework` type (its schema, template, and `registry.json`, `meta.json`
+  and shared `type` enum entries). It had no records: an evaluation tool is one `framework` record
+  in the frameworks repo (category `evaluation` or `guardrails`), which the Evals Tools page lists.
+
 ### Schema 2.2 (benchmark categories; additive)
 
 - **Added** three values to the `category` enum of the `benchmark` type: `Cybersecurity`,
@@ -70,3 +95,4 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 - **2.0** — `leaderboard-entry` replaced by `score-sheet` (breaking).
 - **2.1** — `leaderboard`, `evaluation-framework` and `evaluation-metric` types.
 - **2.2** — three new benchmark categories (additive).
+- **3.0** — `evaluation-metric` reshaped (breaking for that type, which had no records); `standard` type.
