@@ -15,7 +15,7 @@ method: "The agent is placed in a simulated business environment of ~47 SaaS too
 metric: "Task Completed Correctly — a per-task binary that passes only when every end-state assertion succeeds with no guardrail (business-policy) violation; the headline pass rate averages this over scored tasks. A 0.0-1.0 partial-credit score (fraction of assertions satisfied) is also reported. Scores are toolset- and harness-sensitive."
 format: "0-shot agentic: natural-language task + a toolset of SaaS tool functions; multi-step tool-calling loop against a simulated environment seeded with relevant, irrelevant, and sometimes misleading records."
 saturation: low
-limitations: "Scores swing widely with the toolset and harness: the launch white paper reported the best frontier models below 10%, the public repository later showed top models near 30% (binary pass rate), and the Artificial Analysis (AA) partial-credit variant reports ~50% — so a number is meaningless without its toolset and metric. Environments are simulated rather than live SaaS, the official leaderboard uses a separate held-out private task set, and end-state grading cannot credit a sensible-but-different completion path or judge process quality."
+limitations: "Scores swing widely with the toolset and harness: the launch white paper reported the best frontier models below 10%, the public repository later showed top models near 30% (binary pass rate), and the Artificial Analysis (AA) variant, which scores a different metric on a different task split, reports ~50% — so a number is meaningless without its toolset, metric and task set. Three sets exist: the public set of about 600 tasks, the held-out set behind the official leaderboard (dataset version 1.0.6), and AA's private 657-task split of the same dataset version. Environments are simulated rather than live SaaS, the official leaderboard uses a separate held-out private task set, and end-state grading cannot credit a sensible-but-different completion path or judge process quality."
 citation: "https://arxiv.org/abs/2604.18934"
 worked_examples:
   - task_type: "Cross-application workflow with policy (Sales — Salesforce + Slack + Sheets)"
@@ -69,12 +69,14 @@ worked_examples:
     checks: "Whether an agent completes the full round trip across two systems, not just the first write."
     scoring: "Binary Task Completed Correctly; partial credit for the share of assertions satisfied across both systems."
 tags: [agent, tool-use, workflow-automation, saas, api, zapier]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2604.18934", title: "AutomationBench (Shepard & Salimans, Zapier, 2026)", trust: 0.9 }
+  - { url: "https://zapier.com/benchmarks", title: "AutomationBench leaderboard — Zapier", trust: 0.9 }
+  - { url: "https://artificialanalysis.ai/methodology/intelligence-benchmarking", title: "Artificial Analysis Intelligence Benchmarking Methodology (AutomationBench-AA)", trust: 0.85 }
   - { url: "https://github.com/zapier/AutomationBench", title: "AutomationBench — Zapier GitHub repository (public task set + harness)", trust: 0.9 }
   - { url: "https://artificialanalysis.ai/evaluations/automationbench-aa", title: "AutomationBench-AA — Artificial Analysis evaluation page", trust: 0.8 }
-related: [benchmark/tau2-bench, benchmark/bfcl-v4, benchmark/vita-bench]
+related: [benchmark/tau2-bench, benchmark/bfcl-v4, benchmark/vita-bench, leaderboard/artificial-analysis]
 ---
 
 ## What It Tests
@@ -96,6 +98,16 @@ data ended up in the correct systems, not how the agent got there. Two numbers c
 - **Task Completed Correctly** — a per-task binary that passes only when *every* assertion holds and no business-rule guardrail is violated. The headline pass rate averages this over the scored tasks.
 - **Partial credit (0.0-1.0)** — the fraction of a task's assertions satisfied, used as a denser reward signal.
 
+Zapier's leaderboard page states that the official metric is **strict pass/fail: every scored assertion must pass**. Partial credit is diagnostic only and is not part of the headline score. The page says there is no LLM judge, and that run-to-run variance is typically within 1%.
+
+**Three task sets, three kinds of number:**
+
+- **Public set** — about 600 tasks for research and experimentation.
+- **Official leaderboard** — the held-out private set (600-plus tasks, dataset version 1.0.6), run in API mode with two tools: `search` (keyword search over API schemas, top five results) and `execute` (a curl-like call), up to 50 steps per task.
+- **AutomationBench-AA** — Artificial Analysis' run on a private 657-task split of version 1.0.6, with a 50-turn cap. Assertions are split into objectives the agent must make true and guardrails that must stay intact. A task scores 0 if any guardrail breaks, otherwise the share of objectives met; errored tasks score 0.
+
+The AA number is therefore not the same metric as Zapier's strict pass/fail, and neither is the public-set number.
+
 ## Format
 Zero-shot and agentic. The model gets a natural-language task and a **toolset** — `api` (raw REST
 endpoints it must discover), `zapier`, or `limited_zapier` (progressively more abstraction) — then
@@ -108,7 +120,7 @@ count toward the score.
 The choice of toolset and harness moves scores enormously, so a raw number means little without
 context: the April 2026 launch white paper put the best frontier models **below 10%**, the public
 repository later showed top models near **30%** on the binary pass rate, and the Artificial
-Analysis (AA) partial-credit variant reports roughly **50%**. Environments are simulated rather
+Analysis (AA) variant, which scores objectives completed with a guardrail zero, reports roughly **50%**. Environments are simulated rather
 than live SaaS accounts; the official leaderboard at zapier.com/benchmarks scores against a
 separate **held-out private** task set; and end-state grading, by design, cannot reward a
 sensible-but-different path to the goal or judge the quality of the agent's process.

@@ -8,20 +8,23 @@ name: Artificial Analysis
 maintainer: Artificial Analysis (independent)
 url: https://artificialanalysis.ai
 tagline: Intelligence vs. price vs. speed — the production-decision board.
+ranks: language models by an Intelligence Index, plus cost, tokens and speed
+benchmarks: [benchmark/automationbench, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/hle-diamond]
 update_cadence: Weekly
-coverage: ~30 hosted models, ~8 providers
 free_access: true
-tags:
-- leaderboard
-updated: '2026-11-19'
+score_origin: independent
+tags: [leaderboard, composite-index, independent, agentic]
+updated: 2026-11-21
 sources:
-- url: https://artificialanalysis.ai
-  title: Artificial Analysis
+  - { url: "https://artificialanalysis.ai", title: "Artificial Analysis", trust: 0.85 }
+  - { url: "https://artificialanalysis.ai/methodology/intelligence-benchmarking", title: "Artificial Analysis Intelligence Benchmarking Methodology (Index v5.0.1)", trust: 0.9 }
+  - { url: "https://artificialanalysis.ai/evaluations/mka", title: "MKA benchmark — Artificial Analysis evaluation page", trust: 0.85 }
+related: [benchmark/automationbench, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/hle-diamond, benchmark/mka]
 ---
 
 ## What It Ranks
 
-Runs a curated battery (MMLU-Pro, GPQA Diamond, MATH-500, HumanEval, MGSM, LiveCodeBench, SciCode, AIME) against ~30 hosted API models and publishes the scores alongside $ per million tokens, output tokens/second, and time-to-first-token. The 'Intelligence Index' is a weighted aggregate.
+The board runs its own evaluations on hosted models and publishes scores next to cost per task, tokens used and speed. Its headline is the **Intelligence Index**, currently **v5.0.1**.
 
 ### Why You Need It
 
@@ -33,29 +36,41 @@ Only public board that puts capability and economics on one page. A model that s
 
 ## How To Read It
 
+### Intelligence Index v5.0.1
+
+A **weighted average of nine evaluations in four categories**, 25% each. The methodology page describes it as primarily text-based and English.
+
+- **Knowledge Work (25%)** — AA-Briefcase v1.1 (15%), AutomationBench-AA (5%), GDP.pdf (5%).
+- **Coding (25%)** — FrontierCode-AA 2.0 (15%), Terminal-Bench 4.0 (10%).
+- **Science (25%)** — Terminal-Bench-Science 0.1 (15%), CritPt v2 Hard Subset (10%).
+- **General (25%)** — AA-Omniscience v1.1 (15%, split 10% accuracy and 5% non-hallucination rate), HLE-Diamond (10%).
+
+Only some components have their own records here. AA-Briefcase, GDP.pdf, CritPt and AA-Omniscience do not.
+
 ### Methodology
 
-- Independent re-runs of public benchmarks (no author-reported numbers)
-- Latency measured from their infra against each provider's public endpoint
-- Prices pulled from provider pricing pages, updated weekly
-- Intelligence Index is a normalized weighted mean across capability benchmarks
+- Independent runs by the board; the page says all evaluations are run by Artificial Analysis
+- Temperature 0 for non-reasoning models and 0.6 for reasoning models, unless the lab recommends another
+- Agentic evaluations run in sandboxes; several use the open-source Stirrup harness and the terminal-based ones use mini-swe-agent
+- Evaluations outside the Index, such as MKA and GDPval-AA, are reported separately
 
 ### Strengths
 
-- All three dimensions (quality, cost, speed) on one screen
-- Provider-level data — same model at different hosts can have different latency/price
+- Quality, cost and speed on one screen
+- Methodology page names each evaluation, its size, repeats and scoring
 - Historical charts show where the frontier is moving
-- Non-partisan — funded independently, no affiliate bias
+- Several private evaluation sets, which limits memorisation
 
 ### Best For
 
 - Choosing a production API model
 - Cost optimization (same quality, cheaper)
-- Understanding latency headroom for real-time UX
+- Seeing how a model does on agentic and knowledge-work evaluations
 
 ## Caveats
 
-- API-hosted models only — no local / on-prem evaluation
-- Aggregate Intelligence Index hides where a model is weak
-- Benchmark selection is their curated choice, not community consensus
-- Vision, audio, and agentic capabilities under-represented
+- Hosted models only; no local or on-premises evaluation
+- The aggregate hides where a model is weak
+- Benchmark selection and weights are the board's own choice, and they change by version (for example, the Index uses Terminal-Bench 4.0 while the benchmark has reached 4.1)
+- Many components are private or Artificial Analysis variants of public benchmarks, so their numbers differ from the makers' own boards
+- Vendor tables quote Index scores at specific thinking levels; check the level

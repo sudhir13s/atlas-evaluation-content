@@ -16,7 +16,7 @@ method: "Generalist computer-use agents (GUI perception via screenshots + CLI op
 metric: "Full-pass rate (binary: did every gate and criterion pass) plus mean score (continuous, 0–1). Headline results are reported per difficulty tier and as an overall average."
 format: "Agentic, multi-step, long-horizon. The agent operates a real computer environment (GUI + CLI); no few-shot exemplars — it receives the task brief, input files, and tool access, then works to the deliverable."
 saturation: low
-limitations: "It targets computer-use agents, so scores depend heavily on the harness (screenshot quality, tool orchestration, runtime substrate), not the base model alone — a weak scaffold can mask a strong model. Deterministic grading against one expert reference can penalize a correct deliverable produced a different way. The public slice is small (~150 tasks), so open reproduction is limited and most evaluation runs against the private pool the authors control. Absolute numbers are so low today that tier composition and partial-credit weighting materially shift rankings."
+limitations: "It targets computer-use agents, so scores depend heavily on the harness (screenshot quality, tool orchestration, runtime substrate), not the base model alone — a weak scaffold can mask a strong model. Deterministic grading against one expert reference can penalize a correct deliverable produced a different way. The public slice is small (~150 tasks), so open reproduction is limited and most evaluation runs against the private pool the authors control. Absolute numbers are so low today that tier composition and partial-credit weighting materially shift rankings. Version 1.1 is a different, smaller task set (122 tasks) with its own board, so v1.0 and v1.1 numbers are not comparable."
 citation: "https://arxiv.org/abs/2606.05405"
 worked_examples:
   - task_type: "Financial-modeling workflow (professional deliverable)"
@@ -70,9 +70,10 @@ worked_examples:
     checks: "Whether the agent preserves a mandated document structure end-to-end, not merely the surface wording of edited passages."
     scoring: "Gate-and-score: document-parses gate, then structural comparison of sections/clauses against the expert reference."
 tags: [agent, frontier, computer-use, long-horizon, real-world]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2606.05405", title: "Agents' Last Exam (Berkeley RDI, arXiv:2606.05405)", trust: 0.95 }
+  - { url: "https://agents-last-exam.org/leaderboard", title: "Agents' Last Exam — v1.1 leaderboard", trust: 0.9 }
   - { url: "https://github.com/rdi-berkeley/agents-last-exam", title: "rdi-berkeley/agents-last-exam — official GitHub repository", trust: 0.9 }
   - { url: "https://rdi.berkeley.edu/blog/agents-last-exam/", title: "Agents' Last Exam — Berkeley RDI blog", trust: 0.9 }
 related: [benchmark/bfcl-v4, benchmark/automationbench, benchmark/dsbench]
@@ -91,6 +92,14 @@ The pool is **1,490 task instances** (960 expert-authored workflows), split into
 - **Near-Term** (59 tasks) — top agents reach ~30% pass rate.
 - **Full-Spectrum** (55 tasks) — one instance per subdomain, a breadth sweep.
 - **Last-Exam** (35 tasks) — the hardest workflows, where most agents score ~0%.
+
+**Version 1.1 board** (agents-last-exam.org, results updated 2026-11-14):
+
+- **Task set** — 122 tasks: 86 Linux and 36 Windows. The board cites a task-definitions commit dated 2026-10-27.
+- **Metrics** — Pass Rate is the share of runs with a perfect score; Score is the average partial credit. Both average over all 122 tasks, and missing or failed runs count as zero.
+- **Reading a row** — each row is a harness-and-model pair at its strongest effort level; vendor tables may report the averaged rubric Score, not the Pass Rate.
+- **Licences** — dataset under CC BY 4.0, code under Apache-2.0.
+- **Legacy board** — v1.0 stays on a separate page.
 
 ## How It Scores
 The mechanism is **gate-and-score**. A **binary precondition (the gate)** — for example "the file
