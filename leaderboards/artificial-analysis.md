@@ -5,18 +5,19 @@ slug: artificial-analysis
 schema_version: 2.1
 title: Artificial Analysis
 name: Artificial Analysis
-maintainer: Artificial Analysis (independent)
+maintainer: Artificial Analysis
 url: https://artificialanalysis.ai
-tagline: Intelligence vs. price vs. speed — the production-decision board.
+tagline: Its own evaluations of models, shown next to cost, tokens and speed.
 ranks: language models by an Intelligence Index, plus cost, tokens and speed
 benchmarks: [benchmark/automationbench, benchmark/gdp-pdf, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/critpt, benchmark/aa-omniscience, benchmark/hle-diamond]
-update_cadence: Weekly
+update_cadence: Not stated
 free_access: true
 score_origin: independent
 tags: [leaderboard, composite-index, independent, agentic]
 updated: 2026-11-21
 sources:
   - { url: "https://artificialanalysis.ai", title: "Artificial Analysis", trust: 0.85 }
+  - { url: "https://artificialanalysis.ai/about", title: "About Artificial Analysis", trust: 0.85 }
   - { url: "https://artificialanalysis.ai/methodology/intelligence-benchmarking", title: "Artificial Analysis Intelligence Benchmarking Methodology (Index v5.0.1)", trust: 0.9 }
   - { url: "https://artificialanalysis.ai/evaluations/mka", title: "MKA benchmark — Artificial Analysis evaluation page", trust: 0.85 }
 related: [benchmark/automationbench, benchmark/gdp-pdf, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/critpt, benchmark/aa-omniscience, benchmark/hle-diamond, benchmark/mka, benchmark/gdpval, benchmark/harvey-lab, benchmark/healthbench, benchmark/mmmu-pro]
@@ -24,15 +25,7 @@ related: [benchmark/automationbench, benchmark/gdp-pdf, benchmark/frontiercode, 
 
 ## What It Ranks
 
-The board runs its own evaluations on hosted models and publishes scores next to cost per task, tokens used and speed. Its headline is the **Intelligence Index**, currently **v5.0.1**.
-
-### Why You Need It
-
-You need to pick a model for a product. Quality alone is not enough — cost per request, latency, and context window decide whether it ships.
-
-### Why It Matters
-
-Only public board that puts capability and economics on one page. A model that scores 2 points higher but costs 10× more rarely wins in production; this is where you see that tradeoff plainly.
+Artificial Analysis, which calls itself the independent benchmarking company for AI, runs its own evaluations of models and publishes the scores next to cost per task, tokens used and speed. Its headline is the Intelligence Index, currently v5.0.1.
 
 ## How To Read It
 
@@ -49,28 +42,19 @@ Only some components have their own records here; AA-Briefcase does not.
 
 ### Methodology
 
-- Independent runs by the board; the page says all evaluations are run by Artificial Analysis
+- The methodology page describes Artificial Analysis' own implementation of each evaluation
 - Temperature 0 for non-reasoning models and 0.6 for reasoning models, unless the lab recommends another
-- Agentic evaluations run in sandboxes; several use the open-source Stirrup harness and the terminal-based ones use mini-swe-agent
+- Several agentic evaluations use the open-source Stirrup harness, and the terminal-based ones use mini-swe-agent
 - Evaluations outside the Index, such as MKA and GDPval-AA, are reported separately
-
-### Strengths
-
-- Quality, cost and speed on one screen
-- Methodology page names each evaluation, its size, repeats and scoring
-- Historical charts show where the frontier is moving
-- Several private evaluation sets, which limits memorisation
+- The version history lists dated Index releases; the page states no update schedule
 
 ### Best For
 
-- Choosing a production API model
-- Cost optimization (same quality, cheaper)
-- Seeing how a model does on agentic and knowledge-work evaluations
+- Comparing models on the Intelligence Index alongside cost, tokens and speed
 
 ## Caveats
 
-- Hosted models only; no local or on-premises evaluation
-- The aggregate hides where a model is weak
-- Benchmark selection and weights are the board's own choice, and they change by version (for example, the Index uses Terminal-Bench 4.0 while the benchmark has reached 4.1)
-- Many components are private or Artificial Analysis variants of public benchmarks, so their numbers differ from the makers' own boards
+- An aggregate score does not show where a model is weak
+- Benchmark selection and weights are the board's own choice, and they change by version; for example, the Index uses Terminal-Bench 4.0 while the benchmark has reached 4.1
+- Several components are private or Artificial Analysis variants of public benchmarks, so their numbers differ from the makers' own boards
 - Vendor tables quote Index scores at specific thinking levels; check the level

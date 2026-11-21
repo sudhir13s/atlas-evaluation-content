@@ -3,59 +3,54 @@ id: leaderboard/huggingface-open-llm-leaderboard
 type: leaderboard
 slug: huggingface-open-llm-leaderboard
 schema_version: 2.1
-title: HuggingFace Open LLM Leaderboard
-name: HuggingFace Open LLM Leaderboard
+title: Open LLM Leaderboard (Hugging Face)
+name: Open LLM Leaderboard (Hugging Face)
 maintainer: Hugging Face
 url: https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard
-tagline: The only fair-apples ranking of open-weight models at scale.
-update_cadence: Continuous (community submissions)
-coverage: 3000+ open-weight models
+tagline: An archived ranking of open models run on one shared evaluation harness.
+ranks: open models on six benchmarks run with the same harness
+update_cadence: Retired
 free_access: true
+score_origin: independent
 tags:
 - leaderboard
-updated: '2026-11-19'
+updated: '2026-11-21'
 sources:
 - url: https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard
-  title: HuggingFace Open LLM Leaderboard
+  title: Open LLM Leaderboard (Hugging Face Space)
+  trust: 0.9
+- url: https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about
+  title: Open LLM Leaderboard, About (Hugging Face documentation)
+  trust: 0.9
+- url: https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard/discussions/1135
+  title: End of the Open LLM Leaderboard (maintainers' post, 2025-03-13)
+  trust: 0.9
+- url: https://huggingface.co/collections/OpenEvals/archived-open-llm-leaderboard-2024-2025
+  title: Archived Open LLM Leaderboard (2024-2025)
+  trust: 0.9
 ---
 
 ## What It Ranks
 
-Runs `lm-evaluation-harness` (v2 suite: IFEval, BBH, MATH Lvl 5, GPQA, MuSR, MMLU-Pro) against thousands of open-weight models on identical infra. Community can submit any model on HuggingFace Hub and it is re-run from scratch — no author-reported numbers.
+Hugging Face evaluated open models on six benchmarks with the EleutherAI Language Model Evaluation Harness. The maintainers announced on 2025-03-13 that the leaderboard was retiring; its results remain on the Hub as an archive.
 
-### Why You Need It
-
-The open-weight ecosystem has 3000+ models. Paper-reported scores cannot be compared across papers (different prompts, different few-shot counts, different post-processing). This is the one place that runs everyone on the same code.
-
-### Why It Matters
-
-Before this existed, open-model claims were impossible to verify. Now a Llama-3-8B fine-tune that claims to beat the base model has to prove it on the same harness — you can see exactly how much it gained (or regressed).
+- **Benchmarks**: IFEval, BBH, MATH Lvl 5, GPQA, MuSR and MMLU-Pro, in use from June 2024.
+- **Earlier version**: a first version ran from 2023 to June 2024 and is archived separately.
 
 ## How To Read It
 
 ### Methodology
 
-- Fixed `lm-evaluation-harness` config, version-pinned
-- Every model re-run from scratch — no self-reported numbers accepted
-- v2 suite (June 2024) replaced v1 after v1 saturation
-- Per-task scores plus a normalized average
-
-### Strengths
-
-- Reproducible — harness is open-source, configs are public
-- Massive coverage (3000+ open-weight models)
-- Fine-tune comparison vs. base model is trivial
-- Free and publicly hosted, no paywall
+- Every model ran on the same harness; the documentation gives the shots and metric per task, for example 3-shot normalized accuracy for BBH and 5-shot accuracy for MMLU-Pro
+- Instruction models ran with their chat template
+- Detailed results are in the results dataset on the Hub, and the documentation gives the command to reproduce them with Hugging Face's fork of the harness
 
 ### Best For
 
-- Picking the best open-weight model at a given size (7B / 13B / 70B)
-- Verifying fine-tune claims
-- Tracking the open-weight frontier
+- Looking up archived scores of open models on the six benchmarks
 
 ## Caveats
 
-- Harness-specific quirks can penalize certain prompt formats
-- v1 was aggressively gamed before retirement — v2 is harder but not immune
-- Hosted / closed models (GPT, Claude, Gemini) not included
-- Does not measure instruction-following style or long-context ability
+- Retired in March 2025, so models released since then are absent
+- The documentation notes that results can vary slightly with batch size because of padding
+- Models flagged by the community carry "Flagged" in their name, and the documentation says to ignore them

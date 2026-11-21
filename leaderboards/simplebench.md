@@ -5,56 +5,48 @@ slug: simplebench
 schema_version: 2.1
 title: SimpleBench
 name: SimpleBench
-maintainer: Philip (AI Explained)
+maintainer: SimpleBench Team
 url: https://simple-bench.com
-tagline: ~200 trick questions humans ace. LLMs mostly fail.
-update_cadence: Irregular
-coverage: ~15 frontier models
+tagline: Multiple-choice questions where untrained people set the baseline.
+ranks: models by average accuracy over five runs on multiple-choice questions
+update_cadence: Not stated
+coverage: 117 models
 free_access: true
+score_origin: independent
 tags:
 - leaderboard
-updated: '2026-11-19'
+updated: '2026-11-21'
 sources:
 - url: https://simple-bench.com
   title: SimpleBench
+  trust: 0.9
+- url: https://github.com/simple-bench/SimpleBench
+  title: SimpleBench code and public dataset
+  trust: 0.9
 ---
 
 ## What It Ranks
 
-A private benchmark of 200+ multiple-choice questions probing spatial, temporal, and social intuition — the 'common sense' layer humans use without thinking. Designed so untrained humans score 83%+ while frontier LLMs score 40-60%.
+SimpleBench is a multiple-choice text benchmark of over 200 questions on spatio-temporal reasoning, social intelligence and trick questions, which the page calls linguistic adversarial robustness. The page names the SimpleBench Team as authors.
 
-### Why You Need It
-
-Public benchmarks increasingly fail to separate a useful model from a plausible-sounding one. SimpleBench reveals how much of frontier performance is pattern-matched from training data vs. actual reasoning.
-
-### Why It Matters
-
-Cuts through hype cycles. If a new model claims AGI-adjacent reasoning but scores 45% where humans score 83%, that tells you what it actually is.
+- **Human baseline**: 83.7%, from what the page calls a small sample of nine participants; the table also lists a highest human score of 95.4%.
+- **Score**: average over five runs (AVG@5).
 
 ## How To Read It
 
 ### Methodology
 
-- Private question set (prevents contamination)
-- Multiple-choice with a single correct answer
-- Human baseline established with 9 untrained graders
-- Public leaderboard with just 10 questions shown as examples
-
-### Strengths
-
-- Private = contamination-proof
-- Reveals common-sense gap invisible in other benchmarks
-- Single curator = consistent difficulty
-- Human baseline is explicit (83%+)
+- Temperature 0.7 and top-p 0.95, except for the o1 series, per the page
+- The public dataset in the GitHub repository holds 10 questions; the rest are not published
+- The leaderboard has further views: Perf/$, Timeline and Open-Ended
 
 ### Best For
 
-- Reality check on reasoning claims
-- Teaching what common-sense reasoning actually requires
+- Comparing models against a stated human baseline on short reasoning and trick questions
 
 ## Caveats
 
-- Private questions reduce reproducibility
-- Small sample (~200 questions)
-- Single-curator bias in what counts as 'common sense'
-- Updates infrequent
+- Nine human participants set the baseline
+- Most questions are unpublished, so scores cannot be reproduced outside the team
+- The introduction on the page names a top model and says the human baseline beats every tested model, while the table lists several models above 83.7%
+- The page states no update schedule

@@ -5,6 +5,18 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Content (leaderboard accuracy pass)
+
+- **Changed** the seven `leaderboard` records, each checked against the board's own site: who
+  runs it, what it ranks, how it updates and what is public. `update_cadence` is now a short value
+  ("Irregular", "Not stated" or "Retired") with the detail in the body, and card text carries no
+  Markdown.
+- **Changed** `chatbot-arena-lmarena` follows the board's rename to Arena (arena.ai, Arena
+  Intelligence Inc.); `huggingface-open-llm-leaderboard` is marked retired (March 2025);
+  `livebench` describes LiveBench 2.0; `vellum-llm-leaderboard` points at llmleaderboard.com, where
+  vellum.ai now redirects; `vals-index` gains its access value.
+- **Removed** opinion about which board suits what, and coverage figures no source states.
+
 ### Content (benchmark accuracy pass)
 
 - **Changed** the 43 benchmark records written before November 2026, each checked against the

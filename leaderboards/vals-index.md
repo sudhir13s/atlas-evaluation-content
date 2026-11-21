@@ -10,7 +10,8 @@ url: https://www.vals.ai/benchmarks/vals_index
 tagline: A GDP-weighted measure of agentic model performance in finance, coding, legal and tax work.
 ranks: models by weighted accuracy across finance, coding, legal and tax tasks
 benchmarks: [benchmark/terminal-bench]
-update_cadence: Not stated; the page shows 'Updated 11/9/2026' and index releases on 2026-08-13, 2026-09-25 and 2026-10-19
+update_cadence: Irregular
+free_access: true
 tags: [leaderboard, composite-index, economic-weighting, agentic, private-benchmarks]
 updated: 2026-11-21
 sources:
@@ -20,7 +21,7 @@ related: [benchmark/terminal-bench, benchmark/harvey-lab]
 
 ## What It Ranks
 
-The Vals Index ranks models on **agentic work in four sectors**, each weighted by its share of US gross domestic product (GDP). The version described here is **v2.2**, released on 2026-10-19.
+The Vals Index ranks models on agentic work in four sectors, each weighted by its share of US gross domestic product (GDP). The version described here is v2.2, released on 2026-10-19.
 
 - **Finance** — Finance Agent v2.1 and Excel Modeling Benchmark v1.1.
 - **Coding** — Terminal-Bench 4.0, Vibe Code Bench v1.1 and Code Migration v1.1.
@@ -39,11 +40,13 @@ Each sector is the average of its benchmarks, and the sectors combine as:
 - **Scale** — accuracy in percent; the page also lists cost, tokens and duration per test.
 - **Code Migration** — the index uses a fixed subset: 50 of the 120 command-line migration tasks plus all 10 COBOL tasks, weighted 75% and 25%.
 - **Release history** — v2 on 2026-08-13, v2.1 on 2026-09-25 (added Tax and moved to Terminal-Bench 4.0), v2.2 on 2026-10-19 (updated several components, switched Tax Agent Bench to all-pass accuracy).
+- **Updates** — the page states no schedule; it shows "Updated 11/19/2026" and lists the dated releases above.
+- **Access** — the leaderboard table is readable without an account; six of the eight component benchmarks are private.
 
 ## Caveats
 
-- **Mostly private.** Most components are private Vals benchmarks that no other party has full access to, so results cannot be rerun.
-- **Simplified weighting.** The page itself calls GDP weighting a vast oversimplification of AI's economic effect.
-- **Version-bound.** Scores under v2 and v2.2 differ because components and Terminal-Bench versions changed.
-- **Terms.** The page carries a 'Proprietary' label and states no licence or machine-readable file.
-- **Single-maker view.** Vals AI builds and runs the evaluations itself; the page does not say whether scores are independently audited.
+- Most components are private Vals benchmarks that no other party has full access to, so results cannot be rerun.
+- The page itself calls GDP weighting a vast oversimplification of AI's economic effect.
+- Scores under v2 and v2.2 differ because components and Terminal-Bench versions changed.
+- The page carries a "Proprietary" label and states no licence or machine-readable file.
+- Vals AI builds the benchmarks and publishes the scores; the page does not say whether scores are independently audited.
