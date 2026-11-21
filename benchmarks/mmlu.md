@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "MMLU"
 name: MMLU
 category: Knowledge & Academic Reasoning
-description: "Massive Multitask Language Understanding — 57 subjects of expert-level multiple-choice questions."
-what_is_it: "A 4-choice knowledge exam spanning 57 subjects, from elementary math to professional law, medicine, and moral reasoning. It tests breadth of world and academic knowledge rather than a single skill."
-why_people_use_it: "It became the default single-number proxy for general knowledge and is reported by nearly every model release, which makes it useful for rough cross-model comparison — as long as you remember the contamination caveat."
+description: "Massive Multitask Language Understanding: 15,908 multiple-choice questions across 57 subjects, from elementary mathematics to law."
+what_is_it: "MMLU was introduced by Hendrycks et al. (2020) to measure a text model's multitask accuracy. It covers 57 tasks, including elementary mathematics, US history, computer science and law, with 15,908 four-option questions: a few-shot development set of 5 questions per subject, a validation set of 1,540 and a test set of 14,079. The authors estimate expert-level accuracy at about 89.8%, from the 95th-percentile human scores on the source exams."
+why_people_use_it: "It evaluates breadth of academic and professional knowledge in zero-shot and few-shot settings, and its per-subject results show where a model is weak."
 examples:
   - "Which of the following is an example of operant conditioning? (A) a dog salivating at a bell (B) a rat pressing a lever more often after food rewards (C) a child imitating a parent (D) blinking at a puff of air"
-method: "Few-shot (typically 5-shot) multiple-choice; the answer is the option with the highest likelihood, or parsed from a generated letter. 15,908 questions across 57 tasks."
-metric: "Accuracy (% correct), macro-averaged across the 57 subjects."
-format: "5-shot multiple-choice (also reported 0-shot CoT for chat models)."
-saturation: high
-limitations: "Well-documented training-data contamination — many models have seen MMLU items during pre-training, inflating scores. A handful of questions have wrong gold answers. Frontier models cluster at 86–90%, so the top of the scale no longer discriminates; use MMLU-Pro or GPQA instead."
+method: "Zero-shot or few-shot (5-shot uses the development set) multiple choice; the answer is the option with the highest likelihood or a letter parsed from the response."
+metric: "Accuracy (% correct) over the 57 subjects."
+format: "5-shot or 0-shot multiple choice, four options."
+limitations: "MMLU-Redux (Gema et al., 2024) estimates that 6.49% of MMLU questions contain errors. Likelihood-based scoring and parsing a generated letter are different protocols and give different numbers. The questions are public, so they can appear in training data."
 citation: "https://arxiv.org/abs/2009.03300"
 worked_examples:
   - task_type: "Introductory psychology"
@@ -93,36 +92,28 @@ worked_examples:
       why: "A real early-modern idea, but a different one; Westphalia is about relations between states, not the source of a monarch's authority."
     checks: "Associating a landmark treaty with the correct political principle."
     scoring: "Exact-match accuracy on the selected option."
-tags: [knowledge, multiple-choice, reasoning, contamination]
-updated: 2026-07-17
+tags: [knowledge, multiple-choice, reasoning]
+updated: 2026-11-21
 sources:
-  - { url: "https://arxiv.org/abs/2009.03300", title: "Measuring Massive Multitask Language Understanding (Hendrycks et al., 2021)", trust: 0.95 }
-  - { url: "https://arxiv.org/abs/2310.18018", title: "Data Contamination Through the Lens of Time (Sainz et al. discussion of MMLU contamination)", trust: 0.75 }
-related: [benchmark/mmlu-pro, benchmark/gpqa]
+  - { url: "https://arxiv.org/abs/2009.03300", title: "Measuring Massive Multitask Language Understanding (Hendrycks et al., 2020)", trust: 0.95 }
+  - { url: "https://ar5iv.labs.arxiv.org/html/2009.03300", title: "MMLU paper, full text (ar5iv)", trust: 0.95 }
+  - { url: "https://arxiv.org/abs/2406.04127", title: "Are We Done with MMLU? (MMLU-Redux, Gema et al., 2024)", trust: 0.9 }
+related: [benchmark/mmlu-pro, benchmark/mmlu-redux, benchmark/gpqa]
 ---
 
 ## What It Tests
-Breadth of academic and professional knowledge plus light reasoning, across 57 subjects grouped
-into STEM, humanities, social sciences, and "other" (business, health, misc). It is a knowledge
-exam, not a reasoning or generation test.
+**Breadth of academic and professional knowledge** with some problem solving, across 57 subjects in the humanities, social sciences, STEM and other areas.
 
 ## How It Scores
-Plain accuracy: the fraction of the 15,908 four-choice questions answered correctly, macro-averaged
-so each subject counts equally. Random guessing scores 25%. Human expert (domain-specialist)
-performance is ~89.8%; unspecialized humans score far lower on out-of-field subjects.
+**Accuracy** on four-option questions; random guessing scores 25%. The authors estimate expert-level accuracy at about 89.8%.
 
 ## Format
-Standardly 5-shot: five worked examples are prepended, then the model answers the sixth. Base models
-are scored by comparing the likelihood of each answer letter; chat models are often run 0-shot with
-chain-of-thought and the letter is parsed from the response. The two protocols are not directly
-comparable — always check which was used.
+The 5-shot setup prepends five development questions per subject; zero-shot runs give none. Likelihood scoring and letter parsing are not directly comparable.
 
 ## Limitations
-Contamination is the headline problem: MMLU predates most models' training cutoffs, so items leak
-into pre-training corpora and scores overstate true generalization. The benchmark is also near
-**saturated** — frontier models sit at 86–90%, within noise of each other and of the human ceiling —
-and a small number of questions have disputed or incorrect keys. Treat any score above ~90% with
-suspicion.
+- **Label errors.** MMLU-Redux estimates 6.49% of questions contain errors.
+- **Protocol.** Scoring method changes the number.
+- **Public items.** Questions can leak into training data.
 
 ## Example
 "Which of the following is an example of operant conditioning?" with options (A) a dog salivating at

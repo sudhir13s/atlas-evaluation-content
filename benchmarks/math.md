@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "MATH"
 name: MATH
 category: Math & Logic
-description: "12,500 competition mathematics problems (AMC/AIME level) with full worked solutions."
-what_is_it: "A dataset of 12,500 problems from high-school math competitions (AMC, AIME and similar), spanning algebra, geometry, number theory, counting/probability, and precalculus, each labeled with a difficulty level 1–5 and a step-by-step solution. Far harder than GSM8K."
-why_people_use_it: "It is the standard benchmark for genuine mathematical problem-solving beyond arithmetic. A widely reported subset, MATH-500, is used for faster, cleaner evaluation."
+description: "12,500 competition mathematics problems in seven subjects, each with a step-by-step solution and a final boxed answer."
+what_is_it: "MATH (Mathematics Aptitude Test of Heuristics) was introduced by Hendrycks et al. (2021). It has 12,500 competition mathematics problems, 7,500 for training and 5,000 for test. The seven subjects are Prealgebra, Algebra, Number Theory, Counting and Probability, Geometry, Intermediate Algebra and Precalculus. Each problem is tagged with a difficulty level from 1 to 5 following Art of Problem Solving (AoPS): early AMC 8 problems are often level 1, AIME problems level 5."
+why_people_use_it: "Each problem has a full step-by-step solution and a single final answer, so a model's answer can be checked automatically, and the difficulty levels and subjects show where a model breaks down."
 examples:
   - "Find the number of positive integers n <= 1000 such that 15n is a perfect square. (answer: 8, via n = 15m^2)"
-method: "Few-shot (often 4-shot) chain-of-thought; the final boxed answer is extracted and checked, requiring LaTeX/expression normalization and equivalence checking."
-metric: "Accuracy (% of problems with a correct final answer)."
-format: "4-shot chain-of-thought; boxed-answer exact/equivalence match."
-saturation: low
-limitations: "Requires LaTeX parsing and mathematical-equivalence checking, so scoring is sensitive to formatting (e.g. 1/2 vs 0.5 vs \\frac{1}{2}) and answer-extraction bugs cause under-counting. Reasoning models have climbed sharply, and contamination of competition problems is plausible. Level-5 problems dominate the difficulty signal."
+method: "The model generates a solution ending in a final boxed answer, which is extracted and compared with the reference answer, usually after normalising the mathematical expression."
+metric: "Accuracy (% of test problems with a correct final answer)."
+format: "Free response with a boxed final answer; zero-shot or few-shot."
+limitations: "Answer checking needs expression normalisation (for example 1/2 versus 0.5), so extraction and equivalence rules change scores between harnesses. Subsets used in reports, such as the level-5 problems, are not comparable with the full test set; MATH Level 5 has its own record."
 citation: "https://arxiv.org/abs/2103.03874"
 worked_examples:
   - task_type: "Number theory (perfect squares)"
@@ -69,31 +68,28 @@ worked_examples:
     checks: "Solving r^2 = 36 for r before applying the circumference formula."
     scoring: "Accuracy on the final answer under mathematical-equivalence checking."
 tags: [math, competition, reasoning, chain-of-thought]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2103.03874", title: "Measuring Mathematical Problem Solving With the MATH Dataset (Hendrycks et al., 2021)", trust: 0.95 }
-related: [benchmark/gsm8k, benchmark/aime]
+  - { url: "https://ar5iv.labs.arxiv.org/html/2103.03874", title: "MATH paper, full text (ar5iv)", trust: 0.95 }
+related: [benchmark/gsm8k, benchmark/aime, benchmark/math-level-5]
 ---
 
 ## What It Tests
-Real mathematical problem-solving: choosing a strategy, doing algebraic manipulation, and arriving at
-an exact answer for competition-level problems. Unlike GSM8K, brute-force arithmetic rarely suffices —
-insight is required.
+**Competition mathematics**: choosing a strategy and reaching an exact answer across seven subjects.
 
 ## How It Scores
-Accuracy on the final answer, with difficulty levels 1–5 letting you see where a model breaks down.
-The **MATH-500** subset is a 500-problem slice used for faster evaluation. Scoring requires
-normalizing mathematical expressions and checking equivalence, not just string match.
+**Accuracy** on the final boxed answer over the 5,000 test problems.
+
+- **Difficulty levels** — 1 to 5, following AoPS.
+- **Subjects** — seven, from Prealgebra to Precalculus.
 
 ## Format
-Typically 4-shot with chain-of-thought; the model produces a solution ending in a boxed answer
-(`\boxed{...}`) that the harness extracts and compares under mathematical equivalence.
+The model writes a solution ending in `\boxed{...}`; the harness extracts and compares it.
 
 ## Limitations
-Answer extraction and equivalence checking are the main measurement hazards — a correct answer
-written in an unexpected form can be scored wrong. Competition problems may leak into training
-corpora (contamination). Level-5 problems drive most of the discrimination, so the aggregate can hide
-strength/weakness by level.
+- **Answer checking.** Extraction and equivalence rules move scores.
+- **Subsets.** Level-5 or other subsets are not comparable with the full test set.
 
 ## Example
 "Find the number of positive integers n ≤ 1000 such that 15n is a perfect square." Because 15 = 3·5,

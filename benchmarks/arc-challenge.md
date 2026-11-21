@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "ARC-Challenge"
 name: ARC-Challenge
 category: Knowledge & Academic Reasoning
-description: "AI2 Reasoning Challenge — grade-school science questions that resist retrieval and word-association."
-what_is_it: "The hard partition of the AI2 Reasoning Challenge: 2,590 grade-school-level science questions selected because simple retrieval and co-occurrence solvers get them wrong. It rewards multi-step reasoning over surface pattern matching."
-why_people_use_it: "A long-standing, standardized reasoning benchmark included in the original HF Open LLM Leaderboard, so historical scores exist for almost every model — useful for apples-to-apples comparison across generations."
+description: "The Challenge Set of the AI2 Reasoning Challenge (ARC): 2,590 grade-school science questions that both a retrieval method and a word co-occurrence method answered wrongly."
+what_is_it: "ARC was released by the Allen Institute for AI (Clark et al., 2018) as 7,787 natural grade-school science questions written for human tests, split into a Challenge Set (2,590 questions) and an Easy Set (5,197). The Challenge Set keeps only questions that both a retrieval-based solver and a word co-occurrence solver got wrong. Questions are multiple choice, with three to five options and four on average."
+why_people_use_it: "The authors built the Challenge Set so that questions cannot be answered by retrieving a matching sentence or by word association, to encourage work on questions that need more knowledge and reasoning."
 examples:
   - "A student leaves a cup of hot water and a cup of cold water in a room for two hours. What is true afterward? (correct: both reach room temperature via thermal equilibrium)"
-method: "25-shot multiple-choice was the HF Open LLM Leaderboard v1 protocol; papers also report 0-shot. Answer = highest-likelihood option (usually 4 choices)."
-metric: "Accuracy (% correct) on the Challenge partition."
-format: "25-shot (Open LLM v1) or 0-shot multiple-choice."
-saturation: high
-limitations: "Now saturated for frontier models (95%+), so it no longer discriminates at the top. The Easy partition is meaningless for modern models. Scores depend on the shot count, so v1-era 25-shot numbers are not comparable to 0-shot numbers."
+method: "Multiple choice: the model picks one option per question. Evaluations differ in the number of in-context examples (shots)."
+metric: "Accuracy (% correct) on the Challenge Set."
+format: "Multiple choice, 3 to 5 options (4 on average); zero-shot or few-shot."
+limitations: "Scores depend on the number of shots and the answer-selection method, so numbers from different setups are not comparable. The questions are grade-school science, so the benchmark tests a narrow slice of knowledge."
 citation: "https://arxiv.org/abs/1803.05457"
 worked_examples:
   - task_type: "Physical science — thermal equilibrium"
@@ -94,31 +93,28 @@ worked_examples:
     checks: "Separating mass (invariant) from weight (depends on local gravity)."
     scoring: "Exact-match accuracy on the selected option."
 tags: [reasoning, science, multiple-choice]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
-  - { url: "https://arxiv.org/abs/1803.05457", title: "Think you have Solved Question Answering? Try ARC (Clark et al., 2018)", trust: 0.95 }
+  - { url: "https://arxiv.org/abs/1803.05457", title: "Think you have Solved Question Answering? Try ARC, the AI2 Reasoning Challenge (Clark et al., 2018)", trust: 0.95 }
+  - { url: "https://ar5iv.labs.arxiv.org/html/1803.05457", title: "ARC paper, full text (ar5iv)", trust: 0.95 }
 related: [benchmark/hellaswag, benchmark/winogrande]
 ---
 
 ## What It Tests
-Multi-step grade-school science reasoning that cannot be solved by keyword retrieval or word
-co-occurrence. Questions were filtered specifically to defeat an information-retrieval baseline and a
-word-association baseline, isolating actual reasoning.
+**Grade-school science** questions that simple solvers fail.
+
+- **Filtered** — each Challenge question defeated both a retrieval solver and a word co-occurrence solver.
+- **Natural questions** — taken from human science tests, not written for the benchmark.
 
 ## How It Scores
-Accuracy on the 2,590-question Challenge set. Human performance is ~95%. Random baseline is ~25%
-(most items have four options). Report the Challenge partition — the Easy set is not informative for
-capable models.
+**Accuracy** on the 2,590-question Challenge Set (train 1,119, dev 299, test 1,172).
 
 ## Format
-Two protocols dominate: the HF Open LLM Leaderboard v1 used **25-shot**, while papers frequently
-report **0-shot**. The shot count moves scores by several points, so a 25-shot number and a 0-shot
-number are not directly comparable.
+Multiple choice with three to five options, four on average. Reports use zero-shot or few-shot prompts; always state which.
 
 ## Limitations
-The benchmark is **saturated**: frontier models score 95%+ and differences are within noise. That
-makes it useful mainly as a regression check and for historical comparison, not for ranking today's
-best models. Always note the shot count when quoting a score.
+- **Setup-dependent.** Shot count and answer selection change the score.
+- **Narrow.** Grade-school science only.
 
 ## Example
 "A student places a cup of hot water and a cup of cold water in a room. After two hours, what is true

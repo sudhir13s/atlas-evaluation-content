@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "IFBench"
 name: IFBench
 category: Instruction Following & Chat
-description: "A verifiable instruction-following benchmark of 300 prompts built on 58 new, held-out output constraints that models have not been trained to game."
-what_is_it: "An Allen Institute for AI (AI2) and University of Washington benchmark that measures whether a model can follow precise, programmatically checkable output constraints it has never seen — 58 novel out-of-domain constraints paired with real user prompts, each verified by a Python function."
-why_people_use_it: "It exposes overfitting: models ace older instruction tests like IFEval because they trained on those constraint types. IFBench's fresh, held-out constraints reveal whether instruction-following actually generalizes."
+description: "A benchmark of 300 prompts that tests precise instruction following on 58 new, out-of-domain output constraints, each checked by code."
+what_is_it: "IFBench (Pyatkin et al., 2025; Allen Institute for Artificial Intelligence and University of Washington) tests whether precise instruction following generalizes to unseen output constraints. Its 58 verifiable constraints, in seven categories (count, ratio, words, sentence, format, custom, copy), are added to held-out WildChat prompts, and each comes with a verification function."
+why_people_use_it: "The authors found that most models strongly overfit on the small set of verifiable constraints in existing benchmarks and do not generalize well to unseen ones (2025 paper). IFBench combines unseen prompts with unseen constraints to measure that generalization."
 examples:
   - "Prompt: 'Explain photosynthesis. Every sentence must contain exactly one word in all capital letters, and the response must end with the exact phrase: That is all.' — a Python verifier checks both constraints mechanically."
-method: "Combine 58 held-out verifiable constraints with prompts from a WildChat holdout to form 300 test items; a Python verification function per constraint checks the model's output automatically."
-metric: "Prompt-level loose accuracy (fraction of prompts satisfying all constraints); strict and instruction-level variants also reported."
-format: "Single-turn prompts, each carrying one or more verifiable output constraints; programmatic (no LLM judge)."
-saturation: low
-limitations: "Only constraints that a Python function can verify are in scope, so it tests format/structure compliance, not semantic quality or helpfulness. At 300 prompts it is small, and 'loose' vs 'strict' accuracy can differ by several points, so the reported variant matters."
+method: "Constraints are added to unseen WildChat prompts; every instance was checked by a human annotator for prompt-constraint compatibility. A verification function per constraint checks the output. Two settings: single-turn (task and constraints in one prompt) and multi-turn (the third turn asks to rewrite an earlier answer to meet the constraint)."
+metric: "Prompt-level accuracy, strict or loose; loose accuracy first removes first/last lines and certain font modifiers from the output. The paper reports prompt-level loose accuracy."
+format: "300 prompts, each with one or two verifiable output constraints; checked by code, not by a judge model."
+limitations: "Only constraints a function can verify are covered, so it tests compliance, not answer quality. Strict and loose accuracy differ, so the variant must be stated with a score."
 citation: "https://arxiv.org/abs/2507.02833"
 worked_examples:
   - task_type: "Verifiable instruction following (stacked output constraints)"
@@ -69,46 +68,33 @@ worked_examples:
     checks: "Whether the model tracks an ordered structural rule across all lines of the output."
     scoring: "Prompt-level loose accuracy — the ordered-initial constraint must hold for every line."
 tags: [instruction-following, verifiable, constraints, chat]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2507.02833", title: "Generalizing Verifiable Instruction Following (Pyatkin et al., 2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2507.02833", title: "Generalizing Verifiable Instruction Following, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/allenai/IFBench_test", title: "IFBench test set (allenai/IFBench_test, 300 prompts)", trust: 0.9 }
   - { url: "https://github.com/allenai/IFBench", title: "IFBench GitHub repository", trust: 0.85 }
 related: [benchmark/ifeval, benchmark/multichallenge]
 ---
 
 ## What It Tests
-Whether precise instruction-following **generalizes** to constraints a model was not trained on. The
-authors observed that models strongly overfit the small, fixed set of verifiable constraints in
-benchmarks like IFEval, so high scores there no longer prove real skill.
+Whether **precise instruction following generalizes** to output constraints a model has not seen.
 
-IFBench answers that with **58 new, diverse output constraints** — collected from real user requests
-or hand-written to cover core instruction-following skills — deliberately held out of common training
-recipes.
+- **58 constraints** — new, out-of-domain, in seven categories: count, ratio, words, sentence, format, custom, copy.
+- **Unseen prompts** — constraints are added to WildChat prompts held out from release, to avoid train-test contamination.
 
 ## How It Scores
-The primary metric is **prompt-level loose accuracy**: the fraction of prompts where the output
-satisfies all of its constraints (with minor formatting leniency). Strict and per-instruction
-variants are also reported.
+**Prompt-level accuracy**: a prompt counts when its output meets all its constraints, checked by verification functions.
 
-Every constraint ships with a **Python verification function**, so scoring is fully programmatic and
-reproducible — no LLM judge, no human rating, no ambiguity about whether a constraint was met.
+- **Strict** — the output as written.
+- **Loose** — first/last lines and certain font modifiers removed first; the paper reports this one.
 
 ## Format
-Each of the 300 test items pairs a base prompt (drawn from a held-out slice of WildChat) with one or
-more added output constraints — e.g. word counts, forbidden words, required phrases, casing or
-structure rules. A constraint is only admitted if it can be checked by code, which is what keeps the
-benchmark objective.
+300 prompts with one or two constraints each, in a single-turn setting (task plus constraints) or a multi-turn setting (rewrite an earlier answer to meet the constraint).
 
 ## Limitations
-By construction it covers only **machine-verifiable** constraints — structure, format, lexical rules
-— so it says nothing about whether the answer is correct, helpful, or well-written. At 300 prompts it
-is small, and the gap between loose and strict accuracy can reach several points, so comparisons must
-fix the same variant. It is also single-turn, unlike multi-turn tests such as MultiChallenge.
+- **Verifiable only.** Constraints a function can check; answer quality is not scored.
+- **Variant matters.** Strict and loose accuracy differ; state which.
 
 ## Example
-A prompt asks the model to explain a topic while obeying stacked constraints: "each sentence must
-contain exactly one fully capitalized word" and "end with the exact phrase: That is all." The Python
-verifier tokenizes the response, checks the all-caps count per sentence, and confirms the trailing
-phrase byte-for-byte. A fluent, correct explanation still scores zero if it drops the closing phrase —
-the benchmark rewards precise compliance, not content quality.
+A constraint named in the paper: "Maintain a 2:1 ratio of declarative to interrogative sentences." It is appended to a held-out WildChat prompt, and the verification function counts the sentence types in the response to decide pass or fail.

@@ -6,17 +6,15 @@ schema_version: 1.0
 title: "OJBench"
 name: OJBench
 category: Code Generation
-description: "232 olympiad/ICPC-level programming problems from NOI and ICPC, judged with full hidden test suites in Python and C++ — a hard test of competition-grade code reasoning."
-what_is_it: "OJBench is a competition-level code benchmark of 232 rigorously selected problems drawn from China's National Olympiad in Informatics (NOI) and the International Collegiate Programming Contest (ICPC). Problems are labeled Easy/Medium/Hard from real contestant data and are solvable in both Python and C++. Each submission is judged online-judge style: it counts as solved only if it is Accepted on the full hidden test suite."
-why_people_use_it: "Most coding benchmarks top out well below olympiad difficulty. OJBench targets the hardest tier — NOI and ICPC problems — where even strong reasoning models like o4-mini and Gemini 2.5 Pro struggle, giving real headroom to measure competition-grade algorithmic reasoning that easier benchmarks can no longer discriminate."
+description: "232 competition programming problems from NOI and ICPC, judged by whether a generated program passes all of the organisers' test cases."
+what_is_it: "OJBench (Wang et al., 2025, Beijing University of Posts and Telecommunications and collaborators) is a competition-level code benchmark of 232 problems: 159 from China's National Olympiad in Informatics (NOI) and 73 from the International Collegiate Programming Contest (ICPC). Each problem comes with the comprehensive test cases released by the competition organisers, and problems are labelled Easy (36), Medium (79) or Hard (117)."
+why_people_use_it: "It assesses competition-level code reasoning with the organisers' own test cases. The authors evaluated 37 models and report (June 2025) that even state-of-the-art reasoning-oriented models struggle with the hardest problems."
 examples:
-  - "An ICPC-level graph problem: design an efficient algorithm from a natural-language statement and submit a program that must pass every hidden test within the time limit to earn Accepted."
-  - "An NOI-level dynamic-programming problem solved in both Python and C++, with C++ typically clearing the time limits that the Python solution cannot."
-method: "The model reads a competition problem statement and generates a complete program (Python or C++), which is run against the problem's full hidden test suite. A problem is solved only on verdict Accepted (all test cases pass); Wrong Answer, Runtime Error, or Time Limit Exceeded count as failures. 232 problems across three difficulty tiers; 37 models evaluated in the paper."
-metric: "Solve rate / pass@1 (fraction of problems reaching an Accepted verdict on all hidden tests)."
-format: "0-shot competition code generation, judged by full hidden test suites; bilingual Python and C++."
-saturation: low
-limitations: "The 232-problem set is small and skewed toward hard olympiad/ICPC problems, so scores are low and noisy at the top. Full-testcase Accepted judging is strict — a correct algorithm that is too slow in one language (often Python) scores zero — which couples the metric to implementation/runtime, not just reasoning. Being drawn from published contests, older problems risk contamination, so the benchmark leans on difficulty rather than novelty for its signal."
+  - "An NOI or ICPC problem statement in Markdown; the model writes a program in Python or C++, and it counts as correct only if it passes every test case."
+method: "The model generates a program for each problem statement, in Python or C++, and it is run on the problem's test cases. A solution is considered correct only if it passes all test cases. The paper reports pass@1 and pass@8 in each language, and pass@1 by difficulty."
+metric: "pass@k (the paper reports pass@1 and pass@8), per language."
+format: "Competition code generation in Python or C++, judged on the organisers' full test cases."
+limitations: "With 232 problems, a few problems move the score. Difficulty labels for NOI come from votes by contestants who solved the problem and for ICPC from team attempt ratios, so they are approximate. The problems come from past published contests."
 citation: "https://arxiv.org/abs/2506.16395"
 worked_examples:
   - task_type: "Tree path query (LCA)"
@@ -70,43 +68,34 @@ worked_examples:
     checks: "Reducing modulo at every operation rather than once at the end, to stay within the integer range."
     scoring: "Solve rate / pass@1: Accepted vs Wrong Answer from overflow."
 tags: [code-generation, competitive-programming, olympiad, pass-at-1]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
-  - { url: "https://arxiv.org/abs/2506.16395", title: "OJBench: A Competition Level Code Benchmark For Large Language Models (2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/abs/2506.16395", title: "OJBench: A Competition Level Code Benchmark For Large Language Models (Wang et al., 2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2506.16395", title: "OJBench, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://github.com/He-Ren/OJBench", title: "OJBench GitHub repository", trust: 0.9 }
 related: [benchmark/livecodebench]
 ---
 
 ## What It Tests
-Competition-grade algorithmic reasoning at the olympiad and ICPC level. The 232 problems are pulled
-from China's National Olympiad in Informatics (NOI) and the International Collegiate Programming
-Contest (ICPC) — a tier far above typical coding benchmarks — and are stratified into Easy, Medium,
-and Hard using real contestant votes and submission data. Each problem is solvable in both Python and
-C++, so the benchmark also exposes language-dependent performance gaps.
+Competition-level **algorithmic code reasoning** on NOI and ICPC problems.
+
+- **Sources** — 159 NOI and 73 ICPC problems.
+- **Difficulty** — 36 Easy, 79 Medium, 117 Hard.
+- **Two languages** — Python and C++.
 
 ## How It Scores
-Solve rate (pass@1): the fraction of problems for which the model's program earns an Accepted verdict
-on the full hidden test suite. Judging is strict online-judge style — the verdict is Accepted only if
-every test case passes; any Wrong Answer, Runtime Error, or Time Limit Exceeded counts as a failure.
-Across 37 models evaluated in the paper, even state-of-the-art reasoning models (o4-mini,
-Gemini 2.5 Pro) solved only a modest share of the hard problems, and reasoning-oriented models clearly
-outperformed non-reasoning ones, with C++ generally scoring higher than Python.
+A solution is correct only if it **passes all test cases**; the test cases are those released by the competition organisers and validated against contestants' correct submissions.
+
+- **pass@1 and pass@8** — reported per language.
+- **By difficulty** — pass@1 for Easy, Medium and Hard.
 
 ## Format
-Zero-shot competition code generation: the model receives a contest problem statement and returns a
-complete program in Python or C++, which is executed against the problem's hidden tests under time and
-memory limits. There is no partial credit — the unit of success is the Accepted verdict.
+The model receives a problem statement in Markdown and returns a complete program in Python or C++, which runs on the problem's test cases (on average about 32 tests per problem).
 
 ## Limitations
-The set is small (232 problems) and deliberately hard, so top scores are low and sensitive to a few
-problems. Full-testcase Accepted judging ties the score to implementation efficiency, not reasoning
-alone: a correct-but-slow solution (common in Python) is marked failed on Time Limit Exceeded. Because
-the problems come from published contests, older items carry contamination risk; OJBench relies on
-sheer difficulty, rather than a live date-window, for its discriminating power.
+- **Small set.** 232 problems, so a few problems move the score.
+- **Approximate difficulty.** Labels come from contestant votes (NOI) and team attempt ratios (ICPC).
+- **Past contests.** The problems are from published competitions.
 
 ## Example
-An ICPC-level problem gives a graph and a query about optimal routing. The model must devise an
-efficient algorithm (a naive approach will time out), implement it correctly, and submit; only a
-program that returns Accepted across every hidden test scores. A solution with the right idea but an
-off-by-one on a boundary case gets Wrong Answer and zero credit — the strict verdict is what makes
-OJBench a demanding test of both reasoning and precise implementation.
+The model reads an NOI or ICPC problem statement, writes a program in Python or C++, and the program is run on the organisers' test cases; it counts as solved only if every test case passes.

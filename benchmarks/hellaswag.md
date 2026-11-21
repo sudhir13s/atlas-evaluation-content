@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "HellaSwag"
 name: HellaSwag
 category: Knowledge & Academic Reasoning
-description: "Common-sense sentence completion with adversarially filtered wrong endings."
-what_is_it: "A sentence-completion test: given a short context (often from ActivityNet or WikiHow), the model picks the most plausible continuation from four options. The wrong endings are generated and adversarially filtered to fool weaker models while staying obviously wrong to humans."
-why_people_use_it: "It was a standard common-sense benchmark on the original HF Open LLM Leaderboard, giving broad historical coverage. It isolates physical/temporal common sense rather than academic knowledge."
+description: "Commonsense sentence completion: pick the most plausible of four endings, where the wrong endings were chosen by Adversarial Filtering."
+what_is_it: "HellaSwag was introduced by Zellers et al. (2019) as a commonsense natural language inference dataset of 70k problems. Each gives a context from an ActivityNet video caption or a WikiHow article and four possible endings. The wrong endings are machine-generated and selected by Adversarial Filtering, in which a series of discriminators keep the endings that models misclassify."
+why_people_use_it: "The paper reports that the questions are easy for humans (95.6% accuracy) but were hard for the models of the time (under 50%), so it measures everyday commonsense about how a described activity continues."
 examples:
   - "A woman sits at a table with a piece of clay and begins to mold it. She... (correct: rolls it flat and cuts it with a knife; distractor: eats a piece of the clay)"
-method: "10-shot multiple-choice was the HF Open LLM v1 protocol; 0-shot is also reported. Score = highest-likelihood ending among 4."
+method: "Four-way multiple choice: the model picks the ending it rates most likely, zero-shot or few-shot."
 metric: "Accuracy (% correct)."
-format: "10-shot (Open LLM v1) or 0-shot, 4-way multiple-choice."
-saturation: high
-limitations: "Near-saturated: frontier models exceed 95%, matching or beating the ~95.6% human baseline, so it no longer separates strong models. The adversarial filtering was tuned against 2019-era models and does not hold against modern ones. A few items have noisy labels."
+format: "Four-way multiple choice; zero-shot or few-shot."
+limitations: "Adversarial Filtering selected endings that fooled the discriminator models of 2019, so the distractors are tuned to those models. Scores depend on the number of shots and how the ending likelihood is computed, so numbers from different harnesses are not comparable."
 citation: "https://arxiv.org/abs/1905.07830"
 worked_examples:
   - task_type: "Commonsense completion — working with clay"
@@ -94,29 +93,25 @@ worked_examples:
     checks: "Choosing a physically possible action over a fluent, on-theme, but impossible one."
     scoring: "Exact-match accuracy on the selected ending (highest-likelihood option)."
 tags: [common-sense, multiple-choice, completion]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/1905.07830", title: "HellaSwag: Can a Machine Really Finish Your Sentence? (Zellers et al., 2019)", trust: 0.95 }
+  - { url: "https://ar5iv.labs.arxiv.org/html/1905.07830", title: "HellaSwag paper, full text (ar5iv)", trust: 0.95 }
 related: [benchmark/arc-challenge, benchmark/winogrande]
 ---
 
 ## What It Tests
-Everyday physical and temporal common sense — knowing how a described activity plausibly continues.
-The task is trivial for humans but was hard for pre-2020 models, which is exactly the gap it was
-built to expose.
+**Everyday physical and temporal commonsense**: knowing how a described activity plausibly continues.
 
 ## How It Scores
-Accuracy over the validation set. Human baseline is ~95.6%. Random baseline is 25%. Because the set
-is large, scores are stable, but the ceiling is so close that top models are indistinguishable.
+**Accuracy** over four-way choices. The paper reports 95.6% human accuracy.
 
 ## Format
-The HF Open LLM Leaderboard v1 used **10-shot**; papers also report **0-shot**. As with other
-completion benchmarks, base models are scored by ending likelihood.
+A context from ActivityNet captions or WikiHow, then four endings; the model picks one, zero-shot or few-shot.
 
 ## Limitations
-It is **saturated**. The adversarial-filtering trick (Adversarial Filtering) was calibrated against
-2019 models, so its distractors are no longer adversarial to current systems. Use it as a smoke test
-for weak common sense, not as a frontier discriminator.
+- **Dated adversary.** Distractors were filtered against 2019 models.
+- **Setup-dependent.** Shot count and likelihood method change the score.
 
 ## Example
 "A woman is sitting at a table with a piece of clay. She begins to mold the clay into a shape.

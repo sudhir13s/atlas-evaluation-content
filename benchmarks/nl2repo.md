@@ -7,16 +7,14 @@ title: "NL2Repo"
 name: NL2Repo-Bench
 category: Code Generation
 description: "A long-horizon benchmark: build a complete, installable Python repository from scratch given only a natural-language requirements document and an empty workspace."
-what_is_it: "NL2Repo-Bench (natural-language-to-repository) measures whether an LLM or coding agent can turn a single requirements document into a fully functional Python library — no scaffolding, no source, no tests revealed. Starting from an empty workspace, the agent must do architectural design, dependency management, multi-file implementation, and packaging on its own. It comprises 104 tasks across nine library categories, with an average specification length of ~18,800 tokens, far longer than typical repository-level benchmarks."
-why_people_use_it: "Most code benchmarks test localized generation, scaffolded completion, or short repair. NL2Repo-Bench targets the long-horizon capability of building a whole software system end-to-end, which stays largely unsolved: even the strongest agents pass below ~40% of the hidden tests and rarely produce a fully correct repository. It exposes failure modes — premature termination, loss of global coherence, fragile cross-file dependencies, weak planning — that short-task benchmarks never surface."
+what_is_it: "NL2Repo-Bench (Ding et al., 2025, ByteDance Seed, M-A-P and university collaborators) measures whether a coding agent can turn a single natural-language requirements document into a complete, installable Python library, starting from an empty workspace. The agent must design the architecture, manage dependencies and implement multi-module logic itself. It has 104 tasks in nine categories of Python libraries, with input documents averaging about 18,800 tokens."
+why_people_use_it: "The authors say prior evaluations focus on localized code generation, scaffolded completion or short repairs. In their experiments (December 2025), even the strongest agents had average test pass rates below 40% and rarely completed an entire repository correctly; the failure modes they name include premature termination, loss of global coherence, fragile cross-file dependencies and inadequate planning."
 examples:
-  - "Given an ~18k-token spec for a CSV/tabular utility library (reader, schema inference, filtering, export), build the full installable package so the upstream test suite passes."
-  - "From a spec for a small networking-tools library, produce a pip-installable package with correct module layout and dependencies, no ImportError on install."
-method: "Each task gives the agent one natural-language specification document in an empty workspace; the agent works autonomously to produce a complete Python repository. The generated code is installed and run against the original upstream test suite inside an isolated Docker environment; the task score is the fraction of those tests that pass."
-metric: "Average test pass rate — the mean fraction of the hidden upstream tests that the generated repository passes, averaged over tasks. Full-repository correctness (all tests pass) is also reported and is rare."
-format: "0-shot, single spec document; autonomous multi-file/multi-step agent run; execution-based grading against held-out upstream tests."
-saturation: low
-limitations: "The benchmark is Python-only and library-centric (nine categories), so it does not cover applications, services, or other languages. Grading is by upstream test pass rate, so a partially-built repo can score non-zero even when unusable, and a hidden test suite may under- or over-specify the intended behavior. Because inputs are long (~18.8k tokens) and runs span hundreds of steps, scores are sensitive to the agent scaffold and its context/step budget as much as to the base model."
+  - "A requirements document for one of the 104 Python libraries; the agent builds the library in an empty workspace, and the target repository's official test suite is run on it."
+method: "Each task gives the agent one requirements document and an empty workspace. The generated library is evaluated in a dedicated Docker environment per task against the official test suite of the target repository."
+metric: "Average test pass rate, used as the task score."
+format: "A single specification document, an autonomous multi-step agent run, and execution-based grading against the target repository's test suite."
+limitations: "It covers Python libraries only (nine categories). A partly built repository can still pass some tests, so the pass rate is not the same as a working library."
 citation: "https://arxiv.org/abs/2512.12730"
 worked_examples:
   - task_type: "Data-analysis library from a spec"
@@ -70,57 +68,34 @@ worked_examples:
     checks: "Declaring an accurate, minimal dependency set that matches what the code actually imports and what the spec allows."
     scoring: "Average test pass rate: zero on missing dependency vs full suite green."
 tags: [code-generation, coding-agent, long-horizon, repository, python]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
-  - { url: "https://arxiv.org/abs/2512.12730", title: "NL2Repo-Bench: Towards Long-Horizon Repository Generation Evaluation of Coding Agents", trust: 0.95 }
-  - { url: "https://arxiv.org/html/2512.12730v2", title: "NL2Repo-Bench (arXiv HTML, full paper)", trust: 0.95 }
-  - { url: "https://huggingface.co/papers/2512.12730", title: "NL2Repo-Bench — Hugging Face paper page", trust: 0.85 }
+  - { url: "https://arxiv.org/abs/2512.12730", title: "NL2Repo-Bench: Towards Long-Horizon Repository Generation Evaluation of Coding Agents (Ding et al., 2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2512.12730", title: "NL2Repo-Bench, full text (arXiv HTML)", trust: 0.95 }
 related: [benchmark/swe-bench, benchmark/livecodebench, benchmark/humaneval, benchmark/mbpp]
 ---
 
 ## What It Tests
-Whether a coding agent can build a **whole Python library from a single specification** — not
-complete a snippet, not patch an existing repo, but design and construct the entire thing from an
-empty workspace. The agent alone handles architecture, dependency choices, multi-file implementation,
-and packaging, with **no scaffolding, source, or tests revealed**.
+Whether a coding agent can build a **whole Python library from a single specification**, starting from an empty workspace.
 
-The 104 tasks span nine library categories, weighted toward realistic breadth:
+The 104 tasks span nine library categories:
 
 - **System Tools (24)**, **Data Analysis & Processing (18)**, **Testing (13)**, **Utility Libraries (11)**
 - **Web Development (10)**, **Networking Tools (9)**, **Machine Learning (7)**, **Database Interaction (7)**, **Batch File Processing (5)**
 
-Specs are long — **~18,800 tokens on average** — so the model must hold a large design in context
-across hundreds of steps.
+Input documents average about **18,800 tokens**.
 
 ## How It Scores
-The generated repository is **installed and run against the original upstream test suite** in an
-isolated Docker environment. The task score is the **average test pass rate** — the fraction of those
-hidden tests the repo passes — averaged across tasks. Whole-repository correctness (every test green)
-is reported separately and is rare.
+The generated library runs against the **official test suite of the target repository** in a dedicated Docker environment per task. The task score is the **average test pass rate**.
 
-The signal is stark: **all evaluated models score below ~40.5% average pass rate**, and nearly half
-fall under 20%. The strongest results (for example Claude-Sonnet-4.5 under the Claude Code and
-OpenHands harnesses) land around **40%**, confirming that long-horizon repository generation is
-largely unsolved.
+- **Paper's results (December 2025)** — the strongest agents stayed below 40% and rarely reproduced a whole repository.
 
 ## Format
-Zero-shot from a single spec document, then a long autonomous agent run. Grading is purely
-**execution-based** against held-out upstream tests — no LLM judge — so a repository either installs
-and passes tests or it does not.
+One requirements document and an empty workspace, then an autonomous agent run. Grading is execution-based, with no LLM judge.
 
 ## Limitations
-The benchmark is **Python-only and library-centric**, so it does not cover applications, services, or
-other languages. Because grading is by **test pass rate**, a half-built repo can score non-zero while
-being unusable, and a given upstream suite may not fully pin the intended behavior. And with
-**~18.8k-token inputs over hundreds of steps**, the score reflects the agent scaffold's context and
-step budget as much as the base model — swap the harness and the number moves.
+- **Python libraries only.** Nine categories; no applications or other languages.
+- **Partial credit.** A partly built repository can pass some tests.
 
 ## Example
-The agent receives an ~18,800-token spec for a tabular-data utility library — `read_csv`, schema
-inference, filtering, `to_json`, with a stated public API and error behavior — and an empty
-workspace. A passing solution lays out a proper package (`pyproject.toml`, a `src/` tree, module
-files), implements the full API, declares only the needed dependencies, and is pip-installable, so
-the upstream tests pass at a high rate. A plausible failing solution stuffs a couple of functions into
-one `main.py`, declares done early, and leaves the package `__init__.py` and schema module missing —
-`import` fails and most tests error out. That gap between "some functions work" and "a coherent,
-installable repo" is exactly what NL2Repo-Bench measures.
+The agent receives the requirements document for one library, designs its modules and dependencies, and writes the code. The target repository's official tests then run on the result in that task's Docker environment, and the share of tests passed is the task score.

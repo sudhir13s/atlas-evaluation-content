@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "MMLU-ProX"
 name: MMLU-ProX
 category: Multilingual
-description: "MMLU-Pro's harder 10-option reasoning questions extended to 29 languages."
-what_is_it: "MMLU-ProX takes MMLU-Pro — the reasoning-heavy, 10-choice successor to MMLU — and produces the same 11,829 questions in 29 typologically diverse languages via LLM translation plus expert review."
-why_people_use_it: "It is the multilingual test that is still hard at the frontier: unlike translated MMLU (near-saturated), MMLU-ProX keeps MMLU-Pro's difficulty, so it exposes reasoning gaps across languages rather than just recall gaps."
+description: "MMLU-Pro's 10-option questions carried into 29 languages, with the same 11,829 questions in every language."
+what_is_it: "MMLU-ProX (Xuan et al., 2025) is a multilingual benchmark built on the English MMLU-Pro. Each of its 29 language versions has the same 11,829 questions, translated by several LLMs and then reviewed by experts; a lite version has 658 questions per language."
+why_people_use_it: "Because every language has the identical question set, scores can be compared directly across languages. The authors report that the 36 models they tested do well in high-resource languages and decline in low-resource ones, with gaps of up to 24.3% (paper, 2025)."
 examples:
-  - "A university-level physics or economics MMLU-Pro item with 10 answer options, presented identically in Swahili, Thai, Hindi, and 26 other languages."
-method: "Few-shot chain-of-thought multiple-choice over 11,829 parallel questions per language (a 658-question lite split also exists); the final answer letter is parsed from the reasoning output."
+  - "An MMLU-Pro item with ten answer options, presented with the same content in each of the 29 languages."
+method: "Following MMLU-Pro, the paper primarily uses 5-shot chain-of-thought (CoT) prompting and also reports 0-shot results. 70 validation questions per language build the few-shot prompts, so assessment runs on 11,759 questions (full) or 588 (lite)."
 metric: "Accuracy (% correct), per language and averaged."
-format: "10-way multiple-choice, chain-of-thought; run few-shot (inherits the MMLU-Pro protocol)."
-saturation: medium
-limitations: "Translations are LLM-generated then expert-reviewed rather than fully human-authored, so subtle translationese can remain. It is a translation of English-origin questions (no culturally-native content), and like MMLU-Pro its 10-option chain-of-thought format makes scores sensitive to answer parsing and prompt template."
+format: "Multiple choice with ten options (inherited from MMLU-Pro); 5-shot CoT as the main setting."
+limitations: "The questions are translations of an English benchmark (LLM translation followed by expert review), not material written in each language. The paper reports clear differences between 0-shot and 5-shot results, so a score needs its prompting setting."
 citation: "https://arxiv.org/abs/2503.10497"
 worked_examples:
   - task_type: "Advanced economics reasoning (Swahili)"
@@ -120,37 +119,32 @@ worked_examples:
     checks: "Applying the elasticity formula in the correct direction among numeric distractors in a high-resource language."
     scoring: "Accuracy (% correct); random baseline ~10% on 10 options."
 tags: [multilingual, knowledge, reasoning, multiple-choice]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2503.10497", title: "MMLU-ProX: A Multilingual Benchmark for Advanced Large Language Model Evaluation (Xuan et al., 2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2503.10497", title: "MMLU-ProX, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://github.com/weihao1115/MMLU-ProX", title: "weihao1115/MMLU-ProX — official EMNLP 2025 repo", trust: 0.9 }
 related: [benchmark/mmlu-pro, benchmark/mmmlu, benchmark/mmlu]
 ---
 
 ## What It Tests
-Advanced, reasoning-heavy academic knowledge — the same 10-option, distractor-hardened questions
-as MMLU-Pro — evaluated in 29 languages. Because it inherits MMLU-Pro's difficulty, it probes
-whether a model can *reason* in a language, not merely recall facts in it.
+Academic knowledge and reasoning on MMLU-Pro's questions, asked in **29 languages**.
+
+- **Parallel** — the same 11,829 questions in every language.
+- **Cross-lingual comparison** — differences between languages show directly.
 
 ## How It Scores
-Accuracy over 11,829 identical questions per language, reported per language and averaged; a
-658-question lite split supports cheap iteration. The paper's headline finding is the disparity:
-strong performance in high-resource languages but drops of up to 24.3 percentage points in
-low-resource ones.
+**Accuracy**, per language and averaged.
+
+- **Full and lite** — 11,829 or 658 questions per language; 70 of them build the few-shot prompts.
+- **Paper's finding** — gaps of up to 24.3% between high- and low-resource languages (2025).
 
 ## Format
-Ten-way multiple choice with chain-of-thought, run few-shot — the MMLU-Pro reference protocol.
-The ten options push the random baseline to ~10% and the reasoning requirement means the answer
-is parsed from a generated chain, not a single token.
+Multiple choice with **ten options**, as in MMLU-Pro. The paper's main setting is 5-shot chain-of-thought; it also reports 0-shot.
 
 ## Limitations
-Questions are translated (LLM-then-expert-review, not fully human), so residual translationese
-and English-origin cultural framing remain. As with any chain-of-thought multiple-choice test,
-answer-letter parsing and prompt formatting introduce measurement noise, and cross-report
-comparisons must fix the same shot count and template.
+- **Translated content.** LLM translation plus expert review of an English benchmark.
+- **Setting-dependent.** 0-shot and 5-shot results differ, so a score needs its setting.
 
 ## Example
-A graduate-level economics MMLU-Pro item — "Which of the following best explains why a
-monopolistically competitive firm earns zero economic profit in the long run?" among ten
-options — appears in each of the 29 languages. A model scoring 78% in German but 54% in Swahili
-on the identical question set reveals a reasoning-in-language gap.
+An MMLU-Pro question with ten options appears with the same content in each of the 29 languages, and the model's chosen option is scored against the key.

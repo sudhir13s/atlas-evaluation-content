@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "NOVA-63"
 name: NOVA-63
 category: Multilingual
-description: "A native-authored, difficulty-controlled multilingual exam over 63 disciplines."
-what_is_it: "NOVA-63 (Native Omni-lingual Versatile Assessments of 63 Disciplines) is a 93,536-question benchmark sourced from native-language exam material across 14 languages and 63 academic disciplines — built to avoid translationese by not translating."
-why_people_use_it: "It fixes the two big flaws of translated multilingual tests: content is natively authored (no translationese) and every item passes multi-level difficulty screening, so scores stay low and discriminative even for the strongest models."
+description: "A multiple-choice multilingual benchmark of questions sourced from native speakers in 14 languages, divided into 63 academic disciplines."
+what_is_it: "NOVA-63 (Native Omni-lingual Versatile Assessments of 63 Disciplines; Zhang et al., EMNLP 2025) is a multiple-choice benchmark of 89,107 native questions across 14 languages, covering 8 language families. Questions in each language are divided into 13 primary and 63 secondary academic disciplines."
+why_people_use_it: "Its questions are native content rather than translations of English material, and a pipeline of LLM-assisted formatting, expert quality verification and multi-level difficulty screening balances them across disciplines with consistent difficulty standards."
 examples:
-  - "A native-language medical-licensing or law question in Chinese, Arabic, or Russian, drawn from that country's own exams rather than translated from English."
-method: "Multiple-choice evaluation over 93,536 native-sourced questions spanning 63 disciplines in 14 languages; a pipeline of LLM-assisted formatting, expert quality verification, and multi-level difficulty screening curates the set."
-metric: "Accuracy (% correct), analyzed per language, per language-family, and per discipline."
-format: "Multiple-choice; native-language questions, no cross-language translation of items."
-saturation: low
-limitations: "Coverage is deep (63 disciplines) but breadth is 14 languages, so it is not a long-tail low-resource test like INCLUDE or Global PIQA. Native sourcing means questions are not parallel across languages, so a per-language score reflects both that language's difficulty mix and the model's ability — cross-language gaps must be read with that caveat."
+  - "A question written natively in one of the 14 languages, with a question stem, answer options and one correct answer, filed under one of 63 secondary disciplines."
+method: "Multiple choice. To keep the set difficult, the authors selected questions on which large LLMs had accuracy below 50%, generated wrong options from incorrect LLM solutions, and reviewed all candidate questions manually for relevance, fluency and originality."
+metric: "Accuracy: the proportion of correctly answered questions, analysed by language, language family and discipline."
+format: "Multiple-choice questions written natively in each language; items are not parallel across languages."
+limitations: "Questions differ from language to language, so a per-language score mixes that language's question set with the model's ability. The published paper gives 89,107 questions, while the ACL Anthology abstract page gives 93,536."
 citation: "https://aclanthology.org/2025.emnlp-main.364/"
 worked_examples:
   - task_type: "Civil law (Chinese)"
@@ -94,7 +93,7 @@ worked_examples:
     checks: "Current, jurisdiction-specific legal knowledge in the language's own tradition."
     scoring: "Accuracy (% correct)."
 tags: [multilingual, knowledge, reasoning, multiple-choice, native]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://aclanthology.org/2025.emnlp-main.364/", title: "NOVA-63: Native Omni-lingual Versatile Assessments of 63 Disciplines (EMNLP 2025 Main)", trust: 0.95 }
   - { url: "https://aclanthology.org/2025.emnlp-main.364.pdf", title: "NOVA-63 paper PDF (ACL Anthology)", trust: 0.95 }
@@ -102,30 +101,20 @@ related: [benchmark/include, benchmark/mmlu-prox, benchmark/mmmlu]
 ---
 
 ## What It Tests
-Expert-level knowledge across 63 academic disciplines — the "63" in the name is disciplines, not
-languages. It spans STEM, medicine, law, humanities and professional fields, in 14 languages,
-using questions written natively in each language rather than translated from English.
+Academic knowledge in **14 languages**, on questions sourced from native speakers rather than translated.
+
+- **63 disciplines** — the "63" counts secondary disciplines, under 13 primary ones.
+- **8 language families** — the paper says they cover about 69% of the global population.
 
 ## How It Scores
-Accuracy over 93,536 questions, broken down by language, by language family, and by discipline.
-Because every item survives multi-level difficulty screening, top models sit far below the
-ceiling — the strongest public results reported are in the high-50s percent — which keeps the
-benchmark discriminative where translated tests have saturated.
+**Accuracy**, the proportion of questions answered correctly, broken down by language, language family and discipline.
 
 ## Format
-Multiple-choice questions sourced from native exam material in each of the 14 languages. A
-curation pipeline combines large-language-model-assisted formatting, human expert quality
-verification, and difficulty screening; items are not parallel translations, so each language's
-set is its own native content.
+Multiple-choice questions in each language's own content. The pipeline keeps questions large LLMs answered with under 50% accuracy, builds wrong options from incorrect LLM solutions, and has every candidate reviewed manually.
 
 ## Limitations
-It trades breadth for depth: 14 languages (not the 40-plus of INCLUDE or the 100-plus of Global
-PIQA) but 63 disciplines with hard, screened questions. Non-parallel native content means a
-per-language accuracy blends the local question mix with model ability, so raw cross-language
-gaps are less clean than on a parallel set like MMMLU.
+- **Not parallel.** Each language has its own questions, so cross-language gaps mix content and ability.
+- **Two counts.** 89,107 questions in the paper; 93,536 on the Anthology abstract page.
 
 ## Example
-Rather than translating a US bar-exam question into Chinese, NOVA-63 draws an actual
-Chinese-law question authored in Chinese, and an actual Russian-medicine question authored in
-Russian. This native sourcing is the point: it measures knowledge as it exists in each language's
-own academic tradition, avoiding the translationese and Western framing of translated benchmarks.
+Each item is a native-language question with its options and one correct answer, extracted from source material by an LLM and then checked by native-speaking reviewers. The model picks an option, and accuracy is reported per language, language family and discipline.

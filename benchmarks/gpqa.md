@@ -5,17 +5,16 @@ slug: gpqa
 schema_version: 1.0
 title: "GPQA"
 name: GPQA
-category: Frontier / Hardest
-description: "Graduate-level 'Google-proof' science questions in physics, chemistry, and biology."
-what_is_it: "448 hard multiple-choice questions written by PhD-level domain experts and validated to be difficult even for skilled non-experts with web access. The 'Diamond' subset (198 questions) is the highest-quality, most-cited slice."
-why_people_use_it: "It is one of the few knowledge benchmarks not yet saturated. Because questions are 'Google-proof', a high score reflects genuine expert reasoning rather than retrieval or memorization."
+category: Knowledge & Academic Reasoning
+description: "A Graduate-Level Google-Proof Q&A benchmark: 448 multiple-choice questions in biology, physics and chemistry written by domain experts."
+what_is_it: "GPQA was introduced by Rein et al. (2023). Its main set has 448 multiple-choice questions written by domain experts in biology, physics and chemistry; the full set (GPQA Extended) has 546 questions and the highest-quality subset (GPQA Diamond) has 198. In the paper, experts with or pursuing PhDs in the field reached 65% accuracy (74% after discounting mistakes they identified in retrospect), while skilled non-experts reached 34% despite spending over 30 minutes per question with unrestricted web access."
+why_people_use_it: "The authors made the questions hard enough that searching the web does not answer them (\"Google-proof\"), to support scalable-oversight experiments in which humans must supervise AI answers they cannot check easily."
 examples:
   - "Why does the proton have a mass of ~938 MeV/c^2 despite being made of quarks with a combined bare mass of only ~9 MeV/c^2? (multiple choice; correct answer attributes ~99% of the mass to QCD binding energy)"
-method: "0-shot or few-shot multiple-choice; frontier chat models are usually run 0-shot with chain-of-thought. GPQA Diamond (198 Qs) is the standard reporting subset."
+method: "Multiple choice: the model chooses one of four options per question, zero-shot or few-shot, with or without step-by-step reasoning. Reports name the subset used (main, Extended or Diamond)."
 metric: "Accuracy (% correct)."
-format: "0-shot CoT multiple-choice (4 options)."
-saturation: low
-limitations: "Small dataset (448 total / 198 Diamond), so scores have wide confidence intervals. Experts occasionally disagree on gold answers. As a headline frontier metric it is now heavily optimized for, and reasoning models have begun climbing it fast — watch for contamination as it ages."
+format: "Multiple choice, four options."
+limitations: "The sets are small (198 to 546 questions), so scores have wide uncertainty. The authors estimate that 74% of GPQA Extended questions have uncontroversially correct answers, expecting a higher rate on the main and Diamond subsets. Results on different subsets are not comparable; GPQA Diamond has its own record."
 citation: "https://arxiv.org/abs/2311.12022"
 worked_examples:
   - task_type: "Graduate physics (QCD)"
@@ -93,31 +92,30 @@ worked_examples:
       why: "Enantiotopic groups are equivalent in an achiral environment; the correct term is diastereotopic — a subtle topicity distinction that trips non-experts."
     checks: "Applying the homotopic/enantiotopic/diastereotopic hierarchy to predict NMR inequivalence."
     scoring: "Accuracy (% correct) on GPQA Diamond."
-tags: [frontier, science, multiple-choice, reasoning]
-updated: 2026-08-02
+tags: [science, expert-questions, multiple-choice, reasoning]
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2311.12022", title: "GPQA: A Graduate-Level Google-Proof Q&A Benchmark (Rein et al., 2023)", trust: 0.95 }
-related: [benchmark/mmlu-pro]
+  - { url: "https://ar5iv.labs.arxiv.org/html/2311.12022", title: "GPQA paper, full text (ar5iv)", trust: 0.95 }
+related: [benchmark/gpqa-diamond, benchmark/mmlu-pro]
 ---
 
 ## What It Tests
-Deep, expert-level reasoning in physics, chemistry, and biology — the kind of question a domain PhD
-can answer but a smart generalist with a search engine cannot. It probes whether a model has
-internalized graduate-level scientific understanding, not just facts.
+**Graduate-level science** in biology, physics and chemistry that a skilled non-expert cannot answer with a web search.
 
 ## How It Scores
-Accuracy on multiple-choice items. Skilled non-experts (with web access) score ~34%; domain experts
-score ~65–74%. Random baseline is 25%. Because GPQA Diamond has only 198 questions, each question is
-worth ~0.5%, so single-run scores are noisy — report averaged runs.
+**Accuracy** on multiple-choice questions. Paper baselines:
+
+- **Experts** — 65% (74% discounting clear mistakes).
+- **Skilled non-experts with web access** — 34%.
 
 ## Format
-Reported 0-shot with chain-of-thought for chat and reasoning models; the model reasons then commits
-to a letter. Four answer options.
+Four-option multiple choice. Three sets: Extended (546), main (448) and Diamond (198).
 
 ## Limitations
-The dataset is small, which makes the confidence interval large and makes contamination cheap once
-items circulate. Expert disagreement introduces label noise. As with any headline frontier metric,
-labs now optimize for it directly, so a sudden jump warrants scrutiny.
+- **Small.** Wide confidence intervals.
+- **Label quality.** The authors estimate 74% of Extended questions are uncontroversially correct.
+- **Subset matters.** Always state which set a score is on.
 
 ## Example
 "In quantum chromodynamics, why does the proton weigh ~938 MeV/c² when its three valence quarks have

@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "WinoGrande"
 name: WinoGrande
 category: Knowledge & Academic Reasoning
-description: "Large-scale Winograd-style pronoun-resolution problems testing common-sense coreference."
-what_is_it: "A 44,000-item benchmark of fill-in-the-blank sentences where a pronoun or blank must be resolved to the correct noun using common sense. It scales up the classic Winograd Schema Challenge and uses adversarial filtering (AfLite) to remove dataset-specific word cues."
-why_people_use_it: "It targets a narrow but important skill — common-sense coreference — and was part of the original HF Open LLM Leaderboard, so historical scores are broadly available."
+description: "44k fill-in-the-blank problems in the style of the Winograd Schema Challenge, where the right referent of a blank needs commonsense."
+what_is_it: "WinoGrande was introduced by Sakaguchi et al. (2019) as a large-scale dataset of 44k problems inspired by the Winograd Schema Challenge (WSC), adjusted to improve scale and hardness. Problems were crowdsourced as twin sentences that differ slightly and flip the answer, then filtered with AfLite, an algorithm that removes problems with machine-detectable embedding associations. Each problem has two options for the blank. In the paper, human performance is 94.0%."
+why_people_use_it: "The authors built it to test whether models have robust commonsense or rely on dataset-specific biases, which they argue led to overestimating machine commonsense on earlier benchmarks."
 examples:
   - "The trophy doesn't fit into the brown suitcase because _ is too large. (correct: the trophy)"
-method: "5-shot two-way choice (Open LLM v1) or 0-shot; the model picks which of two candidate fillers makes the sentence coherent."
+method: "The model chooses which of the two options fills the blank, zero-shot or few-shot."
 metric: "Accuracy (% correct)."
-format: "5-shot (Open LLM v1) or 0-shot, binary choice."
-saturation: high
-limitations: "Binary choice means a 50% random floor and a compressed dynamic range. Frontier models score in the high 80s/90s, so it is saturating. AfLite filtering reduces but does not eliminate spurious cues."
+format: "Two-option fill-in-the-blank; zero-shot or few-shot."
+limitations: "With two options, random guessing scores 50%, which compresses the useful range. The paper argues that algorithmic bias reduction such as AfLite mitigates, but human-written problems still contain annotation artifacts. Scores depend on the number of shots and the scoring method."
 citation: "https://arxiv.org/abs/1907.10641"
 worked_examples:
   - task_type: "Commonsense coreference — relative size"
@@ -84,30 +83,26 @@ worked_examples:
     checks: "Reasoning about containment: a too-short container fails to hold its contents."
     scoring: "Exact-match accuracy on the selected referent."
 tags: [common-sense, coreference, multiple-choice]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/1907.10641", title: "WinoGrande: An Adversarial Winograd Schema Challenge at Scale (Sakaguchi et al., 2019)", trust: 0.95 }
+  - { url: "https://ar5iv.labs.arxiv.org/html/1907.10641", title: "WinoGrande paper, full text (ar5iv)", trust: 0.95 }
 related: [benchmark/hellaswag, benchmark/arc-challenge]
 ---
 
 ## What It Tests
-Common-sense coreference: resolving an ambiguous pronoun or blank to the right entity based on world
-knowledge rather than grammar. Each item comes as a twin pair that differ by one word and flip the
-answer, which defeats models that latch onto surface cues.
+**Commonsense coreference**: filling a blank with the right entity from world knowledge, not grammar.
 
 ## How It Scores
-Accuracy on a binary choice. Random baseline is 50%; human performance is ~94%. The twin-pair design
-means a model must get both members of a pair right to show real understanding, though the headline
-metric scores items independently.
+**Accuracy** on a two-option choice. Random guessing scores 50%; the paper reports 94.0% for humans.
 
 ## Format
-Open LLM v1 used **5-shot**; **0-shot** is also common. The task presents two candidate fillers and
-the model chooses the coherent one.
+A sentence with a blank and two candidate fillers. Problems come as twin sentences that flip the answer.
 
 ## Limitations
-The binary format compresses the score range and caps information per item. It is **saturating** —
-top models are in the high 80s to 90s and clustered. AfLite adversarial filtering trims dataset
-artifacts but cannot guarantee a model is reasoning rather than exploiting residual statistics.
+- **Binary.** A 50% floor compresses the range.
+- **Residual artifacts.** AfLite reduces but does not remove dataset bias.
+- **Setup-dependent.** Shot count and scoring change the number.
 
 ## Example
 "The trophy doesn't fit into the brown suitcase because _ is too large." The blank resolves to **the

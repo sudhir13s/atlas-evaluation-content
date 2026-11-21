@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "C-Eval"
 name: C-Eval
 category: Knowledge & Academic Reasoning
-description: "The first comprehensive Chinese-language knowledge-and-reasoning suite — 13,948 exam questions across 52 disciplines and four difficulty levels."
-what_is_it: "A Chinese analog of MMLU: 13,948 multiple-choice questions drawn from real Chinese exams (middle school, high school, college, professional), spanning 52 disciplines, plus a 'C-Eval Hard' subset of the most reasoning-heavy science subjects."
-why_people_use_it: "It is the de facto measure of a model's knowledge and reasoning in Chinese, exposing the gap between English-centric and Chinese-oriented models that English benchmarks miss."
+description: "A Chinese evaluation suite of 13,948 four-choice exam questions across 52 disciplines and four difficulty levels, with a harder C-Eval Hard subset."
+what_is_it: "C-Eval (Huang et al., 2023; Shanghai Jiao Tong University, Tsinghua University, University of Edinburgh and others) tests advanced knowledge and reasoning in a Chinese context. Its 13,948 multiple-choice questions span 52 disciplines from humanities to science and engineering, at middle school, high school, college and professional level. C-Eval Hard is a subset of very challenging subjects, such as advanced mathematics and college physics."
+why_people_use_it: "The authors present it as the first comprehensive Chinese evaluation suite for foundation models, built to compare English- and Chinese-oriented models in a Chinese context (2023 paper)."
 examples:
   - "A college-level advanced-mathematics item asking to evaluate a limit or choose the correct derivative, presented in Chinese with four options (A-D) and one correct answer."
-method: "Answer-only and chain-of-thought prompting, few-shot (typically 5-shot), over 13,948 4-way multiple-choice questions; the predicted letter is parsed and matched to the key."
-metric: "Accuracy (% correct), reported overall and per difficulty level; C-Eval Hard reported separately."
-format: "4-way multiple-choice in Chinese; answer-only or few-shot chain-of-thought."
-saturation: high
-limitations: "Released in 2023 and now largely saturated — strong bilingual models exceed 90%, well above GPT-4's original ~68.7%. Exam-sourced questions raise contamination risk, and the multiple-choice format tests recognition, not Chinese generation or long-form reasoning."
+method: "The paper evaluates zero-shot and five-shot answer-only prompting and five-shot chain-of-thought prompting, with the five exemplars taken from the development split; a regular expression extracts the chosen letter. Test-split labels are private: the paper has users submit test predictions to the authors' leaderboard site for scoring."
+metric: "Accuracy (% correct), averaged over subjects; C-Eval Hard is reported separately."
+format: "Four-choice multiple-choice in Chinese; splits are dev (260), validation (1,346) and test (12,342)."
+limitations: "Exam questions from national tests are often widely available online, so the authors kept test labels private to limit contamination. Multiple choice tests picking an answer, not writing Chinese text."
 citation: "https://arxiv.org/abs/2305.08322"
 worked_examples:
   - task_type: "College advanced mathematics (item in Chinese; shown here in English)"
@@ -94,42 +93,33 @@ worked_examples:
     checks: "Matching an organelle to its function and distinguishing photosynthesis from respiration."
     scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, multiple-choice, chinese, multilingual, reasoning]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2305.08322", title: "C-Eval: A Multi-Level Multi-Discipline Chinese Evaluation Suite for Foundation Models (Huang et al., 2023)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2305.08322", title: "C-Eval, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/ceval/ceval-exam", title: "C-Eval dataset (ceval/ceval-exam)", trust: 0.9 }
-  - { url: "https://cevalbenchmark.com/", title: "C-Eval official leaderboard", trust: 0.9 }
 related: [benchmark/mmlu, benchmark/mmlu-pro]
 ---
 
 ## What It Tests
-Broad knowledge and reasoning **in Chinese**, sourced from authentic Chinese exams. The 52
-disciplines span STEM, social science, humanities, and other professional fields, and each item is
-tagged with one of four difficulty levels: middle school, high school, college, and professional.
+**Knowledge and reasoning in Chinese**, from Chinese exam questions.
 
-Because the content and language are Chinese-native, it surfaces capability gaps that English
-benchmarks like MMLU cannot — an English-tuned model can score well on MMLU yet stumble here.
+- **52 disciplines** — humanities to science and engineering, grouped as STEM, humanities, social science and other.
+- **Four levels** — middle school, high school, college and professional.
+- **C-Eval Hard** — very challenging subjects such as advanced mathematics and college physics.
 
 ## How It Scores
-Accuracy across all 13,948 questions, reported overall and broken down by difficulty. A companion
-**C-Eval Hard** subset isolates the most reasoning-intensive science subjects (e.g. advanced math,
-physics) as a harder signal.
+**Accuracy**, averaged over subjects.
 
-At release only GPT-4 cleared 60% average; today strong bilingual models sit above 90%, which is why
-the suite is treated as largely solved for frontier systems.
+- **Settings in the paper** — zero- and five-shot answer-only, five-shot chain-of-thought.
+- **Private test labels** — test predictions are scored by the authors' leaderboard site; dev and validation labels are public.
 
 ## Format
-Four-way multiple-choice (A-D) in Chinese. Models are run answer-only or with few-shot chain-of-
-thought (5-shot is common); the emitted letter is parsed and compared to the key. The public split
-withholds test answers, which are scored via the official leaderboard.
+Every question has exactly four choices and one correct answer, in Chinese. Splits: dev 260, validation 1,346, test 12,342 (13,948 in total).
 
 ## Limitations
-It is saturated for frontier models, so it no longer discriminates at the top. Drawing from public
-exams means real contamination exposure, and the multiple-choice recognition format says nothing
-about Chinese generation, dialogue, or long-context ability. It is knowledge-centric by design.
+- **Contamination.** National exam questions are often online; test labels are kept private for that reason.
+- **Multiple choice.** It does not test writing Chinese text.
 
 ## Example
-A college-level item might present, in Chinese, a definite integral to evaluate with four candidate
-values as options A-D. The distractors correspond to common algebra-sign or bound-substitution
-mistakes, so a model that sets up the integral but slips on a sign lands on a plausible wrong option
-rather than the correct one — the score turns on the reasoning, not on decoding the language alone.
+Figure 2 of the paper shows a college-economics question with its four options and an English translation. A model reads the Chinese question and options and answers with one letter, which is compared with the key.

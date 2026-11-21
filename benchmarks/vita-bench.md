@@ -3,19 +3,18 @@ id: benchmark/vita-bench
 type: benchmark
 slug: vita-bench
 schema_version: 1.0
-title: "VITA-Bench"
+title: "VitaBench"
 name: "VitaBench"
 category: Agent & Tool Use
-description: "A hard, real-world agent benchmark with 66 tools across food delivery, in-store, and travel, scored by a rubric-based evaluator."
-what_is_it: "VitaBench (Versatile Interactive Tasks Benchmark) tests LLM agents on messy, life-serving tasks drawn from food delivery, in-store consumption, and online travel. Each task hands the agent a rich environment — user profile, time-and-place context, and service databases — and 66 composable tools, then asks it to reason over long horizons, clarify ambiguous instructions, and track shifting user intent, with no domain-specific policy scaffolding to lean on."
-why_people_use_it: "Most tool-use benchmarks are single-domain and policy-guided; VitaBench removes those crutches and composes cross-scenario tasks, so it is one of the most realistic and difficult interactive-agent tests available. Its error analysis pinpoints *where* agents fail (reasoning vs tool use vs interaction), which makes it useful for diagnosing agent weaknesses, not just ranking them."
+description: "An interactive agent benchmark with 66 tools across food delivery, in-store consumption and online travel, scored by a rubric-based sliding-window evaluator."
+what_is_it: "VitaBench (He et al., 2025, Meituan LongCat Team) tests LLM agents on interactive tasks drawn from food delivery, in-store consumption and online travel services, using 66 tools. A framework without domain-specific policies lets scenarios and tools be composed into 100 cross-scenario tasks (the main results) and 300 single-scenario tasks. Each task is derived from multiple real user requests."
+why_people_use_it: "Tasks require reasoning across time and place, using complex tool sets, clarifying ambiguous instructions and tracking shifting user intent over multi-turn conversations. In the paper (2025), the best model reached about 30% success on cross-scenario tasks and under 50% on single-scenario tasks; its error analysis attributes 61.8% of failures to reasoning, 21.1% to tool use and 7.9% to interaction management."
 examples:
-  - "Cross-scenario: a user planning a trip asks the agent to book a restaurant near their hotel for the evening they arrive, order groceries delivered to the hotel, and stay within a budget — requiring the agent to chain travel, food-delivery, and in-store tools while reasoning over time, location, and the user's profile."
-method: "Each task runs in an isolated environment with annotated user profiles, spatiotemporal context, and service databases; the agent interacts multi-turn with a simulated user and 66 tools. Long-horizon trajectories are graded by a rubric-based sliding-window evaluator that scores diverse valid solution paths rather than matching one gold trajectory. 100 cross-scenario tasks form the main results; 300 single-scenario tasks are also provided."
-metric: "Success rate (task completion). Top models reach only ~30% on the 100 cross-scenario tasks and under 50% on the single-scenario sets."
-format: "Multi-turn interactive dialogue with tool use in a simulated real-world environment."
-saturation: low
-limitations: "Scoring uses a rubric-based LLM evaluator, which is more flexible than exact match but introduces judge subjectivity and cost. The domains are life-services (food, retail, travel), so results do not transfer to coding, science, or web-research agents. The simulated user is an LLM, and the environments — though richly annotated — are synthetic, so real deployment behavior may differ."
+  - "A user request that spans scenarios (for example travel and food delivery), handled over several turns with a simulated user and the 66 tools."
+method: "The agent talks with a simulated user over multiple turns and calls tools in the environment. A rubric-based sliding-window evaluator assesses the long trajectory, allowing diverse valid solution paths."
+metric: "Success rate (task completion)."
+format: "Multi-turn interactive dialogue with tool use; 100 cross-scenario and 300 single-scenario tasks."
+limitations: "Grading relies on a rubric-based LLM evaluator, and the user is simulated by an LLM, so both affect results. The domains are life services (food delivery, in-store, travel)."
 citation: "https://arxiv.org/abs/2509.26490"
 worked_examples:
   - task_type: "Cross-scenario interactive agent (travel + food-delivery + in-store)"
@@ -69,46 +68,32 @@ worked_examples:
     checks: "Whether an agent recovers from a failed tool call by finding a valid alternative instead of giving up."
     scoring: "Success rate — rubric credits recovering to a completed reservation over abandoning the task."
 tags: [agent, tool-use, multi-turn, interactive, real-world]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2509.26490", title: "VitaBench: Benchmarking LLM Agents with Versatile Interactive Tasks in Real-world Applications (He et al., 2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2509.26490", title: "VitaBench, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://vitabench.github.io/", title: "VitaBench project page (code, dataset, leaderboard)", trust: 0.9 }
 related: [benchmark/tau2-bench, benchmark/bfcl-v4, benchmark/deepplanning]
 ---
 
 ## What It Tests
-Whether an agent can handle *versatile, real-world* interactive tasks — the kind of messy, multi-step
-requests people actually make in food-delivery, in-store, and travel apps. Each task gives the agent a
-lot to juggle at once: a user profile, spatiotemporal context (where and when), large service
-databases, and **66 tools**, with the domain-specific policies deliberately stripped out so tools and
-scenarios can be freely composed. The agent must reason over long horizons, ask clarifying questions
-when instructions are ambiguous, and keep up as the user's intent shifts mid-conversation.
+Whether an agent can complete **interactive real-world tasks** in food delivery, in-store consumption and online travel.
+
+- **66 tools**, composable across scenarios without domain-specific policies.
+- **Skills** — reasoning over time and place, clarifying ambiguous instructions, tracking shifting intent.
 
 ## How It Scores
-The metric is **success rate**. Because a long interactive task has many valid solution paths, VitaBench
-does not match against one gold trajectory; instead a **rubric-based sliding-window evaluator** grades
-segments of the trajectory against criteria, accommodating diverse strategies and the stochasticity of a
-simulated user. The results are humbling: leading models reach only about **30%** on the 100
-cross-scenario tasks and **under 50%** on the single-scenario sets. The paper's error breakdown finds
-reasoning errors dominate (~62%), followed by tool-usage errors (~21%) and interaction-management
-failures (~8%), with agents showing poor self-awareness and weak error recovery.
+**Success rate.** A rubric-based sliding-window evaluator assesses the long trajectory, so different valid solution paths can pass.
+
+- **Paper's results (2025)** — about 30% on cross-scenario and under 50% on single-scenario tasks for the best model.
+- **Error analysis** — reasoning 61.8%, tool use 21.1%, interaction management 7.9%.
 
 ## Format
-Multi-turn interactive dialogue. The agent talks to a simulated user and operates the 66 tools inside an
-isolated, richly annotated environment until the task is done or abandoned. 100 cross-scenario tasks are
-the headline set; 300 single-scenario tasks provide finer-grained coverage.
+Multi-turn dialogue with a simulated user and tool calls in the environment: 100 cross-scenario tasks (main results) and 300 single-scenario tasks.
 
 ## Limitations
-Grading relies on a rubric-based LLM evaluator — more forgiving of alternate solutions than exact match,
-but it adds judge subjectivity and evaluation cost. The scope is life-services (food, in-store, travel),
-so scores do not generalize to coding, scientific, or open-web agents. The user is LLM-simulated and the
-environments, while detailed, are synthetic, so behavior in real deployments can diverge.
+- **LLM in the loop.** A rubric-based LLM evaluator and an LLM-simulated user.
+- **Life services only.** Food delivery, in-store and travel.
 
 ## Example
-A user says: "I land in Kyoto Friday evening — find me a well-reviewed ramen place near my hotel for
-that night, and have breakfast groceries delivered to the hotel for Saturday morning, keep it under
-¥8,000 total." A strong agent chains travel tools (resolve the hotel and arrival time), in-store/food
-tools (search and reserve the restaurant, respecting opening hours and location), and delivery tools
-(place a grocery order within the window and budget), asking for clarification when the request is
-under-specified. The rubric evaluator credits partial progress and alternate valid orderings — and the
-~30% top-model success rate shows how rarely agents get the whole chain right.
+A task derived from real user requests is given to the agent through the simulated user; the agent asks for missing details, calls the scenario tools, and the evaluator checks the trajectory against the task's rubric. Appendix C of the paper shows a full example trajectory.

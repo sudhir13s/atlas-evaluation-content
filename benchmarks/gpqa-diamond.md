@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "GPQA Diamond"
 name: GPQA Diamond
 category: Knowledge & Academic Reasoning
-description: "The hardest 198-question subset of GPQA — expert-written, Google-proof science questions where both experts agreed and most non-experts failed."
-what_is_it: "A curated 198-question slice of GPQA (Graduate-Level Google-Proof Q&A). It keeps only items where both independent domain experts answered correctly and the majority of skilled non-experts got it wrong even with web access — the highest-confidence, hardest questions in the set."
-why_people_use_it: "It is the go-to frontier-reasoning benchmark on modern model cards and leaderboards. Being 'Google-proof' and expert-validated, it measures deep PhD-level reasoning that search and shallow recall cannot shortcut."
+description: "The 198-question highest-quality subset of GPQA: expert-written biology, physics and chemistry questions that both expert validators answered correctly and most non-experts did not."
+what_is_it: "GPQA Diamond is the subset that the GPQA authors (Rein et al., 2023) call their highest-quality one. It includes only questions where both expert validators answer correctly (or the second makes a demonstrable mistake) and the majority of non-expert validators answer incorrectly. GPQA's experts have or are pursuing PhDs in the field."
+why_people_use_it: "GPQA was built for scalable-oversight experiments: its questions are hard for skilled non-experts even with unrestricted web access ('Google-proof'). The diamond set keeps the questions with the strongest expert agreement."
 examples:
   - "A graduate physics item on the quantum-mechanical selection rules for an electric-dipole transition between two specified atomic states, with four expert-written options where the distractors correspond to plausible but incorrect rule applications."
-method: "Zero-shot chain-of-thought over 198 four-way multiple-choice questions in biology, physics, and chemistry; the final answer letter is parsed and matched to the expert-verified key."
-metric: "Accuracy (% correct); random baseline is 25%."
-format: "4-way multiple-choice; zero-shot (or few-shot) chain-of-thought."
-saturation: medium
-limitations: "Only 198 questions, so a handful of items swings the score and confidence intervals are wide. It covers just biology, physics, and chemistry, is multiple-choice (recognition, not derivation), and frontier reasoning models are climbing past ~85%, eroding its headroom."
+method: "Four-option multiple choice. The paper's baselines use zero-shot, few-shot, zero-shot chain-of-thought and few-shot chain-of-thought prompting; the chosen letter is compared with the key."
+metric: "Accuracy (% correct); random choice scores 25%."
+format: "Four-option multiple choice in biology, physics and chemistry, 198 questions."
+limitations: "198 questions, so each question moves the score by about half a percentage point. Three science domains only, in multiple-choice form. The paper reports expert validator accuracy of 81.3% on the diamond set but notes that validator accuracies on it are skewed by the selection rule. The dataset carries a canary string so training corpora can filter it out."
 citation: "https://arxiv.org/abs/2311.12022"
 worked_examples:
   - task_type: "Graduate physics — atomic electric-dipole selection rules"
@@ -94,45 +93,30 @@ worked_examples:
     checks: "Applying the correct free-energy spontaneity criterion rather than the total-entropy statement of the second law."
     scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, reasoning, science, multiple-choice, frontier, google-proof]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2311.12022", title: "GPQA: A Graduate-Level Google-Proof Q&A Benchmark (Rein et al., 2023)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2311.12022", title: "GPQA, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/Idavidrein/gpqa", title: "GPQA dataset (Idavidrein/gpqa, includes gpqa_diamond)", trust: 0.9 }
-  - { url: "https://epoch.ai/benchmarks/gpqa-diamond", title: "GPQA Diamond leaderboard (Epoch AI)", trust: 0.9 }
 related: [benchmark/gpqa, benchmark/supergpqa, benchmark/mmlu-pro]
 ---
 
 ## What It Tests
-Deep, graduate-level science reasoning in **biology, physics, and chemistry** that cannot be looked
-up. GPQA's headline property is being "Google-proof": skilled non-expert validators, given over 30
-minutes and open web access, still reach only ~34% on the full set.
+**Graduate-level science questions** in biology, physics and chemistry, written by domain experts.
 
-Diamond is the hardest slice. From GPQA's 448 expert-written questions, it keeps the 198 where **both
-expert annotators answered correctly and the majority of non-experts answered wrong** — maximizing
-both difficulty and label confidence.
+- **Google-proof** — on GPQA (448 questions), skilled non-expert validators reached 34% despite over 30 minutes with unrestricted web access (2023 paper).
+- **Highest quality** — Diamond keeps questions where both expert validators agree and at most one in three non-experts answered correctly.
 
 ## How It Scores
-Accuracy over 198 four-way multiple-choice questions, with a 25% random baseline. On the full GPQA,
-domain experts score ~65% and skilled non-experts ~34%; Diamond selects the items experts nailed and
-non-experts missed, so it is a clean expert-versus-model gap.
-
-Because the set is small, scores carry meaningful variance — a few flipped items move the number by a
-percent or more, so single-run comparisons should be read with that noise in mind.
+**Accuracy** on 198 four-option questions; random choice scores 25%. The paper's own sets are extended (546), main (448) and diamond (198).
 
 ## Format
-Standard 4-way multiple-choice, evaluated zero-shot (sometimes few-shot) with chain-of-thought: the
-model reasons through the problem, then emits a final letter that is regex-parsed. It is a stable,
-widely reported protocol, which is part of why Diamond became the default frontier science benchmark.
+Four-option multiple choice. The paper's baselines include zero-shot, few-shot and chain-of-thought prompting; the final letter is compared with the key.
 
 ## Limitations
-Its 198-question size makes it statistically noisy and easy to overfit to. Coverage is only three
-science domains and the format is recognition, not open derivation. Frontier reasoning models are now
-pushing past ~85%, so its discriminating headroom is shrinking — hence the move to larger successors
-like SuperGPQA.
+- **Small set.** One question is about 0.5 percentage points.
+- **Narrow.** Three science domains, multiple choice only.
+- **Selection effect.** Validator accuracies on Diamond are skewed by how it was selected, as the paper notes.
 
 ## Example
-A physics item might ask which selection rule permits an electric-dipole transition between two named
-atomic states, offering four options. The distractors encode believable errors — applying a
-magnetic-dipole rule, or ignoring the change-in-parity requirement — so a model that half-remembers
-"selection rules" without reasoning through the specific quantum numbers lands on a wrong but tempting
-choice. Web search does not help, which is the whole design.
+The dataset carries a canary string so training corpora can filter it out, so no question is reproduced here. Each item is a question with four options written by a PhD-level expert; the model answers with one letter, scored against the key.

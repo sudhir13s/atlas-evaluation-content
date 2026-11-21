@@ -7,16 +7,15 @@ title: "LongBench v2"
 name: LongBench v2
 category: Long Context
 description: "503 hard multiple-choice questions over contexts from 8k to 2M words, testing deep understanding and reasoning across six real-world long-context task types."
-what_is_it: "LongBench v2 is a long-context benchmark of 503 challenging multiple-choice questions written by ~100 highly educated annotators. Each question comes with a long context (8k to 2M words) and four answer options, and is designed so that skimming or retrieval is not enough — the answer requires genuine understanding and reasoning over the whole document."
-why_people_use_it: "The original LongBench and simple retrieval tests saturated. LongBench v2 restores difficulty — human experts score only 53.7% under a 15-minute limit — so it separates models that truly reason over long inputs from those that merely locate a passage. It is a standard reference for long-context reasoning."
+what_is_it: "LongBench v2 (Bai et al., 2024; Tsinghua University and Zhipu.AI) has 503 multiple-choice questions with four options each, over contexts of 8k to 2M words. Data came from nearly 100 highly educated people with diverse professional backgrounds, and each question passed an automated check (three models must not all answer it) and a manual review."
+why_people_use_it: "It targets long-context problems that need deep understanding and reasoning across real-world tasks; annotators were told not to write basic information-retrieval questions. The paper reports human experts at 53.7% accuracy under a 15-minute limit (2024 paper)."
 examples:
   - "Given a full novel as context, a single-document QA item asks which character's motivation best explains an event late in the book — answerable only by tracking information across chapters (one correct option of four)."
   - "Given an entire code repository, a code-repository-understanding item asks what a change to one function will break elsewhere (one correct option of four)."
-method: "Zero-shot multiple-choice: the long context plus a four-option question go in the prompt; the chosen letter is parsed and compared to the gold answer. 503 questions span six task categories. Chain-of-thought prompting is commonly reported alongside direct answering."
-metric: "Accuracy (% of questions answered correctly); random baseline is 25% for the 4-way choice."
-format: "Zero-shot, 4-way multiple-choice over long contexts (8k-2M words)."
-saturation: medium
-limitations: "Multiple-choice with four options means a 25% guessing floor and sensitivity to option ordering and answer parsing. The very long contexts make evaluation expensive and force truncation on models with smaller windows, confounding comparisons. Being reasoning-over-choices, it under-tests long-form generation and faithful citation."
+method: "The paper uses two settings: zero-shot, and zero-shot with chain-of-thought (the model first writes a chain of thought, then gives the final answer). Inputs longer than a model's context window are truncated from the middle."
+metric: "Accuracy (% of questions answered correctly); random guessing scores 25%."
+format: "Four-option multiple choice over long contexts: 180 short (under 32k words), 215 medium (32k-128k) and 108 long (over 128k) questions, in six task categories."
+limitations: "Four options give a 25% guessing baseline. Models with smaller context windows see middle-truncated inputs, so their scores reflect truncation too. Multiple choice does not test long-form writing."
 citation: "https://arxiv.org/abs/2412.15204"
 worked_examples:
   - task_type: "Single-document QA over a full novel"
@@ -95,41 +94,33 @@ worked_examples:
     checks: "Whether a model evaluates a condition across an entire structured row rather than seizing on one extreme value."
     scoring: "Accuracy over 4-option questions (25% random baseline); the parsed letter is compared to the gold answer."
 tags: [long-context, reasoning, multiple-choice]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2412.15204", title: "LongBench v2: Towards Deeper Understanding and Reasoning on Realistic Long-context Multitasks (Bai et al., 2024)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2412.15204", title: "LongBench v2, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://aclanthology.org/2025.acl-long.183/", title: "LongBench v2 (ACL 2025)", trust: 0.95 }
 related: [benchmark/aa-lcr]
 ---
 
 ## What It Tests
-Deep understanding and reasoning over realistic long documents — not retrieval. The 503 questions
-span six task categories: single-document question answering (QA), multi-document QA, long
-in-context learning, long-dialogue history understanding, code-repository understanding, and long
-structured-data understanding. Contexts range from 8,000 to 2 million words, so a model must hold
-and reason over far more than a single passage.
+**Understanding and reasoning over long, real documents**, not passage lookup. Six task categories:
+
+- single-document QA and multi-document QA
+- long in-context learning
+- long-dialogue history understanding
+- code-repository understanding
+- long structured-data understanding
 
 ## How It Scores
-Accuracy across the 503 four-option questions, with a 25% random baseline. The set was built to be
-hard: ~100 highly educated annotators wrote and vetted the questions, and human experts reached only
-53.7% under a 15-minute time limit. At release, the best model answering directly hit 50.1%, while a
-reasoning model (o1-preview) reached 57.7% — the first to clear the human baseline, and evidence
-that explicit reasoning, not just a bigger context window, drives the score.
+**Accuracy** on 503 four-option questions; random guessing scores 25%. The paper reports human experts at 53.7% under a 15-minute limit.
 
 ## Format
-Zero-shot multiple choice: the long context and a four-option question are placed in the prompt and
-the model's chosen letter is parsed. Both direct-answer and chain-of-thought protocols are reported;
-chain-of-thought generally helps, so cross-report comparisons must match the protocol.
+The long context and a four-option question go in the prompt, zero-shot or zero-shot with chain-of-thought. Contexts run from 8k to 2M words: 180 short, 215 medium and 108 long questions.
 
 ## Limitations
-Four options impose a 25% guessing floor and make scores sensitive to option ordering and answer
-parsing. The extreme context lengths are costly to run and exceed some models' windows, forcing
-truncation that muddies comparison. As a multiple-choice reasoning test it says nothing about
-long-form generation quality or whether a model can cite the right span.
+- **Guessing floor.** 25% by chance.
+- **Truncation.** Inputs beyond a model's window are cut from the middle.
+- **Multiple choice.** Long-form writing is not tested.
 
 ## Example
-A single-document QA item supplies an entire novel and asks which of four explanations best accounts
-for a late plot event. The correct option depends on details introduced chapters apart; a distractor
-paraphrases a locally plausible but globally wrong reading. A model that retrieves only the nearest
-relevant paragraph — without integrating the earlier setup — picks the distractor, which is the
-failure mode LongBench v2 is designed to surface.
+A code-repository-understanding item gives a whole repository as context with one question and four options. Annotators were asked not to write basic retrieval questions, so the answer needs reasoning across the repository; the model's chosen letter is compared with the key.

@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "Global PIQA"
 name: Global PIQA
 category: Multilingual
-description: "Hand-built physical commonsense reasoning across 100+ languages and cultures."
-what_is_it: "Global PIQA is a physical-commonsense reasoning benchmark hand-written by 335 researchers from 65 countries, covering 116 language varieties — a multilingual, culturally-grounded successor to the English PIQA (Physical Interaction Question Answering) test."
+description: "A participatory commonsense reasoning benchmark in the format of PIQA, built by hand for 141 language varieties."
+what_is_it: "Global PIQA (Chang et al., 2025) was constructed by hand by over 350 researchers from over 65 countries. Its 141 language varieties cover five continents, 19 language families and 24 writing systems. Each item follows English PIQA (Physical Interaction: Question Answering): a goal and two solutions, one correct. Answering needs commonsense reasoning such as physical or temporal reasoning, cultural knowledge or basic world knowledge."
 why_people_use_it: "It tests everyday physical know-how, not expert knowledge, in over 100 languages including many low-resource ones — and because over half the questions reference local foods, customs, and traditions, it exposes cultural blind spots that translated benchmarks hide."
 examples:
   - "Given a goal like preparing a local dish, choose which of two everyday physical actions correctly achieves it — with the objects and customs drawn from the question's own culture."
-method: "Two-choice selection: given a goal, pick the correct physical solution over a plausible distractor; scored across 116 language varieties, in both a parallel split and a non-parallel culturally-specific split."
-metric: "Accuracy (% correct); random baseline is 50%."
-format: "2-way multiple-choice (goal + two candidate solutions); 0-shot."
-saturation: medium
-limitations: "Because it is two-choice, random guessing already scores 50%, so absolute numbers look high; the signal is the *gap* between high- and low-resource languages. Hand authoring by volunteers means per-language set sizes and difficulty vary, and coverage, while broad, is still uneven across the 116 varieties."
+method: "Each item can be run in a cloze setting (comparing completion probabilities, for pretrained-only models) or a generation setting (prompted, for instruction-tuned models). The non-parallel split has items written in each language, many culture-specific; the parallel split translates culturally agnostic items into 131 language varieties for direct comparison."
+metric: "Accuracy (% correct); with two solutions, random choice scores 50%."
+format: "Two-way choice (a goal and two candidate solutions). The official non-parallel split has exactly 100 examples per language for 136 language codes; every example was verified by a native speaker."
+limitations: "The authors note that each language has only 100 examples. The non-parallel split is not translated, so its difficulty can vary across languages. Two choices mean 50% by chance."
 citation: "https://arxiv.org/abs/2510.24081"
 worked_examples:
   - task_type: "Physical commonsense (Swahili)"
@@ -84,39 +83,34 @@ worked_examples:
     checks: "Reasoning about a culturally-specific food transformation, not a generic mixing action."
     scoring: "Accuracy (% correct); random baseline is 50%."
 tags: [multilingual, commonsense, reasoning, culture, physical]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
-  - { url: "https://arxiv.org/abs/2510.24081", title: "Global PIQA: Evaluating Physical Commonsense Reasoning Across 100+ Languages and Cultures (2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/abs/2510.24081", title: "Global PIQA: Evaluating Commonsense Reasoning Across 100+ Languages and Cultures (Chang et al., 2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2510.24081", title: "Global PIQA, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://github.com/mrlbenchmarks/global-piqa", title: "mrlbenchmarks/global-piqa — official repository", trust: 0.9 }
 related: [benchmark/hellaswag, benchmark/winogrande, benchmark/include]
 ---
 
 ## What It Tests
-Everyday physical commonsense — knowing which of two mundane actions actually accomplishes a goal
-(how to open, carry, cook, or fix ordinary things) — across 116 language varieties spanning five
-continents, 14 language families, and 23 writing systems. It is the multilingual, culturally-aware
-extension of the English PIQA (Physical Interaction Question Answering) benchmark.
+**Everyday commonsense in many languages and cultures**, in the PIQA format.
+
+- **Kinds of reasoning** — physical, temporal, cultural knowledge, basic world knowledge.
+- **Culture-specific** — in the non-parallel split, over 50% of examples reference local foods, customs, traditions or other culture-specific elements.
+- **Coverage** — 141 language varieties, five continents, 19 language families, 24 writing systems.
 
 ## How It Scores
-Accuracy against a 50% random baseline, since each item offers two candidate solutions. The
-headline is the resource gap, not the average: the best model reaches only 80.2% on Sub-Saharan
-African languages versus 95.6% on Western European ones — a 15-point gap — and up to 37 points
-separate the strongest and weakest languages.
+**Accuracy**: the share of items where the model picks the correct solution. Random choice gives 50%. The paper finds weaker performance in lower-resource languages, with up to a 68% accuracy gap between languages in the parallel split (2025 paper).
 
 ## Format
-Each item gives a goal and two physical solutions, one correct; the model picks one, 0-shot. The
-benchmark was built by hand by 335 researchers from 65 countries rather than machine-translated,
-and ships a **parallel** split plus a **non-parallel** split where over 50% of items reference
-local foods, customs, or traditions specific to the language's culture.
+A goal (or sentence beginning, or question) and two solutions, one correct. Pretrained models are scored by completion probability; instruction-tuned models are prompted to choose. Splits:
+
+- **Non-parallel** — 100 examples per language for 136 language codes, written in each language.
+- **Parallel** — culturally agnostic items translated into 131 language varieties.
 
 ## Limitations
-The two-choice format means 50% is free, so raw scores look inflated and only cross-language gaps
-are informative. Volunteer hand-authoring gives uneven set sizes and difficulty across languages,
-and although 100-plus varieties is exceptional coverage, it remains uneven — some varieties have
-far fewer items than others.
+- **Small per language.** 100 examples each, as the authors note.
+- **Uneven difficulty.** Non-parallel items differ by language.
+- **Chance level.** Two choices: 50% by guessing.
 
 ## Example
-A non-parallel item might state a goal tied to preparing a regional dish and offer two everyday
-physical actions, only one of which works given local ingredients and utensils. A model trained
-mostly on English web text may know the abstract physics yet miss the culturally-specific setup —
-which is precisely the failure Global PIQA is designed to surface.
+Figure 1 of the paper shows the format: one goal with two candidate solutions. A pretrained model is scored on which solution it finds more probable; an instruction-tuned model is asked which solution is correct.

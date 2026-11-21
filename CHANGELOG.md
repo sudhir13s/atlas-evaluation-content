@@ -5,6 +5,20 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Content (benchmark accuracy pass)
+
+- **Changed** the 43 benchmark records written before November 2026, each checked against the
+  benchmark's own paper or maker page. Names, authors, years, dataset sizes, splits, formats and
+  metrics now match those sources, and `sources` lists the pages used.
+- **Removed** the `saturation` field from those records, together with prose about saturation,
+  difficulty and model scores that no source stated. A paper-stated figure that remains, such as a
+  human baseline, is attributed to the paper and dated.
+- **Changed** `gpqa` moves from "Frontier / Hardest" to "Knowledge & Academic Reasoning", the
+  category of `gpqa-diamond`, because both describe graduate-level science questions.
+- **Changed** in 27 records, the `examples` field or the `Example` body section now quotes an item
+  from the benchmark's paper or dataset, or describes the task format. The `worked_examples` panels
+  are unchanged.
+
 ### Content (Professional Work category)
 
 - **Added** the benchmark category "Professional Work" to the `category` enum of

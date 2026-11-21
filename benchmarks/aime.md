@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "AIME"
 name: AIME
 category: Math & Logic
-description: "American Invitational Mathematics Examination problems — a hard, contamination-resistant math frontier."
-what_is_it: "Problems from the AIME, a selective 15-question US high-school competition whose answers are always integers from 0 to 999. Because a new exam is released each year (AIME I and II), post-cutoff editions serve as a fresh, low-contamination test of advanced mathematical reasoning. The 2024/2025 sets (30 problems) are the common reporting slice."
-why_people_use_it: "It has become the headline math benchmark for reasoning models. The integer-only answer format makes scoring trivial and unambiguous, and using the newest exams sidesteps the contamination that plagues GSM8K and MATH."
+description: "Problems from the American Invitational Mathematics Examination (AIME), a 15-question competition whose answers are integers from 0 to 999."
+what_is_it: "The AIME is run by the Mathematical Association of America (MAA) for students who earned a qualifying score on the AMC 10 or AMC 12. The MAA describes it as a 15-question exam given in two parts of 90 minutes each, with every answer an integer from 0 to 999, and harder than the AMC 10 and AMC 12. Model evaluations use the problems of past exams."
+why_people_use_it: "Every answer is a single integer, so a model's final answer can be checked by exact match without a judge, and each year's exam adds new problems."
 examples:
   - "Every morning Aya walks 9 km and stops for coffee; the walk takes different total times at speeds s and s+2 km/h... find the number of minutes the walk takes at speed s + 1/2. (AIME 2024 I, Problem 1; integer answer 0-999)"
-method: "0-shot or few-shot chain-of-thought; the final integer (0-999) is extracted and exact-matched. Often reported as avg@k / pass@1 over many samples because per-exam variance is high (only 15 problems per exam)."
-metric: "Accuracy (% of problems solved) or avg@k over sampled attempts."
-format: "0-shot CoT; integer exact-match."
-saturation: low
-limitations: "Very small per exam (15 problems), so single-run scores are extremely noisy — averaging over many samples and multiple exams is essential. Integer-only answers mean a right number from wrong reasoning still counts. Once a year's exam is public it becomes contaminable, so only post-cutoff editions are trustworthy."
+method: "The model is given each problem, usually with step-by-step reasoning, and its final integer answer is compared with the official answer. Because there are few problems per exam, evaluators often average accuracy over several runs."
+metric: "Accuracy (% of problems answered correctly), often averaged over several sampled runs."
+format: "0-shot free response; integer exact match."
+limitations: "The AIME is not a benchmark dataset with a paper: which exams and years are used, and how many runs are averaged, differ between reports, so a score needs those details. An exam has only 15 problems, so one problem moves the score by several points. Only the final integer is graded, not the working. Problems from a published exam can appear in later training data."
 citation: "https://maa.org/maa-invitational-competitions/"
 worked_examples:
   - task_type: "Repdigit / algebra (integer answer 0-999)"
@@ -68,34 +67,35 @@ worked_examples:
       why: "Truncated Legendre's formula at 2^4, summing only 50 + 25 + 12 + 6 = 93 and dropping the floor(100/32) = 3 and floor(100/64) = 1 terms."
     checks: "Carrying Legendre's formula through every power of 2 up to the argument, not stopping early."
     scoring: "Exact-match on the integer answer (0-999); avg@k over sampled attempts."
-tags: [math, competition, frontier, reasoning]
-updated: 2026-08-02
+tags: [math, competition, reasoning]
+updated: 2026-11-21
 sources:
-  - { url: "https://maa.org/maa-invitational-competitions/", title: "MAA Invitational Competitions (AIME) — official", trust: 0.9 }
-  - { url: "https://arxiv.org/abs/2103.03874", title: "MATH dataset (context for competition-math evaluation)", trust: 0.8 }
-related: [benchmark/math, benchmark/gpqa]
+  - { url: "https://maa.org/maa-invitational-competitions/", title: "MAA Invitational Competitions (AIME description)", trust: 0.95 }
+  - { url: "https://artofproblemsolving.com/wiki/index.php/2024_AIME_I_Problems/Problem_1", title: "2024 AIME I, Problem 1 (AoPS Wiki)", trust: 0.8 }
+  - { url: "https://matharena.ai/", title: "MathArena (AIME evaluations, runs averaged per problem)", trust: 0.8 }
+related: [benchmark/math, benchmark/otis-mock-aime-2024-2025]
 ---
 
 ## What It Tests
-Advanced, multi-step mathematical problem-solving at a level well above MATH's average — olympiad
-feeder difficulty. Solving requires sustained symbolic reasoning, casework, and verification, not
-retrieval.
+Multi-step **competition mathematics** at the level of the AIME, which the MAA describes as harder than the AMC 10 and AMC 12.
+
+- **Exam format** — 15 questions in two 90-minute parts.
+- **Answers** — always an integer from 0 to 999.
 
 ## How It Scores
-Exact-match on the integer answer (0–999). Because each exam has only 15 problems, the community
-reports averaged metrics — **avg@k** (mean pass rate over k samples) or pass@1 over multiple exams —
-to tame variance. A single 30-problem year is still a small sample; treat 1–2 problem differences as
-noise.
+**Exact match** of the final integer against the official answer.
+
+- **Accuracy** — the share of problems answered correctly.
+- **Averaging** — evaluators such as MathArena run each problem several times and report the mean.
 
 ## Format
-0-shot chain-of-thought is typical for reasoning models; the model works the problem and outputs a
-final integer that is compared to the official answer key.
+Free-response problems answered without examples in the prompt; the model reasons, then gives one integer.
 
 ## Limitations
-**Small samples** make it noisy — always average over many generations and both exams in a year.
-Integer-only grading rewards lucky guesses and correct-answer/wrong-work solutions. Contamination
-appears the moment an exam is published, so only editions after a model's training cutoff give a
-clean read.
+- **Not a fixed dataset.** Reports differ in which exams and years they use.
+- **Small.** 15 problems per exam, so single runs are noisy.
+- **Answer-only grading.** Correct working is not checked.
+- **Leakage.** Published problems can enter later training data.
 
 ## Example
 AIME 2024 I, Problem 1 (Aya's walk): given that a 9 km walk plus a fixed coffee stop takes 4 hours at

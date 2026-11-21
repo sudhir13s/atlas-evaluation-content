@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "BBH (BIG-Bench Hard)"
 name: BBH
 category: Knowledge & Academic Reasoning
-description: "The 23 hardest BIG-Bench tasks where prior models failed to beat the average human."
-what_is_it: "BIG-Bench Hard is a curated 23-task subset of the 200+-task BIG-Bench suite, chosen because earlier language models scored below the average human rater on them. Tasks span logical deduction, multi-step arithmetic, causal judgment, word manipulation, and more."
-why_people_use_it: "It concentrates BIG-Bench's signal into the tasks that still discriminate, and it was the benchmark that popularized chain-of-thought prompting (CoT dramatically improved BBH scores). It is part of the HF Open LLM Leaderboard v2 suite."
+description: "BIG-Bench Hard: 23 BIG-Bench tasks on which earlier language model evaluations did not beat the average human rater."
+what_is_it: "BIG-Bench Hard (BBH) was introduced by Suzgun et al. (2022) as a suite of 23 challenging tasks from BIG-Bench, chosen because prior language model evaluations did not outperform the average human rater on them. It has 6,511 evaluation examples: 250 per task, except for three tasks that use all available examples. Tasks include logical deduction, tracking shuffled objects, date understanding and causal judgement."
+why_people_use_it: "The paper showed that chain-of-thought (CoT) prompting lifts performance on many BBH tasks, and that few-shot prompting without CoT underestimates what models can do on them, so BBH is used to measure multi-step reasoning."
 examples:
   - "(Logical deduction) A is left of B. C is right of B. D is left of A. Order left to right? (correct: D, A, B, C)"
-method: "3-shot, usually with chain-of-thought; a mix of multiple-choice and exact-match free-response tasks, scored per task then averaged."
-metric: "Average accuracy across the 23 tasks (exact-match or multiple-choice per task)."
-format: "3-shot chain-of-thought."
-saturation: medium
-limitations: "Highly heterogeneous — averaging across very different tasks can hide that a model fails badly on a few. Chain-of-thought is essentially required, so scores conflate reasoning ability with prompt formatting. Some tasks are small, adding variance."
+method: "Few-shot prompting with three exemplars per task, written by the authors with and without chain-of-thought reasoning; results are reported per task and averaged."
+metric: "Accuracy per task, averaged across the 23 tasks."
+format: "3-shot, with or without chain-of-thought."
+limitations: "The 23 tasks are very different, so an average can hide a task on which a model fails. Scores depend strongly on whether chain-of-thought prompting is used, so the prompting setup must be stated."
 citation: "https://arxiv.org/abs/2210.09261"
 worked_examples:
   - task_type: "Logical deduction (multi-step ordering)"
@@ -92,31 +91,28 @@ worked_examples:
     checks: "Character-by-character lexicographic comparison, not approximate alphabetization."
     scoring: "Exact-match accuracy on the selected option, averaged across the 23 tasks."
 tags: [reasoning, chain-of-thought, mixed-format]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2210.09261", title: "Challenging BIG-Bench Tasks and Whether Chain-of-Thought Can Solve Them (Suzgun et al., 2022)", trust: 0.95 }
-  - { url: "https://arxiv.org/abs/2206.04615", title: "Beyond the Imitation Game (BIG-bench) (Srivastava et al., 2022)", trust: 0.9 }
+  - { url: "https://ar5iv.labs.arxiv.org/html/2210.09261", title: "BBH paper, full text (ar5iv)", trust: 0.95 }
 related: [benchmark/mmlu-pro, benchmark/drop]
 ---
 
 ## What It Tests
-A spread of hard reasoning skills — symbolic logic, multi-hop deduction, arithmetic word problems,
-date and object tracking, sarcasm and causal judgment. The unifying theme is that pre-CoT models
-underperformed humans on all of them.
+**Multi-step reasoning** across 23 varied tasks, such as logical deduction, date understanding, tracking shuffled objects and causal judgement.
 
 ## How It Scores
-Each of the 23 tasks is scored on its own (exact match or multiple choice) and the results are
-averaged. Because the tasks are so different, the per-task breakdown is far more informative than the
-single average — a strong average can mask a task where the model scores near zero.
+Each task is scored on its own and the results are averaged.
+
+- **Size** — 6,511 evaluation examples, 250 for most tasks.
+- **Per-task view** — the breakdown says more than the average.
 
 ## Format
-Three-shot with chain-of-thought is the canonical protocol; CoT is what makes BBH tractable and is
-the reason the benchmark is famous. Without CoT, scores collapse.
+Three exemplars per task, which the authors wrote both as answer-only and with chain-of-thought reasoning.
 
 ## Limitations
-The **heterogeneity** is the main caveat: aggregating logic puzzles with word-sorting and causal
-judgment produces a number that is hard to interpret. CoT-dependence means the score partly measures
-prompt engineering. Small per-task sizes add noise.
+- **Heterogeneous.** One average covers very different tasks.
+- **Prompt-dependent.** Chain-of-thought changes scores markedly.
 
 ## Example
 (Logical deduction) "A is to the left of B. C is to the right of B. D is to the left of A. What is

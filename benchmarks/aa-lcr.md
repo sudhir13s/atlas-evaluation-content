@@ -6,17 +6,16 @@ schema_version: 1.0
 title: "AA-LCR"
 name: AA-LCR
 category: Long Context
-description: "Artificial Analysis Long Context Reasoning — 100 hard questions requiring multi-step reasoning across sets of real-world documents totaling ~100k tokens each."
-what_is_it: "Artificial Analysis Long Context Reasoning (AA-LCR) is a benchmark of 100 human-crafted questions, each answered by reasoning across a set of real documents (~100k input tokens per set). Answers are never stated in the text; the model must integrate scattered facts and infer the result — designed to replicate real knowledge work rather than synthetic needle-in-a-haystack retrieval."
-why_people_use_it: "Simple retrieval benchmarks (needle-in-a-haystack) dramatically overstate real long-context ability. AA-LCR measures reasoning over many long documents at once, so it discriminates between frontier models on the Artificial Analysis leaderboard where retrieval tests are already saturated."
+description: "Artificial Analysis Long Context Reasoning: 100 text-based questions that need reasoning across sets of real documents averaging about 100k tokens each."
+what_is_it: "Artificial Analysis Long Context Reasoning (AA-LCR), released by Artificial Analysis in August 2025, has 100 questions over 30 document sets (234 documents). Each question needs information from several documents, and the answer is not stated directly: it has to be inferred from several pieces of information. Questions were written and validated by the Artificial Analysis team and more than a dozen undergraduate students."
+why_people_use_it: "Artificial Analysis built it to replicate reasoning tasks knowledge workers expect models to do, unlike synthetic long-context tasks such as Needle in the Haystack. It is part of the Artificial Analysis evaluations."
 examples:
   - "Given four company annual reports and an industry report (~100k tokens), determine which segment drove the largest year-over-year margin change — a figure not printed anywhere but derivable by combining revenue and cost tables across documents."
   - "Across a set of government consultation responses, identify the single position endorsed by a majority of respondents once conflicting terminology is reconciled."
-method: "The model receives a document set (~100k input tokens, cl100k_base tokenizer) and one question; the free-text answer is graded against a reference for correctness. 100 questions span 30 document sets (234 documents) across 7 document types."
+method: "The model receives one document set (about 100k input tokens, measured with the cl100k_base tokenizer) and one question. An LLM-based equality checker, given a judge system prompt, decides whether the answer matches the official answer."
 metric: "Accuracy (% of questions answered correctly)."
-format: "Long-context, open-ended question answering over multi-document inputs of ~100k tokens each."
-saturation: low
-limitations: "Only 100 questions, so scores carry real sampling noise and small differences are not meaningful. Being open-ended, grading depends on answer-matching and can penalize correct-but-differently-phrased responses. Text-only (no tables-as-images, no code repos), and the ~100k-token target does not probe the 500k-2M-token regime some models now advertise."
+format: "Open-ended question answering over a multi-document input of about 100k tokens."
+limitations: "The set has 100 questions, so each question moves the score by one percentage point. The documents are text-only, across seven document types. Version 1.1 (September 2026) corrected sixteen answer keys and added the judge system prompt; the maker says scores on version 1.0.0 are not directly comparable with scores on version 1.1."
 citation: "https://artificialanalysis.ai/articles/announcing-aa-lcr"
 worked_examples:
   - task_type: "Multi-document financial reasoning (~100k-token input)"
@@ -70,44 +69,34 @@ worked_examples:
     checks: "Whether a model combines a weighting scheme and scores drawn from separate long documents instead of reporting one salient figure."
     scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
 tags: [long-context, reasoning, multi-document, open-ended]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://artificialanalysis.ai/articles/announcing-aa-lcr", title: "Announcing Artificial Analysis Long Context Reasoning (AA-LCR)", trust: 0.95 }
-  - { url: "https://huggingface.co/datasets/ArtificialAnalysis/AA-LCR", title: "ArtificialAnalysis/AA-LCR dataset (Hugging Face)", trust: 0.95 }
-  - { url: "https://artificialanalysis.ai/evaluations/artificial-analysis-long-context-reasoning", title: "AA-LCR Leaderboard (Artificial Analysis)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/ArtificialAnalysis/AA-LCR", title: "ArtificialAnalysis/AA-LCR dataset card (Hugging Face)", trust: 0.95 }
 related: [benchmark/longbench-v2]
 ---
 
 ## What It Tests
-Reasoning across several long documents at once. Each question is tied to a document set that
-averages ~100k input tokens (measured with the cl100k_base tokenizer) and spans seven real-world
-document types: company reports, industry reports, government consultations, academia, legal,
-marketing materials, and survey reports. Crucially, the answer is never written down — the model
-must locate relevant facts in different places and combine them through multi-step inference.
+Reasoning across **several long documents at once**.
+
+- **Multi-document** — each answer needs information from more than one document.
+- **Multi-step** — the answer is not stated; it is inferred from several facts.
+- **Real documents** — seven text-only types: company reports, industry reports, government consultations, academia, legal, marketing materials and survey reports.
 
 ## How It Scores
-Accuracy over 100 questions (drawn from 30 document sets, 234 documents total). Each free-text
-answer is checked against a reference answer for correctness. Because the set is small, headline
-numbers move with only a few questions, so it is read as a coarse ranking rather than a precise
-percentage. On release, top systems clustered near 69% (OpenAI o3 at 69.3%, xAI Grok 4 at 68%,
-Qwen3 235B at 67%), with weaker models far below (LG EXAONE 4.0 at 14%).
+**Accuracy** over 100 questions from 30 document sets (234 documents).
+
+- **Judge** — an LLM-based equality checker compares each answer with the official answer.
+- **Human check** — the maker reports evaluators typically answered 40-60% correctly on a first attempt, and every question was answered correctly by at least one human tester.
+- **Versions** — version 1.1 (September 2026) corrected sixteen answer keys and added a judge system prompt; 1.0.0 and 1.1 scores are not directly comparable.
 
 ## Format
-Long-context open-ended question answering: the full document set plus one question go into the
-prompt, and the model returns a written answer. This makes output length vary enormously across
-models — from tens of thousands to millions of output tokens depending on how much the model
-reasons before answering.
+The whole document set (about 100k tokens, cl100k_base tokenizer) and one question go into the prompt; the model writes a free-text answer.
 
 ## Limitations
-The 100-question size means real sampling noise; small gaps between models are not significant.
-Open-ended grading can mis-score answers that are correct but phrased unexpectedly. It is text-only
-and targets the ~100k-token band, so it does not probe multimodal long context or the multi-hundred-
-thousand-token regime. Human evaluators themselves answered only 40-60% correctly on a first
-attempt, which sets a low absolute ceiling for interpreting scores.
+- **Small set.** 100 questions: one question is one percentage point.
+- **Text only.** No images or other modalities in the documents.
+- **Version split.** Check whether a score used version 1.0.0 or 1.1.
 
 ## Example
-A question over a set of company and industry reports (~100k tokens) asks for a quantity — say, the
-business unit with the largest year-over-year margin swing — that appears in no single table. The
-model must pull revenue and cost figures from separate documents, compute the margins itself, and
-compare them. A model that merely retrieves the nearest-looking number without doing the arithmetic
-across documents fails, which is exactly the gap AA-LCR is built to expose.
+The dataset card's sample question: "For the company and quarter where the company reported a 13.5% decline on the prior quarters operating income. What was their adjusted EBITDA? List the company name and adjusted EBITDA." The official answer is "Equinix, $901 million", which the equality checker compares with the model's answer.

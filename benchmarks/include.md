@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "INCLUDE"
 name: INCLUDE
 category: Multilingual
-description: "Regional-knowledge multiple-choice from local exams in 44 languages."
-what_is_it: "INCLUDE is a knowledge- and reasoning-centric benchmark of 22,637 four-option multiple-choice questions (from a larger 197,243-item collection) drawn from real academic and professional exams in 44 languages — deliberately keeping region-specific and cultural knowledge instead of translating English."
-why_people_use_it: "It answers a question translated benchmarks cannot: how does a model do on knowledge that is actually local to a language's speakers — a Polish driving-law question, a Turkish civil-service exam — rather than US content rendered into their language?"
+description: "Four-option multiple-choice questions from local academic, professional and licence exams in 44 languages, keeping regional and cultural knowledge."
+what_is_it: "INCLUDE (Romanou et al., 2024; EPFL, Cohere For AI, ETH Zurich, Swiss AI Initiative and others) collected 197,243 question-answer pairs from local exam sources in 44 written languages, instead of translating English benchmarks. The released INCLUDE-base set has 22,637 four-option questions covering 57 topics (dataset card; the paper gives 22,635), and INCLUDE-lite has 10,770."
+why_people_use_it: "The authors note that multilingual benchmarks are often translated from English and so ignore the regional and cultural knowledge of the places where models are used; INCLUDE evaluates models in those language environments (2024 paper)."
 examples:
   - "A national driving-licence or civil-service exam question in Turkish, Tamil, or Basque, including items whose answer depends on that country's specific laws or customs."
-method: "Multiple-choice evaluation over 22,637 four-option questions across 44 languages and 57 topics; items are labelled region-agnostic, region-implicit, or region-explicit to separate universal from culturally-specific knowledge."
-metric: "Accuracy (% correct), reported overall and by language and region-sensitivity."
-format: "4-way multiple-choice, questions in their original language; run 0-shot or few-shot."
-saturation: medium
-limitations: "Sourcing from real exams means uneven subject and difficulty distribution across the 44 languages, so per-language scores are not strictly comparable. It is knowledge-recall-centric (little generation or tool use), and because questions are native rather than parallel, it measures a different thing than a translated set like MMMLU — the two are complementary, not interchangeable."
+method: "The paper reports 5-shot and zero-shot chain-of-thought accuracy, with prompts in the question's language or in English. Questions are labelled region-agnostic or region-specific; region-specific splits into region-explicit (laws, certifications, clinical guidelines, licensing), cultural and region-implicit."
+metric: "Accuracy (% correct), overall and by language, academic area and regional label."
+format: "Four-option multiple choice in each question's original language; INCLUDE-base caps each language at 550 questions (500 regional-knowledge, 50 STEM)."
+limitations: "The authors note that performance across regional labels is not separated from topic difficulty and academic level. Questions come from different exams in each language, so per-language scores are not a matched comparison. Multiple choice only."
 citation: "https://arxiv.org/abs/2411.19799"
 worked_examples:
   - task_type: "Driving law (Turkish)"
@@ -94,39 +93,33 @@ worked_examples:
     checks: "Precise local regulatory knowledge versus a popular stereotype about German motorways."
     scoring: "Accuracy (% correct)."
 tags: [multilingual, knowledge, regional, multiple-choice, culture]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
-  - { url: "https://arxiv.org/abs/2411.19799", title: "INCLUDE: Evaluating Multilingual Language Understanding with Regional Knowledge (2024)", trust: 0.95 }
+  - { url: "https://arxiv.org/abs/2411.19799", title: "INCLUDE: Evaluating Multilingual Language Understanding with Regional Knowledge (Romanou et al., 2024)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2411.19799", title: "INCLUDE, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/CohereLabs/include-base-44", title: "CohereLabs/include-base-44 — Datasets at Hugging Face", trust: 0.9 }
 related: [benchmark/nova-63, benchmark/mmmlu, benchmark/global-piqa]
 ---
 
 ## What It Tests
-Regional, culturally-grounded knowledge — the kind that lives inside a language's own exams. The
-core INCLUDE-base set is 22,637 four-option questions across 44 languages and 57 topics, spanning
-STEM, humanities, social science, health, and professional certifications, collected from local
-academic and professional examinations rather than translated from English.
+**Knowledge and reasoning in 44 languages, as local exams test it**.
+
+- **Sources** — academic exams, professional certifications and licences, and regional licence exams.
+- **Regional labels** — region-agnostic (34.4% of collected questions, e.g. mathematics), region-explicit (18.8%), cultural (16.4%) and region-implicit.
 
 ## How It Scores
-Accuracy overall and broken out by language and by how region-specific a question is. Items are
-tagged **region-agnostic** (universally answerable), **region-implicit**, or **region-explicit**
-(needs local legal, geographic, or cultural knowledge), which lets the benchmark separate general
-competence from genuinely local knowledge.
+**Accuracy**, reported overall and by language, academic area and regional label. The paper runs 5-shot and zero-shot chain-of-thought prompts.
 
 ## Format
-Four-way multiple choice in each question's original language, run 0-shot or few-shot. The full
-collection gathered 197,243 question-answer pairs from local exam sources; the released base
-benchmark distils these to 22,637 clean multiple-choice items.
+Four-option multiple choice in the original language. Questions with fewer options were dropped and those with more were pruned to four.
+
+- **INCLUDE-base** — 22,637 questions (dataset card), at most 550 per language.
+- **INCLUDE-lite** — 10,770 questions, at most 250 per language, region-specific domains only.
 
 ## Limitations
-Because questions come from real, heterogeneous exams, subject mix and difficulty vary across the
-44 languages, so raw per-language accuracy is not a clean apples-to-apples comparison. It is
-recall-and-reasoning multiple-choice only — no generation, dialogue, or tool use — and its native,
-non-parallel design measures local knowledge, a deliberately different axis from translated
-parallel tests.
+- **Confounded labels.** Regional-label results are not separated from topic difficulty, as the authors note.
+- **Not parallel.** Different exams per language.
+- **Multiple choice.** No generation is tested.
 
 ## Example
-Where a translated benchmark would ask a US-centric question in Turkish, INCLUDE instead asks an
-actual question from a Turkish national exam — for instance one whose correct answer hinges on
-Turkish traffic law. A model can only get such an item right if it holds knowledge local to that
-region, which is exactly the capability INCLUDE isolates.
+The paper's Figure 1 describes a region-explicit question about local laws or licensing, and a history question in a Greek exam whose answer may reflect a regional perspective. The model reads the question and four options in the original language and answers with one letter.

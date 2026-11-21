@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "MMLU-Redux"
 name: MMLU-Redux
 category: Knowledge & Academic Reasoning
-description: "A hand-re-annotated, error-corrected subset of MMLU used to measure knowledge without the noise of the original's wrong answer keys."
-what_is_it: "A 5,700-question subset of MMLU that 14 experts manually re-checked against a formal error taxonomy, correcting or flagging items whose ground-truth answer was wrong, missing, or ambiguous — so scores reflect knowledge rather than label noise."
-why_people_use_it: "It quantified that MMLU itself is buggy (~6.49% of questions have errors) and gives a cleaner surface for comparing near-saturated models, where a few percent of bad labels can flip rankings."
+description: "A 5,700-question subset of MMLU, manually re-annotated so that each question carries a label saying whether, and how, it is erroneous."
+what_is_it: "MMLU-Redux (Gema et al., 2024, University of Edinburgh and collaborators) is 100 randomly selected questions from each of MMLU's 57 subjects. 14 human experts re-annotated the 5,700 questions under a hierarchical error protocol: is the question clear, is there a single valid answer, and does it match the dataset's ground truth."
+why_people_use_it: "From it the authors estimate that 6.49% of MMLU questions contain errors, with 57% of the analysed Virology questions erroneous, and they show that model scores differ from those originally reported once the errors are taken into account."
 examples:
-  - "A re-audit of an original MMLU virology item flagged as 'Wrong Ground Truth' — the answer key names an option that the domain expert re-annotator marks as incorrect, so the item is corrected or excluded rather than scored against the faulty key."
-method: "Re-annotate 5,700 MMLU questions (100 per subject × 57 subjects) under a two-level error taxonomy, then re-score models on the corrected set and compare against original MMLU numbers."
-metric: "Accuracy (% correct) on the corrected items."
-format: "Same 4-way multiple-choice as MMLU; typically 0-shot or 5-shot."
-saturation: high
-limitations: "It corrects labels but keeps MMLU's 4-option multiple-choice format, so guessing headroom and the knowledge-only scope remain. Only 100 questions per subject are re-annotated, so per-subject estimates are noisy, and it inherits MMLU's contamination exposure."
+  - "A Virology question from MMLU marked 'wrong ground truth': the annotator finds that the dataset's answer key does not match the single valid answer."
+method: "Each of the 5,700 questions has an error-type label from the annotation protocol (Question Assessment, then Ground Truth Verification). The paper notes that annotators' suggested correct answers are not used to replace the MMLU labels; models are compared on the questions with and without errors."
+metric: "Accuracy (% correct)."
+format: "MMLU's four-option multiple choice."
+limitations: "Only 100 of the questions in each subject are annotated; the paper notes that the remaining 8,342 MMLU questions are not covered. The suggested corrections do not replace the original answer keys, and the content is MMLU's own."
 citation: "https://arxiv.org/abs/2406.04127"
 worked_examples:
   - task_type: "Undergraduate biology (re-audited, verified key)"
@@ -94,47 +93,33 @@ worked_examples:
     checks: "Distinguishing a retrovirus's packaged genome from its DNA intermediate, against a hand-verified label."
     scoring: "Exact-match accuracy on the selected option (over corrected labels)."
 tags: [knowledge, multiple-choice, data-quality, mmlu]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2406.04127", title: "Are We Done with MMLU? (Gema et al., 2024)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2406.04127", title: "Are We Done with MMLU?, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/edinburgh-dawg/mmlu-redux", title: "MMLU-Redux dataset (Edinburgh DAWG)", trust: 0.9 }
   - { url: "https://github.com/aryopg/mmlu-redux", title: "MMLU-Redux GitHub repository", trust: 0.85 }
 related: [benchmark/mmlu, benchmark/mmlu-pro, benchmark/gpqa]
 ---
 
 ## What It Tests
-The same broad academic knowledge as MMLU across 57 subjects — but the point is measurement
-quality, not new content. MMLU-Redux asks whether a model's MMLU score is even trustworthy once
-the wrong answer keys are removed.
+MMLU's academic knowledge across 57 subjects, on questions whose **errors are labelled**.
 
-The authors found roughly **6.49% of MMLU questions contain errors**, with some subjects far worse
-(over half of the sampled virology items were flawed). On near-saturated leaderboards that error
-floor is enough to reorder models.
+- **Paper's estimate** — 6.49% of MMLU questions contain errors.
+- **Uneven by subject** — 57% of the analysed Virology questions had errors (wrong ground truth 33%, multiple correct answers 4%, unclear questions 14%).
 
 ## How It Scores
-Accuracy over the 5,700 re-annotated questions (100 per subject × 57 subjects). Each item was
-audited under a two-level error taxonomy:
+**Accuracy**, which can be computed on all 5,700 questions or only on those annotated as error-free. Each question carries a label from the protocol:
 
-- **Question Assessment** — bad question clarity, or bad/ambiguous answer options.
-- **Ground-Truth Verification** — no correct answer, multiple correct answers, or a wrong ground
-  truth in the original key.
-
-Items with correct labels are scored normally; flawed items are corrected or excluded, so the
-resulting accuracy is a cleaner signal than raw MMLU.
+- **Question Assessment** — is the question and its options clear.
+- **Ground Truth Verification** — no correct answer, multiple correct answers, or a wrong ground truth.
 
 ## Format
-Unchanged from MMLU: 4-way multiple-choice, run 0-shot or 5-shot depending on the harness. The
-contribution is the corrected labels and the annotation protocol, not a new prompt format.
+MMLU's four-option multiple choice; the contribution is the annotation, not a new question format.
 
 ## Limitations
-It fixes the answer keys but not the design: four options keep the random baseline at 25%, and the
-scope stays knowledge-only (no generation, tools, or long context). Only 100 questions per subject
-are re-checked, so per-subject error estimates carry real sampling noise, and the underlying items
-remain as exposed to training-data contamination as MMLU.
+- **Partial coverage.** 100 questions per subject; 8,342 MMLU questions are not annotated.
+- **Keys not replaced.** Annotators' suggested answers do not replace MMLU's labels.
 
 ## Example
-Take an original MMLU item whose answer key marks option C as correct. A domain-expert re-annotator
-reviewing it under the taxonomy determines that C is actually wrong and B is the defensible answer —
-tagging it **Wrong Ground Truth**. In plain MMLU, a model that answered B is penalized; in
-MMLU-Redux the key is corrected (or the item dropped), so the score reflects knowledge instead of
-the benchmark's own mistake.
+An annotator reads an MMLU question, checks that it is clear, that one option is valid and that this option matches the dataset's key; a mismatch is labelled **wrong ground truth**.

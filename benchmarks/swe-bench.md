@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "SWE-bench"
 name: SWE-bench
 category: Code Generation
-description: "Real GitHub issues from popular Python repos — the model must produce a patch that passes the repo's tests."
-what_is_it: "A benchmark built from ~2,300 real resolved issues across 12 popular Python repositories (Django, scikit-learn, matplotlib, sympy, …). The model is given the repo and the issue text and must generate a code patch; success means the repo's own hidden tests (that the human fix made pass) now pass. SWE-bench Verified is a ~500-issue human-validated subset."
-why_people_use_it: "It is the leading measure of realistic, agentic software engineering — multi-file understanding, code navigation, and producing a working patch — not toy function completion. It is the headline benchmark for coding agents."
+description: "2,294 software engineering problems from real GitHub issues in 12 popular Python repositories; the model must edit the codebase so the issue's tests pass."
+what_is_it: "SWE-bench was introduced by Jimenez et al. (2023). Its 2,294 task instances come from merged pull requests that resolve a GitHub issue and add tests, across 12 popular Python repositories. Given the codebase and the issue text, the model must edit the code to resolve the issue. SWE-bench Verified, released by OpenAI with the SWE-bench authors, is a subset of 500 test samples that professional developers screened for well-specified issues and appropriate tests."
+why_people_use_it: "Resolving an issue often needs changes across several functions, classes and files, interaction with an execution environment and long contexts, which the authors argue goes far beyond traditional code generation."
 examples:
   - "Fix a Django issue where QuerySet.bulk_create() silently ignores update_conflicts on unsupported backends; the patch must raise NotSupportedError and pass the added regression test."
-method: "Agentic: the system is given the repo + issue, explores the codebase, and emits a patch (diff). The patch is applied and the repo's fail-to-pass and pass-to-pass test sets are run. Reported on SWE-bench Verified (~500) most often."
-metric: "% of issues resolved (patch makes the target tests pass without breaking existing ones)."
-format: "Agentic patch generation; test-suite execution."
-saturation: low
-limitations: "Expensive and complex to run (per-issue Docker environments). Requires an agent scaffold, so scores reflect the whole system (model + tools + prompt), not the model alone. Python-only. Some issues have under-specified tests; the Verified subset addresses part of this. Contamination is possible for issues predating training cutoffs."
+method: "The system produces a patch for the repository; the harness applies it and runs the instance's tests. Every instance has at least one fail-to-pass test from the reference fix."
+metric: "% resolved: the share of instances whose patch applies and makes all of the instance's tests pass."
+format: "Patch generation over a full repository; test execution."
+limitations: "Scores depend on the agent scaffold, tools and retrieval setup as well as the model, so a number describes the whole system. SWE-bench Verified exists because OpenAI's annotators found test-set samples with underspecified issues or unsuitable tests. Results on the full set, Verified (500) and Lite (300) are not comparable. Repositories are Python only."
 citation: "https://arxiv.org/abs/2310.06770"
 worked_examples:
   - task_type: "Django — raise instead of silently ignore"
@@ -69,33 +68,31 @@ worked_examples:
     checks: "Fixing a side-effect bug without altering the method's documented merge contract."
     scoring: "Resolve rate on hidden tests: fail-to-pass green AND pass-to-pass all green vs a behavior regression."
 tags: [code, agentic, real-world, patch, execution]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2310.06770", title: "SWE-bench: Can Language Models Resolve Real-World GitHub Issues? (Jimenez et al., 2023)", trust: 0.95 }
+  - { url: "https://ar5iv.labs.arxiv.org/html/2310.06770", title: "SWE-bench paper, full text (ar5iv)", trust: 0.95 }
+  - { url: "https://openai.com/index/introducing-swe-bench-verified/", title: "Introducing SWE-bench Verified (OpenAI)", trust: 0.9 }
+  - { url: "https://www.swebench.com/", title: "SWE-bench leaderboards (Verified 500, Lite 300 instances)", trust: 0.9 }
 related: [benchmark/humaneval, benchmark/mbpp, benchmark/deepswe]
 ---
 
 ## What It Tests
-End-to-end software engineering on real code: read an issue, locate the relevant files in a large
-repository, write a correct multi-line patch, and not break anything else. It is the closest common
-benchmark to a working developer's job.
+**Software engineering on real code**: read an issue, find the relevant code in a large repository, and write a patch that resolves it.
 
 ## How It Scores
-An issue is **resolved** if the applied patch turns the target failing tests green (fail-to-pass)
-while keeping the previously passing tests green (pass-to-pass). The headline is the percentage of
-resolved issues, usually on **SWE-bench Verified** (~500 human-checked issues). Top agent systems
-resolve a substantial minority — meaningful, because these are bugs that required human engineers to
-diagnose.
+An instance is **resolved** when the patch applies and all of its tests pass.
+
+- **Fail-to-pass tests** — at least one per instance, from the reference fix.
+- **Headline** — % of instances resolved.
 
 ## Format
-Agentic: the model, wrapped in a scaffold that can read files and run commands, produces a unified
-diff. The harness applies it and runs the repo's tests in an isolated environment.
+The model, usually inside an agent scaffold, outputs a patch; the harness applies it and runs the repository's tests.
 
 ## Limitations
-Scores measure the **whole system** (model + agent scaffold + tools + prompt), so a number is not a
-property of the base model alone. Running it is costly (per-issue containers). It is Python-only, some
-test suites are under-specified (Verified mitigates this), and issues older than the training cutoff
-risk contamination.
+- **System, not model.** Scaffold and tools shape the score.
+- **Split matters.** Full set, Verified (500) and Lite (300) differ.
+- **Python only.** Twelve Python repositories.
 
 ## Example
 A Django issue: `QuerySet.bulk_create()` silently ignores `update_conflicts=True` on backends that do

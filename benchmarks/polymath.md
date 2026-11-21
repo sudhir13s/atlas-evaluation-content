@@ -3,19 +3,18 @@ id: benchmark/polymath
 type: benchmark
 slug: polymath
 schema_version: 1.0
-title: "PolyMATH"
-name: PolyMATH
+title: "PolyMath"
+name: PolyMath
 category: Multilingual
-description: "Parallel mathematical reasoning across 18 languages and four difficulty tiers."
-what_is_it: "PolyMATH is a multilingual math-reasoning benchmark of 500 problems per language in 18 languages, organised into four difficulty levels from grade-school word problems to Olympiad and frontier mathematics."
-why_people_use_it: "It separates two things most math benchmarks conflate — reasoning ability and the language it happens in — by giving the exact same problems in 18 languages, revealing that even top reasoning models lose several points simply by switching language."
+description: "A multilingual mathematical reasoning benchmark: the same problems in 18 languages, at four difficulty levels."
+what_is_it: "PolyMath (Wang et al., 2025, Qwen team) has four difficulty levels (low, medium, high, top) spanning K-12 to Olympiad and advanced frontier mathematics. Each level has 125 problems, and every problem is available in 18 language versions, so each language has 500 problems. Translations are calibrated by language experts rather than taken directly from LLM output."
+why_people_use_it: "Because the problems are parallel across languages, differences between languages show directly. The authors report that reasoning performance varies widely across languages and that input-output language consistency is low in reasoning LLMs (paper, 2025)."
 examples:
-  - "An Olympiad-level algebra or number-theory problem presented identically in English, Chinese, Swahili, Telugu, and 14 other languages, requiring a worked derivation and a final answer."
-method: "Free-response math solving over 125 problems per language at each of four difficulty levels (500 per language, 18 languages); the final answer is extracted and checked for correctness."
-metric: "Accuracy (% correct), reported per language and per difficulty level."
-format: "Open-ended generation with chain-of-thought; answer extracted and matched; 0-shot."
-saturation: low
-limitations: "The hardest tier is far from solved — leading reasoning models sit around 40% at the top level — but that also means most of the discriminating signal is concentrated in a few hard problems per language. As a parallel translated set it measures reasoning-in-language, not culturally-native math, and answer extraction on free-form solutions adds some grading noise."
+  - "A problem from one of the four levels, given in each of the 18 languages; the model writes a solution and its final answer is checked."
+method: "The model solves each problem and its final answer is checked. The benchmark score is Difficulty-Weighted Accuracy (DW-ACC): problems at the low, medium, high and top levels carry weights 1, 2, 4 and 8."
+metric: "Difficulty-Weighted Accuracy (DW-ACC), per language and overall; accuracy per level is also reported."
+format: "Free-response mathematics with a final answer; 125 problems per level per language."
+limitations: "The language versions are translations of the same problems, so they test reasoning in each language rather than mathematics native to it. Under DW-ACC, a top-level problem counts eight times as much as a low-level one, so a few hard problems carry much of the score."
 citation: "https://arxiv.org/abs/2504.18428"
 worked_examples:
   - task_type: "Multilingual math — counting (Swahili)"
@@ -69,9 +68,10 @@ worked_examples:
     checks: "Distinguishing diagonals from all vertex-pairs when applying the polygon formula, across languages."
     scoring: "Accuracy (% correct)."
 tags: [multilingual, math, reasoning, generation]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
-  - { url: "https://arxiv.org/abs/2504.18428", title: "PolyMath: Evaluating Mathematical Reasoning in Multilingual Contexts (Qwen Team, 2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/abs/2504.18428", title: "PolyMath: Evaluating Mathematical Reasoning in Multilingual Contexts (Wang et al., 2025)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2504.18428", title: "PolyMath, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://github.com/QwenLM/PolyMath", title: "QwenLM/PolyMath — NeurIPS 2025 D&B evaluation repo", trust: 0.9 }
 related: [benchmark/math, benchmark/aime, benchmark/gsm8k]
 ---
@@ -83,24 +83,14 @@ Swahili, Vietnamese, Italian, Telugu, Korean, Thai, and Malay — spanning four 
 that mix *thought depth* and *knowledge breadth*, from elementary word problems up to frontier math.
 
 ## How It Scores
-Accuracy per language and per difficulty level, over 125 problems at each level (500 problems per
-language). The point is the cross-language spread: even Qwen3-235B-A22B-Thinking and Gemini-2.5-Pro
-reach only ~54.6 and ~52.2 overall, about 40% at the hardest level, with per-language differences
-of up to 10 points at low accuracy — evidence that language alone moves math scores.
+**Difficulty-Weighted Accuracy (DW-ACC)**: correct answers weighted 1, 2, 4 and 8 for the low, medium, high and top levels. Reported per language and overall, with accuracy per level alongside.
 
 ## Format
-Open-ended generation: the model produces a chain-of-thought derivation, and the final answer is
-extracted and checked, run 0-shot. Because the 18 language versions are parallel translations of
-the same problems, a per-language gap isolates reasoning-in-that-language from problem difficulty.
+Free-response problems with a final answer: 125 per level, four levels, so 500 per language. The 18 language versions are expert-calibrated translations of the same problems.
 
 ## Limitations
-The top tier remains largely unsolved, so much of the discriminative signal rides on a small set
-of hard problems per language. It is a parallel translated benchmark, hence it measures reasoning
-in a language rather than culturally-native mathematics, and grading free-form solutions by answer
-extraction introduces some measurement noise on borderline outputs.
+- **Translated set.** Reasoning in a language, not mathematics native to it.
+- **Weighted score.** Top-level problems count eight times as much as low-level ones.
 
 ## Example
-An Olympiad-grade problem — say, proving a divisibility property or solving a functional
-equation — is posed identically in all 18 languages. A model that solves it in English but fails
-the Telugu or Swahili version, despite identical mathematics, exposes a language-dependent
-reasoning gap that a monolingual benchmark like MATH or AIME cannot see.
+A problem from one level is posed in each of the 18 languages; the model's final answer in each language is checked, and the per-language DW-ACC scores are compared.

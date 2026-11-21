@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "MMLU-Pro"
 name: MMLU-Pro
 category: Knowledge & Academic Reasoning
-description: "A harder, reasoning-focused MMLU with 10 answer choices and cleaned questions."
-what_is_it: "A rebuilt MMLU that expands each item to 10 options (instead of 4), removes trivial and noisy questions, and adds more reasoning-heavy problems so the test discriminates again at the frontier."
-why_people_use_it: "MMLU saturated; MMLU-Pro restores headroom. It has become the de facto knowledge-reasoning benchmark on leaderboards like HF Open LLM v2 and Artificial Analysis."
+description: "An extension of MMLU with 12,032 more reasoning-focused questions in 14 disciplines and up to ten answer options."
+what_is_it: "MMLU-Pro was introduced by Wang et al. (2024). It extends the mostly knowledge-driven MMLU with more challenging, reasoning-focused questions, removes trivial and noisy MMLU questions, and expands the choices from four to ten. It has 12,032 questions in 14 disciplines, including mathematics, physics, chemistry, law, engineering, psychology and health; 83% of questions have ten options, and the average is 9.47."
+why_people_use_it: "The authors report that models score 16% to 33% lower than on MMLU, and that sensitivity to prompt wording falls from 4-5% on MMLU to 2% on MMLU-Pro across 24 prompt styles, making it more discriminative."
 examples:
   - "In quantum mechanics, which best describes the Born rule? (one correct answer among 10 options, e.g. 'it gives the probability of a measurement outcome from the squared amplitude of the wavefunction')"
-method: "5-shot chain-of-thought multiple-choice over ~12,000 questions across 14 disciplines; the answer letter is parsed from the CoT response."
+method: "The paper's reference setup is 5-shot chain-of-thought (CoT) prompting; the answer letter is extracted from the response."
 metric: "Accuracy (% correct)."
-format: "5-shot CoT, 10-way multiple-choice."
-saturation: medium
-limitations: "Newer, so less contamination data exists — but it is not immune. The 10-option format and CoT dependence make scores sensitive to answer-parsing and prompt template. Still knowledge-centric, so it under-tests generation, tool use, and long-context skills."
+format: "5-shot CoT multiple choice, up to ten options."
+limitations: "Answer extraction from a CoT response and the prompt template affect scores, so runs must use the same protocol to be compared. It tests knowledge and reasoning in multiple-choice form only, not generation, tool use or long context."
 citation: "https://arxiv.org/abs/2406.01574"
 worked_examples:
   - task_type: "College physics — quantum mechanics"
@@ -124,31 +123,25 @@ worked_examples:
     checks: "Recognizing that the balance invariant bounds the tree height and thus the search cost."
     scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, multiple-choice, reasoning]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2406.01574", title: "MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark (Wang et al., 2024)", trust: 0.95 }
+  - { url: "https://ar5iv.labs.arxiv.org/html/2406.01574", title: "MMLU-Pro paper, full text (ar5iv)", trust: 0.95 }
 related: [benchmark/mmlu, benchmark/gpqa]
 ---
 
 ## What It Tests
-The same broad academic knowledge as MMLU but with a heavier reasoning load and far less room for
-lucky guessing. Ten answer options drop the random baseline from 25% to ~10%, and distractors are
-written to be plausible.
+Broad **academic knowledge with a heavier reasoning load** than MMLU, across 14 disciplines.
 
 ## How It Scores
-Accuracy across ~12,000 questions in 14 disciplines. Because the choice set is wider and questions
-are cleaner, a given percentage is meaningfully harder than on MMLU — roughly, 70% on MMLU-Pro is
-comparable in difficulty to ~85% on MMLU.
+**Accuracy** over 12,032 questions. With up to ten options, random guessing scores about 10%.
 
 ## Format
-Five-shot with chain-of-thought is the reference protocol; the model reasons then emits a final
-letter that is regex-parsed. Scores shift several points if run 0-shot or with a different template,
-so cross-report comparisons must match the protocol.
+The reference protocol is 5-shot chain-of-thought; the final letter is parsed from the response.
 
 ## Limitations
-It is knowledge-and-reasoning only — it says nothing about coding, agentic behavior, or long
-context. Contamination pressure is lower than MMLU's today but grows as the set ages. Answer parsing
-under CoT is a real source of measurement noise.
+- **Protocol-sensitive.** Template and answer parsing change scores.
+- **Multiple choice only.** No generation, tool use or long context.
 
 ## Example
 "In the context of quantum mechanics, which of the following best describes the significance of the

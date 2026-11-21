@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "MMMLU"
 name: MMMLU
 category: Multilingual
-description: "OpenAI's professionally human-translated MMLU test set in 14 languages."
-what_is_it: "The Multilingual Massive Multitask Language Understanding (MMMLU) set is the full MMLU test split translated by professional human translators into 14 languages, so the same 14,042 questions can be scored in each language."
-why_people_use_it: "It is the most-cited apples-to-apples multilingual knowledge test: because every language is a human translation of the identical questions, a model's score gap between English and, say, Yoruba isolates language ability from question difficulty."
+description: "OpenAI's translation of the MMLU test set into 14 languages by professional human translators."
+what_is_it: "Multilingual Massive Multitask Language Understanding (MMMLU), released by OpenAI on Hugging Face, is MMLU's test set translated into 14 languages by professional human translators: Arabic, Bengali, German, Spanish, French, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Swahili, Yoruba and Simplified Chinese. Each language has 14,042 questions across MMLU's 57 subjects."
+why_people_use_it: "Every language holds the same questions, so scores can be compared across languages. OpenAI says relying on human translators increases confidence in the translations, especially for low-resource languages such as Yoruba."
 examples:
-  - "A US-foreign-policy MMLU item such as 'The Monroe Doctrine was primarily concerned with...' presented in Arabic, Swahili, or Japanese, with the same four answer options translated."
-method: "0-shot or few-shot multiple-choice over 14,042 parallel questions per language across 57 subjects; the predicted answer letter is parsed and compared to the gold key."
-metric: "Accuracy (% correct), reported per language and averaged."
-format: "4-way multiple-choice, one correct option; typically run 0-shot or 5-shot."
-saturation: high
-limitations: "It is a translation of English-origin MMLU, so it carries MMLU's US/Western cultural framing and any of MMLU's original label errors into every language — it measures multilingual knowledge recall, not culturally-native knowledge. High-resource languages are near-saturated; the signal now lives in the low-resource tail (e.g. Yoruba, Swahili)."
+  - "An MMLU abstract-algebra question shown on the dataset card in Arabic, with its four options (A to D) and the answer letter."
+method: "Multiple choice: the model picks one of four options and its letter is compared with the key. OpenAI publishes the evaluation code alongside the translations."
+metric: "Accuracy (% correct), per language and averaged."
+format: "Four-option multiple choice (A to D), one correct answer."
+limitations: "The questions are translations of the English MMLU, so they keep MMLU's content and framing rather than knowledge native to each language, and any error in an original MMLU question carries into every translation."
 citation: "https://huggingface.co/datasets/openai/MMMLU"
 worked_examples:
   - task_type: "US government / history (Yoruba)"
@@ -94,39 +93,28 @@ worked_examples:
     checks: "Recall of SI units on a parallel item common to all 14 languages."
     scoring: "Accuracy (% correct)."
 tags: [multilingual, knowledge, multiple-choice, translation]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://huggingface.co/datasets/openai/MMMLU", title: "openai/MMMLU — Datasets at Hugging Face", trust: 0.95 }
-  - { url: "https://www.marktechpost.com/2024/09/23/openai-releases-multilingual-massive-multitask-language-understanding-mmmlu-dataset-on-hugging-face-to-easily-evaluate-multilingual-llms/", title: "OpenAI Releases MMMLU Dataset on Hugging Face (2024)", trust: 0.7 }
+  - { url: "https://datasets-server.huggingface.co/size?dataset=openai/MMMLU", title: "openai/MMMLU — row counts per locale (Hugging Face dataset viewer)", trust: 0.9 }
 related: [benchmark/mmlu, benchmark/mmlu-pro, benchmark/mmlu-redux]
 ---
 
 ## What It Tests
-The same broad academic knowledge as MMLU (57 subjects, from elementary math to professional
-law and medicine) but read and answered in a non-English language. Because the questions are
-identical across languages, it isolates *language competence* from *subject difficulty*.
+MMLU's academic knowledge (57 subjects, from elementary level to professional subjects such as law and physics), read and answered in **14 languages**.
+
+- **Parallel** — the same 14,042 questions in every language.
+- **Human translation** — professional translators, not machine translation.
 
 ## How It Scores
-Accuracy over 14,042 questions per language, reported for each of the 14 languages and averaged.
-The 14 languages span Europe (German, Spanish, French, Italian, Portuguese), Asia (Chinese,
-Japanese, Korean, Hindi, Bengali, Indonesian), the Middle East (Arabic), and Africa (Swahili,
-Yoruba). The per-language spread — not the average — is the headline number.
+**Accuracy**, per language and averaged across the 14 languages.
 
 ## Format
-Four-way multiple choice, one correct option, usually run 0-shot or 5-shot. Crucially, every
-item is a *human* translation: OpenAI paid professional translators for one translation per
-question per language rather than machine-translating, which removes translationese as a
-confound — a first for a benchmark of this size.
+Four-option multiple choice with one correct answer, as in MMLU. The locales are AR_XY, BN_BD, DE_DE, ES_LA, FR_FR, HI_IN, ID_ID, IT_IT, JA_JP, KO_KR, PT_BR, SW_KE, YO_NG and ZH_CN.
 
 ## Limitations
-The questions originate from English MMLU, so their cultural and topical framing stays Western
-regardless of the target language — MMMLU asks "can you answer US-centric questions in Swahili?",
-not "what does a Swahili speaker's world contain?". It also inherits MMLU's known label noise,
-and high-resource languages are already near the ceiling, leaving useful signal mainly in
-low-resource languages.
+- **Translated content.** MMLU's English-origin questions, not knowledge native to each language.
+- **Inherited errors.** A wrong key in MMLU stays wrong in every translation.
 
 ## Example
-An MMLU item like "In the context of US foreign policy, the Monroe Doctrine primarily aimed to..."
-appears verbatim-translated into each of the 14 languages, with the same four options. A model
-that scores 88% in English but 61% in Yoruba reveals a language gap, not a knowledge gap — the
-question set is by construction the same.
+The dataset card shows Arabic rows from the abstract-algebra subject: a question, four options A to D and the answer letter (for one factoring question, C). The model's chosen letter is compared with that key.

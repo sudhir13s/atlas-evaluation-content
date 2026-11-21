@@ -6,16 +6,15 @@ schema_version: 1.0
 title: "MBPP"
 name: MBPP
 category: Code Generation
-description: "Mostly Basic Python Problems — ~1,000 entry-level programming tasks with tests."
-what_is_it: "Google's Mostly Basic Python Problems: ~974 short, entry-level tasks, each with a natural-language description, a reference solution, and three assert-based test cases. A hand-verified subset (~427 problems) is the cleaner reporting slice."
-why_people_use_it: "It complements HumanEval with more problems at a similar (basic) difficulty, giving a larger, less-noisy minimum-competence signal for Python code generation. Widely reported alongside HumanEval."
+description: "Mostly Basic Programming Problems: 974 short Python programming tasks for entry-level programmers, each with three test cases."
+what_is_it: "MBPP was introduced by Austin et al. (2021). It has 974 short Python tasks written by crowdworkers with basic Python knowledge; each has a short problem statement, a self-contained reference function and three test cases written as assert statements. The authors also inspected, edited and pruned a subset into 426 hand-verified questions (the edited dataset)."
+why_people_use_it: "It measures whether a model can write short Python programs from a natural-language description, checked by running the tests."
 examples:
   - "Write a function to count the number of ways to tile a 2xn board with 2x1 tiles. (Fibonacci; tile_ways(4) == 5)"
-method: "Few-shot (commonly 3-shot) or 0-shot; generated solutions are executed against the provided assert tests. pass@1 is standard."
-metric: "pass@1 (% of tasks whose generated solution passes all asserts)."
-format: "3-shot or 0-shot; unit-test execution."
-saturation: high
-limitations: "Problems are basic and self-contained, so MBPP works better as a competence floor than a discriminator between strong models (frontier models score 85%+). The raw split has some noisy descriptions and weak tests; use the sanitized subset. Python-only and small-function-only, like HumanEval."
+method: "The model writes a function from the problem statement (often with a few examples in the prompt); it is executed against the three assert-based test cases."
+metric: "Share of tasks whose generated solution passes all test cases (pass@1 is the most reported)."
+format: "Few-shot or zero-shot function synthesis; unit-test execution."
+limitations: "The tasks are short, self-contained Python functions. Each task has only three test cases. In the paper, few-shot performance on 100 problems found in both versions rose from 63% on the original wording to 79% on the edited wording, so results on the full and edited sets are not comparable."
 citation: "https://arxiv.org/abs/2108.07732"
 worked_examples:
   - task_type: "Recurrence with a base case"
@@ -69,29 +68,26 @@ worked_examples:
     checks: "Handling the 0! = 1 boundary that a naive downward multiply misses."
     scoring: "pass@1 on the provided asserts: 3/3 vs 2/3 (fails factorial(0))."
 tags: [code, python, execution, pass-at-k]
-updated: 2026-08-02
+updated: 2026-11-21
 sources:
   - { url: "https://arxiv.org/abs/2108.07732", title: "Program Synthesis with Large Language Models (Austin et al., 2021)", trust: 0.95 }
+  - { url: "https://ar5iv.labs.arxiv.org/html/2108.07732", title: "MBPP paper, full text (ar5iv)", trust: 0.95 }
 related: [benchmark/humaneval, benchmark/swe-bench]
 ---
 
 ## What It Tests
-Basic Python program synthesis from a short description — string manipulation, small algorithms,
-list/dict operations. It measures whether a model reliably writes correct simple functions.
+**Basic Python program synthesis** from a short description: small algorithms and string, list and dictionary operations.
 
 ## How It Scores
-pass@1: execute the generated solution against the three provided assert statements; the task is
-solved if all pass. Because the problems are easy and numerous (~974, or ~427 sanitized), the score
-is stable but ceilinged — most capable models cluster high.
+Run the generated function against the task's **three assert statements**; the task counts as solved if all pass.
 
 ## Format
-Commonly 3-shot (three worked examples prepended) or 0-shot. Generated code is executed against the
-asserts in a sandbox.
+Few-shot or zero-shot prompts; code executes against the asserts.
 
 ## Limitations
-**Basic and saturated**: frontier models routinely exceed 85% pass@1, so MBPP separates weak from
-competent models but not good from great. The unsanitized split has noisy prompts and thin tests —
-prefer the hand-verified subset. Like HumanEval, it is Python-only and isolated-function-only.
+- **Basic scope.** Short single functions in Python only.
+- **Thin tests.** Three asserts per task.
+- **Two versions.** The full 974-task set and the 426-task edited set score differently.
 
 ## Example
 "Write a function to count the number of ways to tile a 2×n board with 2×1 tiles." The count follows
