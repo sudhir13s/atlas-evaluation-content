@@ -15,7 +15,7 @@ tags: [leaderboard, composite-index, economic-weighting, agentic, private-benchm
 updated: 2026-11-21
 sources:
   - { url: "https://www.vals.ai/benchmarks/vals_index", title: "Vals Index — Vals AI", trust: 0.9 }
-related: [benchmark/terminal-bench]
+related: [benchmark/terminal-bench, benchmark/harvey-lab]
 ---
 
 ## What It Ranks

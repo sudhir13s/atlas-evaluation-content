@@ -5,7 +5,7 @@ slug: vamos-bench
 schema_version: 1.0
 title: "VAmoS Bench"
 name: VAmoS Bench (Voice Agent Simulation Bench, including VAmoS Pro Bench)
-category: Agent & Tool Use
+category: Voice & Speech
 description: "A Veris AI benchmark that runs complete voice-agent systems through simulated phone calls and grades what the agent did, not only what it said."
 what_is_it: "VAmoS Bench, the Voice Agent Simulation Bench, measures whole voice-agent systems end to end on a stateful customer-support task. The agent, Riley, is a credit-card support representative for a fictional bank who can freeze, cancel, replace or activate a card. There are 100 scenarios; each gives a simulated caller a private goal and a seeded PostgreSQL database, and about one third of callers apply adversarial pressure. The agent has five tools that run real SQL. VAmoS Pro Bench is Veris AI's second, harder set for utility billing and payment assistance."
 why_people_use_it: "Voice-agent benchmarks usually measure component quality such as word error rate, latency and turn-taking. VAmoS measures whether the call was handled correctly: the paper calls this 'containment'. It compares cascaded, speech-to-speech and hybrid stacks on one task. The board is a living one where new implementations of Riley can be submitted."
@@ -20,7 +20,7 @@ sources:
   - { url: "https://arxiv.org/abs/2607.27453", title: "VAmoS Bench: Voice Agent Simulation Bench (arXiv:2607.27453)", trust: 0.95 }
   - { url: "https://veris.ai/leaderboard/vamos", title: "VAmoS Bench — Veris AI leaderboard", trust: 0.9 }
   - { url: "https://veris.ai/leaderboard/vamos-pro", title: "VAmoS Pro Bench — Veris AI leaderboard", trust: 0.9 }
-related: [benchmark/tau2-bench]
+related: [benchmark/tau2-bench, benchmark/tau-voice, benchmark/voicebench]
 ---
 
 ## What It Tests

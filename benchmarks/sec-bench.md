@@ -5,7 +5,7 @@ slug: sec-bench
 schema_version: 1.0
 title: "SEC-bench"
 name: SEC-bench (including SEC-bench Pro)
-category: Agent & Tool Use
+category: Cybersecurity
 description: "A security-engineering benchmark for LLM agents: the original SEC-bench covers proof-of-concept generation and vulnerability patching, and SEC-bench Pro adds long-horizon bug hunting in browsers and Linux."
 what_is_it: "SEC-bench describes itself as the first fully automated framework for evaluating LLM agents on authentic security-engineering tasks. The original release (June 2025, accepted to NeurIPS 2025) has two tasks, proof-of-concept (PoC) generation and vulnerability patching. SEC-bench Pro launched on 2026-05-01 with a V8 board and is described as a self-evolving benchmark that measures agents' ability to hunt security bugs in critical software. Its Overall board combines V8, Firefox and Linux into 344 instances."
 why_people_use_it: "The tasks use real vulnerabilities and are checked by running the result, not by judging text. SEC-bench Pro adds large, hard targets with long runs, and its boards grow over time. Google DeepMind cites SEC-bench Pro among its cybersecurity benchmarks."

@@ -73,7 +73,7 @@ updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2506.07982", title: "τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment (Barres et al., 2025)", trust: 0.95 }
   - { url: "https://github.com/sierra-research/tau2-bench", title: "sierra-research/tau2-bench (official repo)", trust: 0.9 }
-related: [benchmark/bfcl-v4, benchmark/vita-bench, benchmark/deepplanning]
+related: [benchmark/tau-voice, benchmark/bfcl-v4, benchmark/vita-bench, benchmark/deepplanning]
 ---
 
 ## What It Tests

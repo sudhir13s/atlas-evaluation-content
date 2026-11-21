@@ -32,7 +32,7 @@ examples) so it stays machine-parseable; the body carries explanation.
 - `tags`: lowercase, hyphen-separated.
 - `updated`: ISO date (`YYYY-MM-DD`).
 - `sources[]`: `{ url, title, trust }` — `trust` in `[0,1]`. Open-source-first; cite, do not copy.
-- `schema_version`: the `major.minor` the file was authored against. The repo is at `2.1`; `benchmark` and `evaluation-dataset` files were authored
+- `schema_version`: the `major.minor` the file was authored against. The repo is at `2.2`; `benchmark` and `evaluation-dataset` files were authored
   against `1.0` and stay valid, because their types did not change.
 
 ## Body sections
@@ -44,7 +44,7 @@ examples) so it stays machine-parseable; the body carries explanation.
 
 ## Per-type specifics
 
-- **benchmark** — carries `category` (one of the eight UI groups), `metric`, `method`, `format`,
+- **benchmark** — carries `category` (one of the UI groups in the schema enum), `metric`, `method`, `format`,
   `saturation`, and `limitations`. `method`, `metric`, and `limitations` are required: **a score is
   never shown without them.** Body sections: What It Tests → How It Scores → Format → Limitations → Example.
 - **evaluation-dataset** — the datasets and harnesses that *run* benchmarks (a harness like

@@ -5,7 +5,7 @@ slug: cybergym
 schema_version: 1.0
 title: "CyberGym"
 name: CyberGym
-category: Agent & Tool Use
+category: Cybersecurity
 description: "A large-scale security-agent benchmark: given a vulnerability description and a codebase, an agent must write a proof-of-concept input that reproduces the bug — verified by crashing the vulnerable build but not the patched one."
 what_is_it: "CyberGym evaluates AI agents' real-world cybersecurity capability at scale. It comprises 1,507 real vulnerability instances drawn from Google's OSS-Fuzz service across 188 C/C++ open-source projects. The core task is vulnerability reproduction: the agent is given a pre-patch codebase (and, depending on difficulty level, a text description and execution traces) and must generate a proof-of-concept (PoC) input that triggers the specific vulnerability. Success is decided by execution under sanitizers, not by an LLM judge."
 why_people_use_it: "It tests offensive-security agent skill on real code at a scale prior benchmarks lacked — hundreds of projects, over 1,500 vulnerabilities — with an execution-based verdict that is hard to game. It is deliberately hard (top agent-model combinations reach only ~20% success), and it has real-world teeth: running CyberGym surfaced 34 previously-unknown zero-day vulnerabilities and 18 historically incomplete patches, so it doubles as a stress test of an agent's ability to find and reproduce genuine bugs."
@@ -76,7 +76,7 @@ sources:
   - { url: "https://www.cybergym.io/cybergym/", title: "CyberGym — official project site", trust: 0.9 }
   - { url: "https://huggingface.co/papers/2506.02548", title: "CyberGym — Hugging Face paper page", trust: 0.85 }
   - { url: "https://www.alphaxiv.org/overview/2506.02548", title: "CyberGym overview (alphaXiv)", trust: 0.8 }
-related: [benchmark/swe-bench, benchmark/terminal-bench, benchmark/bfcl-v4, benchmark/tau2-bench]
+related: [benchmark/swe-bench, benchmark/terminal-bench, benchmark/bfcl-v4, benchmark/tau2-bench, benchmark/exploitgym]
 ---
 
 ## What It Tests

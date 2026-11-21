@@ -5,7 +5,7 @@ slug: <slug>
 schema_version: 1.0
 title: "<Benchmark Name>"
 name: <BENCHMARK NAME>
-category: Knowledge & Academic Reasoning   # see schema enum for the eight categories
+category: Knowledge & Academic Reasoning   # see schema enum for the allowed categories
 description: "<one line: what the benchmark is>"
 what_is_it: "<plain-English explanation of what it measures>"
 why_people_use_it: "<why it matters / what decision it informs>"

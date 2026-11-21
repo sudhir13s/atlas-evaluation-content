@@ -9,7 +9,7 @@ maintainer: Artificial Analysis (independent)
 url: https://artificialanalysis.ai
 tagline: Intelligence vs. price vs. speed — the production-decision board.
 ranks: language models by an Intelligence Index, plus cost, tokens and speed
-benchmarks: [benchmark/automationbench, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/hle-diamond]
+benchmarks: [benchmark/automationbench, benchmark/gdp-pdf, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/critpt, benchmark/aa-omniscience, benchmark/hle-diamond]
 update_cadence: Weekly
 free_access: true
 score_origin: independent
@@ -19,7 +19,7 @@ sources:
   - { url: "https://artificialanalysis.ai", title: "Artificial Analysis", trust: 0.85 }
   - { url: "https://artificialanalysis.ai/methodology/intelligence-benchmarking", title: "Artificial Analysis Intelligence Benchmarking Methodology (Index v5.0.1)", trust: 0.9 }
   - { url: "https://artificialanalysis.ai/evaluations/mka", title: "MKA benchmark — Artificial Analysis evaluation page", trust: 0.85 }
-related: [benchmark/automationbench, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/hle-diamond, benchmark/mka]
+related: [benchmark/automationbench, benchmark/gdp-pdf, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/critpt, benchmark/aa-omniscience, benchmark/hle-diamond, benchmark/mka, benchmark/gdpval, benchmark/harvey-lab, benchmark/healthbench, benchmark/mmmu-pro]
 ---
 
 ## What It Ranks
@@ -45,7 +45,7 @@ A **weighted average of nine evaluations in four categories**, 25% each. The met
 - **Science (25%)** — Terminal-Bench-Science 0.1 (15%), CritPt v2 Hard Subset (10%).
 - **General (25%)** — AA-Omniscience v1.1 (15%, split 10% accuracy and 5% non-hallucination rate), HLE-Diamond (10%).
 
-Only some components have their own records here. AA-Briefcase, GDP.pdf, CritPt and AA-Omniscience do not.
+Only some components have their own records here; AA-Briefcase does not.
 
 ### Methodology
 

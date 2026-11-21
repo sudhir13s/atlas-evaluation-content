@@ -5,7 +5,7 @@ slug: cwe-bench
 schema_version: 1.0
 title: "CWE-Bench"
 name: CWE-bench
-category: Agent & Tool Use
+category: Cybersecurity
 description: "A Collinear AI defensive-security benchmark: 100 held-out tasks where a coding agent must audit a real repository, find a weakness and fix it without breaking anything."
 what_is_it: "CWE-bench gives a coding agent a checkout of a real open-source repository, some reproducing disclosed CVEs, and one instruction: audit the code and fix what you find. The task does not reveal the vulnerabilities or how many exist. The held-out set has 100 tasks covering 54 distinct weakness types from CWE, the weakness classification maintained by MITRE, and all 10 OWASP 2025 categories with 8 to 11 tasks each. Agents are never asked to create exploits."
 why_people_use_it: "It mimics a real security audit, where nobody hands over a CVE number for a flaw no one has reported. Collinear contrasts it with benchmarks that name the CVE and weakness class. Artificial Analysis independently evaluates and publishes the results, and Google DeepMind cites it in its cybersecurity table as 'CWE-Bench v2'."

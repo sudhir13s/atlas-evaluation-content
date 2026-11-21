@@ -72,7 +72,7 @@ tags: [code, agentic, real-world, patch, execution]
 updated: 2026-08-02
 sources:
   - { url: "https://arxiv.org/abs/2310.06770", title: "SWE-bench: Can Language Models Resolve Real-World GitHub Issues? (Jimenez et al., 2023)", trust: 0.95 }
-related: [benchmark/humaneval, benchmark/mbpp]
+related: [benchmark/humaneval, benchmark/mbpp, benchmark/deepswe]
 ---
 
 ## What It Tests

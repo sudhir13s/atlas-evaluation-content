@@ -5,6 +5,14 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Schema 2.2 (benchmark categories; additive)
+
+- **Added** three values to the `category` enum of the `benchmark` type: `Cybersecurity`,
+  `Voice & Speech` and `Science & Research`. Adding values loosens the rule, so no other record
+  changes schema version. `cybergym`, `cwe-bench`, `sec-bench` and `webexploitbench` moved to
+  `Cybersecurity`, `vamos-bench` to `Voice & Speech`, and `terminal-bench-science` to
+  `Science & Research`.
+
 ### Schema 2.1 (leaderboards, evaluation frameworks and metrics; additive)
 
 - **Added** the `leaderboard` type (`leaderboards/`, `leaderboard/<slug>`): an outside leaderboard
@@ -61,3 +69,4 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 - **1.0** — initial schema for the three evaluation content types.
 - **2.0** — `leaderboard-entry` replaced by `score-sheet` (breaking).
 - **2.1** — `leaderboard`, `evaluation-framework` and `evaluation-metric` types.
+- **2.2** — three new benchmark categories (additive).

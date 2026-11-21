@@ -5,7 +5,7 @@ slug: terminal-bench-science
 schema_version: 1.0
 title: "Terminal-Bench-Science"
 name: Terminal-Bench-Science (v0.1)
-category: Agent & Tool Use
+category: Science & Research
 description: "A Stanford-led benchmark of 70 expert-written scientific research workflows that an agent completes in a terminal, each checked by its own tests."
 what_is_it: "Terminal-Bench-Science extends Terminal-Bench from software tasks to science. Researchers contribute workflows from their own work in the life, physical, Earth, mathematical and engineering sciences. Release 0.1 has 70 tasks covering data analysis, statistical inference, simulation, optimization, theorem proving, image reconstruction, signal processing, inverse problems, sensor calibration, model fitting, classification and scientific machine learning. The project is hosted by Stanford University and the Laude Institute."
 why_people_use_it: "It lets scientists, not model makers or data vendors, set the bar for scientific capability in AI. Tasks were calibrated during review to challenge the newest frontier models, and it is a continuous benchmark with regular releases. Artificial Analysis includes it in its Intelligence Index."
