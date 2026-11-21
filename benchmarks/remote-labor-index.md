@@ -5,7 +5,7 @@ slug: remote-labor-index
 schema_version: 1.0
 title: "Remote Labor Index"
 name: Remote Labor Index (RLI)
-category: Agent & Tool Use
+category: Professional Work
 description: "A CAIS and Scale AI benchmark of real, economically valuable remote-work projects that measures how often an AI agent's deliverable would be accepted as commissioned work."
 what_is_it: "The Remote Labor Index (RLI) is a broadly multi-sector benchmark of real-world, economically valuable projects, designed to evaluate end-to-end agent performance in practical settings. The authors are at the Center for AI Safety and Scale AI (paper submitted 2025-10-30). The paper reports that agents perform near the floor on it."
 why_people_use_it: "Research benchmarks of knowledge and reasoning do not show how gains turn into economic value or automation. RLI grounds that discussion in whole projects that a client might hire a freelancer to do. It gives a common basis for tracking AI automation over time."

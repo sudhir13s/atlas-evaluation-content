@@ -5,7 +5,7 @@ slug: harvey-lab
 schema_version: 1.0
 title: "Harvey LAB"
 name: Harvey LAB (Legal Agent Benchmark)
-category: Agent & Tool Use
+category: Professional Work
 description: "An open-source benchmark of about 1,250 legal agent tasks across 24 practice areas, graded all-pass against expert-written rubric criteria."
 what_is_it: "The Legal Agent Benchmark (LAB) from Harvey evaluates agents on real legal work. The first version has 1,250 agent tasks across 24 legal practice areas and more than 75,000 expert-written rubric criteria. Tasks are matter-style: they give an agent instructions, documents and a workspace, and it must produce a deliverable. Harvey open-sourced both the dataset and an execution harness, under the MIT licence per the repository."
 why_people_use_it: "It gives model providers, agent builders, researchers and law firms a shared way to measure progress on long-horizon legal agents. Harvey says all-pass grading reflects how high-stakes legal work is reviewed: there is no partial credit for catching most of the issues. Variants exist at Artificial Analysis (Harvey LAB-AA) and Vals AI (HLAB-Vals), which feeds the Vals Index."

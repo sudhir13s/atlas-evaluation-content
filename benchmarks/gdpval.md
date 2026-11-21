@@ -5,7 +5,7 @@ slug: gdpval
 schema_version: 1.0
 title: "GDPval"
 name: GDPval
-category: Agent & Tool Use
+category: Professional Work
 description: "An OpenAI benchmark of real work products across 44 occupations in the top 9 industries by US GDP, graded by blind expert comparison with human deliverables."
 what_is_it: "GDPval measures model performance on economically valuable, real-world tasks. It covers the majority of US Bureau of Labor Statistics work activities for 44 occupations in the 9 sectors that contribute most to US GDP. The full set has 1,320 tasks, 30 per occupation, and 220 of them form an open gold set. Every task is based on a real work product, such as a legal brief, an engineering blueprint, a customer-support conversation or a nursing care plan, written by professionals with 14 years of experience on average."
 why_people_use_it: "It ties model progress to the work people are paid to do instead of exam questions. The paper says frontier performance improved roughly linearly over time and is approaching expert quality, and that more reasoning effort, context and scaffolding help. Artificial Analysis runs its own agentic version, GDPval-AA, as an additional evaluation."

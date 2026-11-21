@@ -5,7 +5,7 @@ slug: healthbench
 schema_version: 1.0
 title: "HealthBench"
 name: HealthBench
-category: Truthfulness & Safety
+category: Knowledge & Academic Reasoning
 description: "An OpenAI open-source benchmark of 5,000 realistic health conversations, each graded against a physician-written rubric."
 what_is_it: "HealthBench measures the performance and safety of language models in healthcare. It has 5,000 multi-turn conversations between a model and either an individual user or a healthcare professional. Responses are scored against conversation-specific rubrics written by 262 physicians from 60 countries, with 48,562 unique criteria in total. The criteria cover contexts such as emergencies, transforming clinical data and global health, and behaviours such as accuracy, instruction following and communication."
 why_people_use_it: "It replaces multiple-choice and short-answer medical tests with open-ended, realistic conversations. OpenAI says evaluations in health should be meaningful, so scores reflect real-world impact and go beyond exam questions. The evaluation and data are open on GitHub."

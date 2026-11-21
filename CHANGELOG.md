@@ -5,6 +5,17 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Content (Professional Work category)
+
+- **Added** the benchmark category "Professional Work" to the `category` enum of
+  `benchmark.schema.json`. It is a content-only change: no field changed, so the schema stays at 3.0
+  and existing records stay valid.
+- **Changed** `gdpval`, `remote-labor-index` and `harvey-lab` move from "Agent & Tool Use" to
+  "Professional Work": each is built from real professional work products judged for acceptance.
+- **Changed** `healthbench` moves from "Truthfulness & Safety" to "Knowledge & Academic Reasoning":
+  it scores answers to health conversations against physician-written rubrics, not hallucination or
+  abstention behaviour.
+
 ### Schema 3.0 (evaluation metrics reshaped; standards added)
 
 - **Changed (breaking, for `evaluation-metric` only)** the `evaluation-metric` type, which had no
