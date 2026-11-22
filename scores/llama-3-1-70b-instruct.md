@@ -7,11 +7,12 @@ title: Llama-3.1-70B-Instruct — scores
 model: model/llama-3-1-70b-instruct
 scores:
 - benchmark: benchmark/arc-challenge
-  value: 93.0
+  value: 94.8
   scale: percent
   source: https://arxiv.org/abs/2407.21783
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
+  method: 0-shot
 - benchmark: benchmark/gpqa-diamond
   value: 0.441919
   scale: fraction
@@ -22,33 +23,27 @@ scores:
   value: 95.1
   scale: percent
   source: https://arxiv.org/abs/2407.21783
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
-  note: Vendor-reported, 8-shot CoT (Llama 3.1 paper).
+  method: 8-shot, CoT
 - benchmark: benchmark/humaneval
   value: 80.5
   scale: percent
   source: https://arxiv.org/abs/2407.21783
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
-  note: Vendor-reported pass@1 (Llama 3.1 paper).
+  method: 0-shot
 - benchmark: benchmark/mmlu
-  value: 86.0
+  value: 83.6
   scale: percent
   source: https://arxiv.org/abs/2407.21783
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
-  note: Vendor-reported, 5-shot (Llama 3.1 model card / paper).
-- benchmark: benchmark/truthfulqa
-  value: 63.0
-  scale: percent
-  source: https://arxiv.org/abs/2407.21783
-  observed_on: '2026-07-17'
-  self_reported: true
+  method: 5-shot
 tags:
 - llm
 - text-generation
-updated: '2026-11-20'
+updated: '2026-11-22'
 sources:
 - url: https://arxiv.org/abs/2407.21783
   title: The Llama 3 Herd of Models (Meta, 2024)
@@ -62,9 +57,8 @@ sources:
 
 ## Notes
 
-MMLU (86.0, 5-shot), HumanEval (80.5 pass@1), and GSM8K (95.1, 8-shot CoT) are Meta's own reported
-figures from the Llama 3.1 paper and model card — hence `self_reported: true`. Meta's headline table
-does not report TruthfulQA or ARC-Challenge for the instruct model; the values here (TruthfulQA ~63,
-ARC-Challenge ~93) are reference approximations consistent with the Llama-3-70B range on the archived
-HF Open LLM Leaderboard v1 (TruthfulQA MC2, ARC-Challenge 25-shot) and should be verified before
-citation. Independent re-runs (LMArena, LiveBench) are the trustworthy cross-check.
+MMLU (83.6, 5-shot), HumanEval (80.5, 0-shot), GSM8K (95.1, 8-shot CoT) and ARC-Challenge (94.8,
+0-shot) are Meta's figures for the fine-tuned 70B model in Table 2 of the Llama 3 paper, which
+states that all its results are for the Llama 3.1 models; the instruction-tuned table of the
+Llama 3.1 model card gives the same values. The same paper table reports MMLU as 86.0 under 0-shot
+chain-of-thought prompting. Meta does not report TruthfulQA for this model.

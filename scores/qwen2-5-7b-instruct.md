@@ -6,12 +6,6 @@ schema_version: 2.0
 title: Qwen2.5 7B Instruct — scores
 model: model/qwen2-5-7b-instruct
 scores:
-- benchmark: benchmark/arc-challenge
-  value: 63.0
-  scale: percent
-  source: https://arxiv.org/abs/2412.15115
-  observed_on: '2026-07-17'
-  self_reported: true
 - benchmark: benchmark/gpqa-diamond
   value: 0.354798
   scale: fraction
@@ -19,52 +13,28 @@ scores:
   observed_on: '2026-08-30'
   self_reported: false
 - benchmark: benchmark/gsm8k
-  value: 0.916
-  scale: fraction
-  source: https://qwenlm.github.io/blog/qwen2.5-llm/
-  observed_on: '2026-11-19'
-  self_reported: true
-  method: vendor-reported
-- benchmark: benchmark/gsm8k
-  value: 85.4
+  value: 91.6
   scale: percent
-  source: https://arxiv.org/abs/2412.15115
-  observed_on: '2026-07-17'
+  source: https://qwenlm.github.io/blog/qwen2.5-llm/
+  observed_on: '2026-11-22'
   self_reported: true
-  note: Vendor-reported (Qwen2.5 technical report).
 - benchmark: benchmark/humaneval
-  value: 0.848
-  scale: fraction
+  value: 84.8
+  scale: percent
   source: https://qwenlm.github.io/blog/qwen2.5-llm/
-  observed_on: '2026-11-19'
+  observed_on: '2026-11-22'
   self_reported: true
-  method: 0-shot
 - benchmark: benchmark/math
-  value: 0.755
-  scale: fraction
-  source: https://qwenlm.github.io/blog/qwen2.5-llm/
-  observed_on: '2026-11-19'
-  self_reported: true
-  method: vendor-reported
-- benchmark: benchmark/mmlu
-  value: 74.2
+  value: 75.5
   scale: percent
-  source: https://arxiv.org/abs/2412.15115
-  observed_on: '2026-07-17'
+  source: https://qwenlm.github.io/blog/qwen2.5-llm/
+  observed_on: '2026-11-22'
   self_reported: true
-  note: Vendor-reported (Qwen2.5 technical report).
 - benchmark: benchmark/mmlu-pro
-  value: 0.563
-  scale: fraction
-  source: https://qwenlm.github.io/blog/qwen2.5-llm/
-  observed_on: '2026-11-19'
-  self_reported: true
-  method: 5-shot
-- benchmark: benchmark/truthfulqa
-  value: 64.0
+  value: 56.3
   scale: percent
-  source: https://arxiv.org/abs/2412.15115
-  observed_on: '2026-07-17'
+  source: https://qwenlm.github.io/blog/qwen2.5-llm/
+  observed_on: '2026-11-22'
   self_reported: true
 tags:
 - llm
@@ -75,7 +45,7 @@ tags:
 - instruct
 - multilingual
 - apache-2-0
-updated: '2026-11-20'
+updated: '2026-11-22'
 sources:
 - url: https://qwenlm.github.io/blog/qwen2.5-llm/
   title: https://qwenlm.github.io/blog/qwen2.5-llm/
@@ -91,6 +61,7 @@ sources:
 
 ## Notes
 
-MMLU (74.2), HumanEval (84.8 pass@1), and GSM8K (85.4) are the Qwen team's reported figures.
-TruthfulQA (~64) and ARC-Challenge (~63) are reference approximations not headlined in the Qwen2.5
-report and should be verified before citation.
+GSM8K (91.6), HumanEval (84.8), MATH (75.5) and MMLU-Pro (56.3) are the Qwen team's figures for
+Qwen2.5-7B-Instruct in the "Qwen2.5-7B-Instruct Performance" table of the Qwen2.5 blog; the Qwen2.5
+technical report (Table 8) gives the same values. The Qwen team publishes MMLU, ARC-Challenge and
+TruthfulQA only for the Qwen2.5-7B base model, so none are listed for the instruct model.

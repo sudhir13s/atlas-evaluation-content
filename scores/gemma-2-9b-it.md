@@ -6,52 +6,26 @@ schema_version: 2.0
 title: Gemma 2 9B IT — scores
 model: model/gemma-2-9b-it
 scores:
-- benchmark: benchmark/arc-challenge
-  value: 68.4
-  scale: percent
-  source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-07-17'
-  self_reported: true
 - benchmark: benchmark/gpqa-diamond
   value: 0.274621
   scale: fraction
   source: https://epoch.ai/benchmarks
   observed_on: '2025-01-27'
   self_reported: false
-- benchmark: benchmark/gsm8k
-  value: 0.686
-  scale: fraction
-  source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-11-19'
-  self_reported: true
-  method: 5-shot (Gemma 2 9B pretrained-base report)
-- benchmark: benchmark/humaneval
-  value: 0.402
-  scale: fraction
-  source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-11-19'
-  self_reported: true
-  method: pass@1 (Gemma 2 9B pretrained-base report)
-- benchmark: benchmark/math
-  value: 0.366
-  scale: fraction
-  source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-11-19'
-  self_reported: true
-  method: 4-shot (Gemma 2 9B pretrained-base report)
 - benchmark: benchmark/mmlu
-  value: 0.713
-  scale: fraction
-  source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-11-19'
-  self_reported: true
-  method: 5-shot (Gemma 2 9B pretrained-base report)
-- benchmark: benchmark/truthfulqa
-  value: 45.3
+  value: 72.3
   scale: percent
   source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
+  method: few-shot
+- benchmark: benchmark/truthfulqa
+  value: 50.27
+  scale: percent
+  source: https://arxiv.org/abs/2408.00118
+  observed_on: '2026-11-22'
+  self_reported: true
+  method: MC2Acc
 tags:
 - llm
 - gemma
@@ -60,7 +34,7 @@ tags:
 - gqa
 - instruct
 - sliding-window
-updated: '2026-11-20'
+updated: '2026-11-22'
 sources:
 - url: https://arxiv.org/abs/2408.00118
   title: https://arxiv.org/abs/2408.00118
@@ -73,6 +47,8 @@ sources:
 
 ## Notes
 
-MMLU (71.3), HumanEval (40.2 pass@1), and GSM8K (68.6) are from the Gemma 2 technical report.
-TruthfulQA (~45.3) and ARC-Challenge (~68.4) are reference figures from the report/HF archive and
-should be verified before citation.
+MMLU (72.3) is Google's figure for the instruction-tuned 9B model in Table 17 of the Gemma 2
+technical report, which compares pre-trained (71.3) and instruction-tuned models on few-shot
+benchmarks. TruthfulQA (50.27, MC2 accuracy) is from the report's safety academic benchmark table
+(Table 18) for Gemma 2 IT 9B. The report gives ARC-Challenge, GSM8K, HumanEval and MATH only for the
+pre-trained model, so none are listed here.

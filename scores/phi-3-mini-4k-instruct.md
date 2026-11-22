@@ -10,35 +10,37 @@ scores:
   value: 84.9
   scale: percent
   source: https://arxiv.org/abs/2404.14219
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
+  method: 10-shot
 - benchmark: benchmark/gsm8k
-  value: 0.825
-  scale: fraction
+  value: 82.5
+  scale: percent
   source: https://arxiv.org/abs/2404.14219
-  observed_on: '2026-11-19'
+  observed_on: '2026-11-22'
   self_reported: true
-  method: 8-shot CoT
+  method: 8-shot; CoT
 - benchmark: benchmark/humaneval
-  value: 0.585
-  scale: fraction
+  value: 58.5
+  scale: percent
   source: https://arxiv.org/abs/2404.14219
-  observed_on: '2026-11-19'
+  observed_on: '2026-11-22'
   self_reported: true
   method: 0-shot
 - benchmark: benchmark/mmlu
-  value: 0.688
-  scale: fraction
+  value: 68.8
+  scale: percent
   source: https://arxiv.org/abs/2404.14219
-  observed_on: '2026-11-19'
+  observed_on: '2026-11-22'
   self_reported: true
   method: 5-shot
 - benchmark: benchmark/truthfulqa
   value: 65.0
   scale: percent
   source: https://arxiv.org/abs/2404.14219
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
+  method: 10-shot; MC2
 tags:
 - llm
 - phi
@@ -48,7 +50,7 @@ tags:
 - instruct
 - small
 - mit
-updated: '2026-11-19'
+updated: '2026-11-22'
 sources:
 - url: https://arxiv.org/abs/2404.14219
   title: https://arxiv.org/abs/2404.14219
@@ -59,9 +61,8 @@ sources:
 
 ## Notes
 
-Phi-3-mini (3.8B) is the strongest small model in this row set, thanks to its heavily curated training
-data. MMLU (68.8), HumanEval (58.5 pass@1), and GSM8K (82.5) are Microsoft's reported figures from the
-Phi-3 technical report, which does tabulate TruthfulQA (~65) and ARC-Challenge (~84.9) — these two are
-closer to vendor-reported here than in the other rows, but still verify against the report before
-citation. Phi models are also the textbook caution on contamination given their synthetic-data
-training recipe.
+Phi-3-mini has 3.8B parameters. All five values are Microsoft's figures for phi-3-mini in the
+academic-benchmark table of the Phi-3 technical report: MMLU 68.8, GSM8K 82.5, HumanEval 58.5,
+ARC-Challenge 84.9 and TruthfulQA 65.0. The report states that every model in that table was run
+through the same Microsoft-internal evaluation pipeline at temperature 0, with the number of shots
+listed per benchmark.

@@ -6,49 +6,30 @@ schema_version: 2.0
 title: gemma-2-27b-it — scores
 model: model/gemma-2-27b-it
 scores:
-- benchmark: benchmark/arc-challenge
-  value: 71.4
-  scale: percent
-  source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-07-17'
-  self_reported: true
 - benchmark: benchmark/gpqa-diamond
   value: 0.364899
   scale: fraction
   source: https://epoch.ai/benchmarks
   observed_on: '2025-01-27'
   self_reported: false
-- benchmark: benchmark/gsm8k
-  value: 74.0
-  scale: percent
-  source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-07-17'
-  self_reported: true
-  note: Vendor-reported, 5-shot / 8-shot (Gemma 2 technical report).
-- benchmark: benchmark/humaneval
-  value: 51.8
-  scale: percent
-  source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-07-17'
-  self_reported: true
-  note: Vendor-reported pass@1 (Gemma 2 technical report).
 - benchmark: benchmark/mmlu
-  value: 75.2
+  value: 76.2
   scale: percent
   source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
-  note: Vendor-reported, 5-shot (Gemma 2 technical report, base model).
+  method: few-shot
 - benchmark: benchmark/truthfulqa
-  value: 51.0
+  value: 51.6
   scale: percent
   source: https://arxiv.org/abs/2408.00118
-  observed_on: '2026-07-17'
+  observed_on: '2026-11-22'
   self_reported: true
+  method: MC2Acc
 tags:
 - llm
 - text-generation
-updated: '2026-11-20'
+updated: '2026-11-22'
 sources:
 - url: https://arxiv.org/abs/2408.00118
   title: 'Gemma 2: Improving Open Language Models at a Practical Size (Google DeepMind, 2024)'
@@ -62,8 +43,8 @@ sources:
 
 ## Notes
 
-MMLU (75.2), HumanEval (51.8 pass@1), and GSM8K (74.0) come from Google's Gemma 2 technical report
-(several are reported on the base model, which the report tabulates alongside the IT variant).
-TruthfulQA (~51) and ARC-Challenge (~71.4) are the report's/HF-archive reference figures and should be
-verified before citation. Gemma 2 is notable for punching above its size on human-preference boards
-(LMArena) relative to these static numbers.
+MMLU (76.2) is Google's figure for the instruction-tuned 27B model in Table 17 of the Gemma 2
+technical report, which compares pre-trained (75.2) and instruction-tuned models on few-shot
+benchmarks. TruthfulQA (51.60, MC2 accuracy) is from the report's safety academic benchmark table
+(Table 18) for Gemma 2 IT 27B. The report gives ARC-Challenge, GSM8K and HumanEval only for the
+pre-trained model, so none are listed here.
