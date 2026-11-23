@@ -2,7 +2,7 @@
 id: score-sheet/phi-3-mini-4k-instruct
 type: score-sheet
 slug: phi-3-mini-4k-instruct
-schema_version: 2.0
+schema_version: 4.0
 title: Phi-3 Mini 4K Instruct — scores
 model: model/phi-3-mini-4k-instruct
 scores:

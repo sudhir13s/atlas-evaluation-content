@@ -2,7 +2,7 @@
 id: standard/<slug>
 type: standard
 slug: <slug>
-schema_version: 3.0
+schema_version: 4.0              # the schema's current version; the schema refuses any other
 title: "<Name as the issuer writes it>"
 issuer: "<Issuing body>"
 kind: framework              # standard | framework | regulation | guidance

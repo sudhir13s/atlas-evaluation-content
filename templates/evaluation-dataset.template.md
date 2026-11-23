@@ -2,7 +2,7 @@
 id: evaluation-dataset/<slug>
 type: evaluation-dataset
 slug: <slug>
-schema_version: 1.0
+schema_version: 4.0              # the schema's current version; the schema refuses any other
 title: "<Dataset or Harness Name>"
 name: "<Dataset or Harness Name>"
 category: Harness            # Harness | Framework | Dataset Suite | Human Preference | LLM-as-Judge | Live / Contamination-Free

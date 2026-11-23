@@ -2,21 +2,31 @@
 id: leaderboard/vals-index
 type: leaderboard
 slug: vals-index
-schema_version: 2.1
+schema_version: 4.0
 title: Vals Index
 name: Vals Index
 maintainer: Vals AI
 url: https://www.vals.ai/benchmarks/vals_index
 tagline: A GDP-weighted measure of agentic model performance in finance, coding, legal and tax work.
 ranks: models by weighted accuracy across finance, coding, legal and tax tasks
-benchmarks: [benchmark/terminal-bench]
+benchmarks:
+- benchmark/terminal-bench
 update_cadence: Irregular
 free_access: true
-tags: [leaderboard, composite-index, economic-weighting, agentic, private-benchmarks]
-updated: 2026-11-21
+tags:
+- leaderboard
+- composite-index
+- economic-weighting
+- agentic
+- private-benchmarks
+updated: '2026-11-21'
 sources:
-  - { url: "https://www.vals.ai/benchmarks/vals_index", title: "Vals Index — Vals AI", trust: 0.9 }
-related: [benchmark/terminal-bench, benchmark/harvey-lab]
+- url: https://www.vals.ai/benchmarks/vals_index
+  title: Vals Index — Vals AI
+  trust: 0.9
+related:
+- benchmark/terminal-bench
+- benchmark/harvey-lab
 ---
 
 ## What It Ranks

@@ -2,7 +2,7 @@
 id: score-sheet/gemma-2-9b-it
 type: score-sheet
 slug: gemma-2-9b-it
-schema_version: 2.0
+schema_version: 4.0
 title: Gemma 2 9B IT — scores
 model: model/gemma-2-9b-it
 scores:

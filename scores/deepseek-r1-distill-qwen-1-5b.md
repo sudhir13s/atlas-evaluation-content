@@ -2,7 +2,7 @@
 id: score-sheet/deepseek-r1-distill-qwen-1-5b
 type: score-sheet
 slug: deepseek-r1-distill-qwen-1-5b
-schema_version: 2.0
+schema_version: 4.0
 title: DeepSeek-R1-Distill-Qwen-1.5B — scores
 model: model/deepseek-r1-distill-qwen-1-5b
 scores:

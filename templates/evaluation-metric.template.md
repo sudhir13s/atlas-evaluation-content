@@ -2,7 +2,7 @@
 id: evaluation-metric/<slug>
 type: evaluation-metric
 slug: <slug>
-schema_version: 3.0
+schema_version: 4.0              # the schema's current version; the schema refuses any other
 title: "<Metric Name>"
 name: "<Metric Name>"
 category: retrieval          # retrieval | generation | agent | classification | ranking | safety

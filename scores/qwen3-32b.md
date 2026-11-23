@@ -2,7 +2,7 @@
 id: score-sheet/qwen3-32b
 type: score-sheet
 slug: qwen3-32b
-schema_version: 2.0
+schema_version: 4.0
 title: Qwen3-32B — scores
 model: model/qwen3-32b
 scores:

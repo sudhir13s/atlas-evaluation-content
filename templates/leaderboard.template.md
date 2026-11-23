@@ -2,7 +2,7 @@
 id: leaderboard/<slug>
 type: leaderboard
 slug: <slug>
-schema_version: 2.1
+schema_version: 4.0              # the schema's current version; the schema refuses any other
 title: "<Leaderboard Name>"
 name: "<Leaderboard Name>"
 maintainer: "<who runs it>"
@@ -10,9 +10,8 @@ url: "<address of the leaderboard>"
 tagline: "<one line: what the board is for>"      # optional
 ranks: "<what it ranks, in a few words>"           # optional
 benchmarks: [benchmark/<slug>]                     # optional: benchmark records the board reports
-update_cadence: "<how often it changes, as the source states it>"
+update_cadence: Irregular            # Irregular | Retired | Not stated
 coverage: "<models or votes covered, as the source states it>"   # optional
-data_licence: "<licence of the board's data>"      # optional
 free_access: true                                  # optional
 score_origin: independent                          # optional: self-reported | independent | mixed
 tags: [<tag>]

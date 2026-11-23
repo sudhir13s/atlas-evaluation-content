@@ -2,7 +2,7 @@
 id: score-sheet/qwen3-30b-a3b-instruct-2507
 type: score-sheet
 slug: qwen3-30b-a3b-instruct-2507
-schema_version: 2.0
+schema_version: 4.0
 title: Qwen3-30B-A3B-Instruct-2507 — scores
 model: model/qwen3-30b-a3b-instruct-2507
 scores:

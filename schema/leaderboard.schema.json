@@ -6,6 +6,7 @@
   "unevaluatedProperties": false,
   "properties": {
     "type": { "const": "leaderboard" },
+    "schema_version": { "const": 4.0 },
     "name": { "type": "string", "minLength": 1, "description": "the leaderboard's own name, e.g. Chatbot Arena (LMArena)" },
     "maintainer": { "type": "string", "minLength": 1, "description": "who runs it, as the source names them" },
     "url": { "type": "string", "format": "uri", "description": "address of the leaderboard" },
@@ -16,9 +17,12 @@
       "items": { "type": "string", "pattern": "^benchmark/[a-z0-9]+(?:-[a-z0-9]+)*$" },
       "description": "IDs of the benchmark records the board reports"
     },
-    "update_cadence": { "type": "string", "minLength": 1, "description": "how often the board changes, as the source states it" },
+    "update_cadence": {
+      "type": "string",
+      "enum": ["Irregular", "Not stated", "Retired"],
+      "description": "how often the board changes: Irregular (it changes with no stated rhythm), Retired (it no longer changes), Not stated (the source gives no rhythm). A new rhythm is added here before a record uses it"
+    },
     "coverage": { "type": "string", "minLength": 1, "description": "how many models or votes the board covers, as the source states it" },
-    "data_licence": { "type": "string", "minLength": 1, "description": "licence of the board's data, when it publishes one" },
     "free_access": { "type": "boolean", "description": "true when the board is free to read" },
     "score_origin": {
       "type": "string",

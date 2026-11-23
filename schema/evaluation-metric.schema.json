@@ -6,6 +6,7 @@
   "unevaluatedProperties": false,
   "properties": {
     "type": { "const": "evaluation-metric" },
+    "schema_version": { "const": 4.0 },
     "name": { "type": "string", "minLength": 1, "description": "the metric's own name, as its defining source writes it, e.g. Context Precision" },
     "category": {
       "type": "string",

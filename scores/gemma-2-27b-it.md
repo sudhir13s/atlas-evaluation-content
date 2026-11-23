@@ -2,7 +2,7 @@
 id: score-sheet/gemma-2-27b-it
 type: score-sheet
 slug: gemma-2-27b-it
-schema_version: 2.0
+schema_version: 4.0
 title: gemma-2-27b-it — scores
 model: model/gemma-2-27b-it
 scores:

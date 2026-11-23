@@ -2,7 +2,7 @@
 id: leaderboard/livebench
 type: leaderboard
 slug: livebench
-schema_version: 2.1
+schema_version: 4.0
 title: LiveBench
 name: LiveBench
 maintainer: Abacus.AI

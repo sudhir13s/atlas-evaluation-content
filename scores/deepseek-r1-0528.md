@@ -2,7 +2,7 @@
 id: score-sheet/deepseek-r1-0528
 type: score-sheet
 slug: deepseek-r1-0528
-schema_version: 2.0
+schema_version: 4.0
 title: DeepSeek-R1-0528 — scores
 model: model/deepseek-r1-0528
 scores:

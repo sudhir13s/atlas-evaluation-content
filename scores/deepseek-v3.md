@@ -2,7 +2,7 @@
 id: score-sheet/deepseek-v3
 type: score-sheet
 slug: deepseek-v3
-schema_version: 2.0
+schema_version: 4.0
 title: DeepSeek-V3 — scores
 model: model/deepseek-v3
 scores:

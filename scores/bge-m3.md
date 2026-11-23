@@ -2,7 +2,7 @@
 id: score-sheet/bge-m3
 type: score-sheet
 slug: bge-m3
-schema_version: 2.0
+schema_version: 4.0
 title: bge-m3 — scores
 model: model/bge-m3
 scores:

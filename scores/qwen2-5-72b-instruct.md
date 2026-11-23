@@ -2,7 +2,7 @@
 id: score-sheet/qwen2-5-72b-instruct
 type: score-sheet
 slug: qwen2-5-72b-instruct
-schema_version: 2.0
+schema_version: 4.0
 title: Qwen2.5 72B Instruct — scores
 model: model/qwen2-5-72b-instruct
 scores:

@@ -6,6 +6,7 @@
   "unevaluatedProperties": false,
   "properties": {
     "type": { "const": "standard" },
+    "schema_version": { "const": 4.0 },
     "issuer": { "type": "string", "minLength": 1, "description": "the body that issues it, as it names itself" },
     "kind": {
       "type": "string",

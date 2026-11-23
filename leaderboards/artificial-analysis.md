@@ -2,25 +2,58 @@
 id: leaderboard/artificial-analysis
 type: leaderboard
 slug: artificial-analysis
-schema_version: 2.1
+schema_version: 4.0
 title: Artificial Analysis
 name: Artificial Analysis
 maintainer: Artificial Analysis
 url: https://artificialanalysis.ai
 tagline: Its own evaluations of models, shown next to cost, tokens and speed.
 ranks: language models by an Intelligence Index, plus cost, tokens and speed
-benchmarks: [benchmark/automationbench, benchmark/gdp-pdf, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/critpt, benchmark/aa-omniscience, benchmark/hle-diamond]
+benchmarks:
+- benchmark/automationbench
+- benchmark/gdp-pdf
+- benchmark/frontiercode
+- benchmark/terminal-bench
+- benchmark/terminal-bench-science
+- benchmark/critpt
+- benchmark/aa-omniscience
+- benchmark/hle-diamond
 update_cadence: Not stated
 free_access: true
 score_origin: independent
-tags: [leaderboard, composite-index, independent, agentic]
-updated: 2026-11-21
+tags:
+- leaderboard
+- composite-index
+- independent
+- agentic
+updated: '2026-11-21'
 sources:
-  - { url: "https://artificialanalysis.ai", title: "Artificial Analysis", trust: 0.85 }
-  - { url: "https://artificialanalysis.ai/about", title: "About Artificial Analysis", trust: 0.85 }
-  - { url: "https://artificialanalysis.ai/methodology/intelligence-benchmarking", title: "Artificial Analysis Intelligence Benchmarking Methodology (Index v5.0.1)", trust: 0.9 }
-  - { url: "https://artificialanalysis.ai/evaluations/mka", title: "MKA benchmark — Artificial Analysis evaluation page", trust: 0.85 }
-related: [benchmark/automationbench, benchmark/gdp-pdf, benchmark/frontiercode, benchmark/terminal-bench, benchmark/terminal-bench-science, benchmark/critpt, benchmark/aa-omniscience, benchmark/hle-diamond, benchmark/mka, benchmark/gdpval, benchmark/harvey-lab, benchmark/healthbench, benchmark/mmmu-pro]
+- url: https://artificialanalysis.ai
+  title: Artificial Analysis
+  trust: 0.85
+- url: https://artificialanalysis.ai/about
+  title: About Artificial Analysis
+  trust: 0.85
+- url: https://artificialanalysis.ai/methodology/intelligence-benchmarking
+  title: Artificial Analysis Intelligence Benchmarking Methodology (Index v5.0.1)
+  trust: 0.9
+- url: https://artificialanalysis.ai/evaluations/mka
+  title: MKA benchmark — Artificial Analysis evaluation page
+  trust: 0.85
+related:
+- benchmark/automationbench
+- benchmark/gdp-pdf
+- benchmark/frontiercode
+- benchmark/terminal-bench
+- benchmark/terminal-bench-science
+- benchmark/critpt
+- benchmark/aa-omniscience
+- benchmark/hle-diamond
+- benchmark/mka
+- benchmark/gdpval
+- benchmark/harvey-lab
+- benchmark/healthbench
+- benchmark/mmmu-pro
 ---
 
 ## What It Ranks

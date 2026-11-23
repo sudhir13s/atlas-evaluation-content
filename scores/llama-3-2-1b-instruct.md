@@ -2,7 +2,7 @@
 id: score-sheet/llama-3-2-1b-instruct
 type: score-sheet
 slug: llama-3-2-1b-instruct
-schema_version: 2.0
+schema_version: 4.0
 title: Llama-3.2-1B-Instruct — scores
 model: model/llama-3-2-1b-instruct
 scores:

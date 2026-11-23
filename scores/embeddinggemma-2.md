@@ -2,7 +2,7 @@
 id: score-sheet/embeddinggemma-2
 type: score-sheet
 slug: embeddinggemma-2
-schema_version: 2.0
+schema_version: 4.0
 title: embeddinggemma-2 — scores
 model: model/embeddinggemma-2
 scores:

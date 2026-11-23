@@ -2,9 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://theaiatlas.dev/schema/evaluation/benchmark.schema.json",
   "title": "benchmark",
+  "unevaluatedProperties": false,
   "allOf": [{ "$ref": "_shared.schema.json#/$defs/base" }],
   "properties": {
     "type": { "const": "benchmark" },
+    "schema_version": { "const": 4.0 },
     "name": { "type": "string", "description": "canonical benchmark name, e.g. MMLU" },
     "category": {
       "type": "string",
@@ -34,7 +36,6 @@
     "method": { "type": "string", "description": "evaluation methodology (few-shot/0-shot, judge, harness)" },
     "metric": { "type": "string", "description": "the scoring metric, e.g. accuracy, pass@1, F1, ELO" },
     "format": { "type": "string", "description": "prompt format, e.g. 5-shot, 0-shot CoT, multiple-choice" },
-    "saturation": { "type": "string", "enum": ["high", "medium", "low"], "description": "how close top models are to the ceiling" },
     "limitations": { "type": "string", "description": "honest limitations, contamination, saturation" },
     "citation": { "type": "string", "description": "canonical paper/site URL" },
     "openness": {
@@ -51,7 +52,7 @@
       "description": "3-5 category-appropriate worked examples, shown as a navigable carousel. Each is one success-vs-plausible-failure contrast; the UI derives panel labels + footer from `category` + `metric`. Author DISTINCT examples (different sub-tasks, difficulties, or failure modes), not variations of one.",
       "minItems": 1,
       "items": {
-        "type": "object",
+        "type": "object", "unevaluatedProperties": false,
         "required": ["task_type", "input", "success", "failure"],
         "properties": {
           "task_type": { "type": "string", "description": "subject/task label, e.g. 'College Physics' or 'Array manipulation'" },
@@ -62,7 +63,7 @@
             "description": "answer choices for a multiple-choice item, in order; the UI renders them lettered (A, B, C, ...). Omit for non-MCQ tasks (code, translation, agents, ...)."
           },
           "success": {
-            "type": "object",
+            "type": "object", "unevaluatedProperties": false,
             "required": ["answer", "why"],
             "properties": {
               "answer": { "type": "string", "description": "the correct / passing / safe / truthful response. For MCQ, start with the letter, e.g. 'B — a rat pressing a lever'." },
@@ -70,7 +71,7 @@
             }
           },
           "failure": {
-            "type": "object",
+            "type": "object", "unevaluatedProperties": false,
             "required": ["answer", "why"],
             "properties": {
               "answer": { "type": "string", "description": "a PLAUSIBLE wrong/weak/unsafe/misleading response (never an obviously foolish one)" },

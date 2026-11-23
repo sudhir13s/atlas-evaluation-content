@@ -2,7 +2,7 @@
 id: score-sheet/deepseek-r1
 type: score-sheet
 slug: deepseek-r1
-schema_version: 2.0
+schema_version: 4.0
 title: DeepSeek-R1 — scores
 model: model/deepseek-r1
 scores:

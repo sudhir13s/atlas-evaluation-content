@@ -2,7 +2,7 @@
 id: benchmark/<slug>
 type: benchmark
 slug: <slug>
-schema_version: 3.1
+schema_version: 4.0              # the schema's current version; the schema refuses any other
 title: "<Benchmark Name>"
 name: <BENCHMARK NAME>
 category: Knowledge & Academic Reasoning   # see schema enum for the allowed categories
@@ -14,7 +14,6 @@ examples:
 method: "<evaluation methodology: few-shot/0-shot, judge, harness>"
 metric: "<scoring metric, e.g. accuracy, pass@1, F1, ELO>"
 format: "<prompt format, e.g. 5-shot multiple-choice>"
-saturation: medium            # high | medium | low
 limitations: "<honest limitations, contamination, saturation>"
 citation: "<canonical paper/site URL>"
 openness: open                # open | partly-open | closed

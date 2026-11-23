@@ -2,7 +2,7 @@
 id: leaderboard/huggingface-open-llm-leaderboard
 type: leaderboard
 slug: huggingface-open-llm-leaderboard
-schema_version: 2.1
+schema_version: 4.0
 title: Open LLM Leaderboard (Hugging Face)
 name: Open LLM Leaderboard (Hugging Face)
 maintainer: Hugging Face

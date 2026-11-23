@@ -2,9 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://theaiatlas.dev/schema/evaluation/evaluation-dataset.schema.json",
   "title": "evaluation-dataset",
+  "unevaluatedProperties": false,
   "allOf": [{ "$ref": "_shared.schema.json#/$defs/base" }],
   "properties": {
     "type": { "const": "evaluation-dataset" },
+    "schema_version": { "const": 4.0 },
     "name": { "type": "string", "description": "dataset or harness name" },
     "category": {
       "type": "string",

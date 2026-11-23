@@ -2,7 +2,7 @@
 id: leaderboard/chatbot-arena-lmarena
 type: leaderboard
 slug: chatbot-arena-lmarena
-schema_version: 2.1
+schema_version: 4.0
 title: Arena (formerly LMArena)
 name: Arena (formerly LMArena)
 maintainer: Arena Intelligence Inc.

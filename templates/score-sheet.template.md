@@ -2,7 +2,7 @@
 id: score-sheet/<model-slug>
 type: score-sheet
 slug: <model-slug>
-schema_version: 2.0
+schema_version: 4.0              # the schema's current version; the schema refuses any other
 title: "<Model Name> — scores"
 model: model/<model-slug>
 scores:

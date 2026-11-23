@@ -2,7 +2,7 @@
 id: score-sheet/mixtral-8x7b-instruct-v0-1
 type: score-sheet
 slug: mixtral-8x7b-instruct-v0-1
-schema_version: 2.0
+schema_version: 4.0
 title: Mixtral 8x7B Instruct v0.1 — scores
 model: model/mixtral-8x7b-instruct-v0-1
 scores:

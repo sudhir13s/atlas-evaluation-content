@@ -31,10 +31,9 @@ examples) so it stays machine-parseable; the body carries explanation.
 - `tags`: lowercase, hyphen-separated.
 - `updated`: ISO date (`YYYY-MM-DD`).
 - `sources[]`: `{ url, title, trust }` — `trust` in `[0,1]`. Open-source-first; cite, do not copy.
-- `schema_version`: the `major.minor` the file was authored against. The repo is at `3.2`;
-  `benchmark` files carry `3.1` (they use `openness`); `score-sheet` files stay valid at `2.0`
-  (`reported_by` is optional); `evaluation-dataset` files were authored
-  against `1.0` and stay valid, because their type did not change.
+- `schema_version`: the version of the type's schema. Every schema fixes the value (`4.0`) and a
+  record with any other is refused; a breaking change raises it and converts every record.
+- **No unknown fields** on any type, at the top level or inside a block of fixed shape.
 
 ## Body sections
 
@@ -46,7 +45,7 @@ examples) so it stays machine-parseable; the body carries explanation.
 ## Per-type specifics
 
 - **benchmark** — carries `category` (one of the UI groups in the schema enum), `metric`, `method`, `format`,
-  `saturation`, and `limitations`. `method`, `metric`, and `limitations` are required: **a score is
+  and `limitations`. `method`, `metric`, and `limitations` are required: **a score is
   never shown without them.** Body sections: What It Tests → How It Scores → Format → Limitations → Example.
   - `openness` says how much of the benchmark anyone can inspect, judged from the maker's own
     paper, page or repository: `open` (tasks or data and the scoring method are public),
@@ -66,7 +65,7 @@ examples) so it stays machine-parseable; the body carries explanation.
 - **score-sheet** — all reported scores of one model. The slug equals the model slug
   (`score-sheet/<model-slug>`). Carries `model` (a `model/<slug>` ID from the models repo) and
   `scores`, a list of `{ benchmark, value, scale, source, observed_on }` where `benchmark` is a
-  `benchmark/<slug>` ID. Optional per score: `reported_by`, `self_reported`, `method`, `note`. Optional body
+  `benchmark/<slug>` ID. Optional per score: `reported_by`, `self_reported`, `method`. Optional body
   section: Notes (which report a number came from and which benchmarks the vendor did not publish).
   - `value` is copied exactly as the source states it and is **never rescaled**; `scale` says how
     to read it: `percent` (0 to 100) or `fraction` (0 to 1).
@@ -79,8 +78,8 @@ examples) so it stays machine-parseable; the body carries explanation.
     it). A sheet without it reads from `self_reported`: true is `maker`, false is `independent`.
     Never state more than the source does: a leaderboard row is `leaderboard`, not `maker`.
 - **leaderboard** — an outside leaderboard as a thing, not its scores. Required: `name`,
-  `maintainer`, `url`, `update_cadence`. Optional: `tagline`, `ranks`, `benchmarks` (`benchmark/<slug>`
-  IDs the board reports), `coverage`, `data_licence`, `free_access`, `score_origin` (`self-reported`,
+  `maintainer`, `url`, `update_cadence` (`Irregular`, `Retired` or `Not stated`). Optional: `tagline`, `ranks`, `benchmarks` (`benchmark/<slug>`
+  IDs the board reports), `coverage`, `free_access`, `score_origin` (`self-reported`,
   `independent` or `mixed`). Body sections: What It Ranks → How To Read It → Caveats.
 - **evaluation-metric** — one metric, as its defining source (paper or tool documentation)
   defines it. Required: `name`, `category` (`retrieval`, `generation`, `agent`, `classification`,

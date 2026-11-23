@@ -2,7 +2,7 @@
 id: leaderboard/simplebench
 type: leaderboard
 slug: simplebench
-schema_version: 2.1
+schema_version: 4.0
 title: SimpleBench
 name: SimpleBench
 maintainer: SimpleBench Team

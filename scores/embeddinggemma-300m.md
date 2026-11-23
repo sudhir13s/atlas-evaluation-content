@@ -2,7 +2,7 @@
 id: score-sheet/embeddinggemma-300m
 type: score-sheet
 slug: embeddinggemma-300m
-schema_version: 2.0
+schema_version: 4.0
 title: embeddinggemma-300m — scores
 model: model/embeddinggemma-300m
 scores:

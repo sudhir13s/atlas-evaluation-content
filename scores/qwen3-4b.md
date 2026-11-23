@@ -2,7 +2,7 @@
 id: score-sheet/qwen3-4b
 type: score-sheet
 slug: qwen3-4b
-schema_version: 2.0
+schema_version: 4.0
 title: Qwen3-4B — scores
 model: model/qwen3-4b
 scores:

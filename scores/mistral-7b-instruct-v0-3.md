@@ -2,7 +2,7 @@
 id: score-sheet/mistral-7b-instruct-v0-3
 type: score-sheet
 slug: mistral-7b-instruct-v0-3
-schema_version: 2.0
+schema_version: 4.0
 title: Mistral 7B Instruct v0.3 — scores
 model: model/mistral-7b-instruct-v0-3
 scores:

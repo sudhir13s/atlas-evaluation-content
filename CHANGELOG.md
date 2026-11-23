@@ -5,6 +5,26 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Schema 4.0 (strict schemas, a real version; breaking for a reader of the removed fields)
+
+All 152 records were brought to the version by the consumer's
+`atlas migrate evaluation-restructure`. No field of a record moved; every record is now written
+by the one writer, so `updated` is a quoted date in every file.
+
+- **Changed** `schema_version` to a constant of each schema (`4.0`); a record with any other
+  value is refused. The records said `1.0`, `2.0`, `2.1`, `3.0` or `3.1`.
+- **Changed** to strict: no unknown field at the top level of `benchmark` and
+  `evaluation-dataset` (the other four already were), in `sources[]` or inside a worked example.
+- **Changed** `leaderboard.update_cadence` to an enum of the values in use: `Irregular`,
+  `Retired`, `Not stated`.
+- **Removed** fields no record held: `benchmark.saturation`, `leaderboard.data_licence` and
+  `score-sheet.scores[].note`.
+- **Kept** `benchmark.openness_note` (95 records): each is a sourced sentence that holds facts
+  the record states nowhere else.
+- **Kept** as written: `benchmark.metric` (a sentence on all 95, not the name of an
+  `evaluation-metric` record) and `related` (a record lists what its author chose; a consumer
+  that wants both directions reads the incoming links too).
+
 ### Schema 3.2 (who produced a score; additive)
 
 - **Added** optional `reported_by` (`independent`, `maker`, `leaderboard`) per score in
