@@ -31,8 +31,9 @@ examples) so it stays machine-parseable; the body carries explanation.
 - `tags`: lowercase, hyphen-separated.
 - `updated`: ISO date (`YYYY-MM-DD`).
 - `sources[]`: `{ url, title, trust }` — `trust` in `[0,1]`. Open-source-first; cite, do not copy.
-- `schema_version`: the `major.minor` the file was authored against. The repo is at `3.1`;
-  `benchmark` files carry `3.1` (they use `openness`); `evaluation-dataset` files were authored
+- `schema_version`: the `major.minor` the file was authored against. The repo is at `3.2`;
+  `benchmark` files carry `3.1` (they use `openness`); `score-sheet` files stay valid at `2.0`
+  (`reported_by` is optional); `evaluation-dataset` files were authored
   against `1.0` and stay valid, because their type did not change.
 
 ## Body sections
@@ -65,13 +66,18 @@ examples) so it stays machine-parseable; the body carries explanation.
 - **score-sheet** — all reported scores of one model. The slug equals the model slug
   (`score-sheet/<model-slug>`). Carries `model` (a `model/<slug>` ID from the models repo) and
   `scores`, a list of `{ benchmark, value, scale, source, observed_on }` where `benchmark` is a
-  `benchmark/<slug>` ID. Optional per score: `self_reported`, `method`, `note`. Optional body
+  `benchmark/<slug>` ID. Optional per score: `reported_by`, `self_reported`, `method`, `note`. Optional body
   section: Notes (which report a number came from and which benchmarks the vendor did not publish).
   - `value` is copied exactly as the source states it and is **never rescaled**; `scale` says how
     to read it: `percent` (0 to 100) or `fraction` (0 to 1).
   - `source` is the address where the value was published; `observed_on` is the date the Atlas
     recorded it when the source gives none.
   - The same benchmark may appear twice when two sources report different values.
+  - `reported_by` says who produced the value: `independent` (a third party re-ran the
+    evaluation, for example Epoch AI or Aider), `maker` (the maker's own published figure) or
+    `leaderboard` (taken from the benchmark's public leaderboard, which does not state who ran
+    it). A sheet without it reads from `self_reported`: true is `maker`, false is `independent`.
+    Never state more than the source does: a leaderboard row is `leaderboard`, not `maker`.
 - **leaderboard** — an outside leaderboard as a thing, not its scores. Required: `name`,
   `maintainer`, `url`, `update_cadence`. Optional: `tagline`, `ranks`, `benchmarks` (`benchmark/<slug>`
   IDs the board reports), `coverage`, `data_licence`, `free_access`, `score_origin` (`self-reported`,
@@ -96,5 +102,6 @@ examples) so it stays machine-parseable; the body carries explanation.
 
 Open-source-first, zero plagiarism. Prefer open papers, official model/technical reports, the
 benchmark's own paper, and Papers-with-Code. Reference paywalled material only as a cited pointer,
-never as copied text. Scores are **vendor-reported** and marked `self_reported: true`
-unless the score states an independent re-run. Record everything in `sources[]`.
+never as copied text. A score taken from a maker's own report is `reported_by: maker`
+(with `self_reported: true`); a score from an independent re-run is `independent`; a score read
+from a public leaderboard that does not say who ran it is `leaderboard`. Record everything in `sources[]`.

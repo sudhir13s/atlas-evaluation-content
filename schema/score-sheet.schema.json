@@ -26,7 +26,8 @@
         "scale": { "type": "string", "enum": ["percent", "fraction"], "description": "percent runs from 0 to 100, fraction from 0 to 1" },
         "source": { "type": "string", "format": "uri", "description": "where the value was published" },
         "observed_on": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "date the value was recorded in the Atlas when the source gives none" },
-        "self_reported": { "type": "boolean", "description": "true when the vendor published the value itself, not an independent re-run" },
+        "self_reported": { "type": "boolean", "description": "kept for older readers; true when the value is not an independent re-run. When reported_by is missing, true reads as maker and false as independent" },
+        "reported_by": { "type": "string", "enum": ["independent", "maker", "leaderboard"], "description": "independent: a third party re-ran the evaluation; maker: the model's maker published the value; leaderboard: taken from the benchmark's public leaderboard, which does not say who ran it" },
         "method": { "type": "string", "minLength": 1, "description": "how it was measured, as the source states it (shots, metric, variant)" },
         "note": { "type": "string", "minLength": 1, "description": "caveat on this value, as written by the source record it came from" }
       }

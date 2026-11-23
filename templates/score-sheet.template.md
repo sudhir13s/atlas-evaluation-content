@@ -11,7 +11,8 @@ scores:
     scale: percent
     source: "<url of the report that publishes the value>"
     observed_on: <YYYY-MM-DD>
-    self_reported: true
+    reported_by: maker   # maker | independent | leaderboard
+    self_reported: true  # older readers; omit when reported_by says it
     method: "<how it was measured, as the source states it>"
 tags: [<tag>]
 updated: <YYYY-MM-DD>

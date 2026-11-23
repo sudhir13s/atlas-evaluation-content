@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.1",
+  "schema_version": "3.2",
   "shared": "schema/_shared.schema.json",
   "types": {
     "benchmark": {

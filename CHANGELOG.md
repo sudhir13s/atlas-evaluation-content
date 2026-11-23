@@ -5,6 +5,26 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Schema 3.2 (who produced a score; additive)
+
+- **Added** optional `reported_by` (`independent`, `maker`, `leaderboard`) per score in
+  `score-sheet.schema.json`, the template and CONVENTIONS. `independent` is a third-party re-run,
+  `maker` the maker's own published figure, `leaderboard` a value read from a public leaderboard
+  that does not say who ran it. Optional fields loosen nothing, so existing sheets stay valid;
+  a missing `reported_by` reads from `self_reported` (true is `maker`, false is `independent`).
+- **Changed** the six MTEB scores in `bge-m3`, `embeddinggemma-2` and `embeddinggemma-300m` set
+  `reported_by: leaderboard`: the MTEB leaderboard does not say who ran a model.
+
+### Content (embedding benchmarks)
+
+- **Added** the benchmark category "Embeddings & Retrieval" to the `category` enum of
+  `benchmark.schema.json`, for benchmarks that score text embedding models. Adding a value
+  loosens the rule, so the schema stays at 3.1 and existing records stay valid.
+- **Added** three `benchmark` records from the Massive Text Embedding Benchmark (MTEB):
+  `mteb-eng-v2`, `mteb-multilingual-v2` and `longembed`, each checked against its paper and the
+  benchmark definitions in the `mteb` package. Their scores are copied from the MTEB leaderboard
+  by `evals-sync`.
+
 ### Schema 3.1 (benchmark openness; additive)
 
 - **Added** optional `openness` (`open`, `partly-open`, `closed`) and `openness_note` (one sourced
