@@ -2,20 +2,22 @@
 id: benchmark/wmt24pp
 type: benchmark
 slug: wmt24pp
-schema_version: 1.0
+schema_version: 3.1
 title: "WMT24++"
 name: WMT24++
 category: Multilingual
 description: "A machine-translation benchmark from English into 55 languages and dialects, built on the WMT24 English sources."
-what_is_it: "WMT24++ (Deutsch et al., 2025, Google) extends the WMT24 dataset to 55 languages and dialects by collecting new human-written references and post-edits for 46 new languages and dialects, plus post-edits of the references in 8 of the 9 original WMT24 languages. The 998 English source paragraphs cover four domains: literary, news, social and speech."
-why_people_use_it: "It gives English-to-many translation test data with human references across 55 languages. Using automatic metrics, the authors found LLMs to be the best-performing MT systems in all 55 languages, and say this should be confirmed by human evaluation (2025)."
+what_is_it: "WMT24++ (Deutsch et al., February 2025, mostly Google authors) extends the WMT24 dataset to 55 languages and dialects by collecting new human-written references and post-edits for 46 new languages and dialects, plus post-edits of the references in 8 of the 9 original WMT24 languages (Icelandic keeps its original reference). Professional translators produced the references and post-edits. The 998 English source segments are paragraphs from four domains, literary, news, social and speech, plus one canary segment."
+why_people_use_it: "It gives English-to-many translation test data with human references across 55 languages. Using automatic metrics, the authors found large language models (LLMs) to be the best-performing machine translation (MT) systems in all 55 languages, and say this should be confirmed by human evaluation (2025)."
 examples:
-  - "An English source paragraph from the literary, news, social or speech domain, translated into one of the 55 target languages and scored against the human reference."
-method: "English-to-X translation of paragraph-level sources. The paper removed 38 low-quality sources (mostly URLs or emojis), so evaluation uses 960 of the 998; outputs are scored with automatic metrics."
-metric: "Automatic MT metrics: MetricX-24 and MetricX-24-QE in the main paper; BLEU, chrF, XCOMET, XCOMET-QE and COMETKiwi-23 in the appendix."
+  - "Siso's depictions of land, water center new gallery exhibition. (an English news source segment from the public Hugging Face data, to be translated into each target language)"
+method: "English-to-X translation of paragraph-level sources. The paper removed 38 low-quality sources (mostly URLs, user tags, HTML and emojis, flagged is_bad_source in the data) from evaluation; outputs are scored with automatic metrics against the post-edited human reference."
+metric: "Automatic MT metrics: MetricX-24 and MetricX-24-QE (a reference-free quality-estimation variant) in the main paper; BLEU, chrF, XCOMET, XCOMET-QE, COMETKiwi-23 and Gemini-DA scores in the appendix. MetricX scores are error scores, so lower is better."
 format: "Paragraph-level translation from English into each target language (en to xx)."
-limitations: "Results rest on automatic metrics, and human evaluation is left for future work. The authors caution that automatic metrics are known to be biased against human translations, so apparent super-human MT scores should not be taken at face value. Only the English-to-X direction is covered."
+limitations: "Results rest on automatic metrics, and human evaluation is left for future work. The authors caution that quality-estimation metrics rank human translations lower than human evaluators do, so apparent super-human MT scores should not be taken at face value. Only the English-to-X direction is covered. The data is public, so it can appear in training sets."
 citation: "https://arxiv.org/abs/2502.12404"
+openness: open
+openness_note: "All 55 language pairs, with English sources, post-edited and original references and a bad-source flag, are public on Hugging Face under Apache-2.0."
 worked_examples:
   - task_type: "Machine translation — negation (English → German, news)"
     input: "Translate into German: 'The committee did not approve the new budget.'"
@@ -68,34 +70,52 @@ worked_examples:
     checks: "Translating idiomatic meaning rather than a misleading literal rendering."
     scoring: "Automatic MT metrics — MetricX-24 (primary; an error score, lower is better) and chrF (higher is better)."
 tags: [multilingual, translation, machine-translation, generation]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2502.12404", title: "WMT24++: Expanding the Language Coverage of WMT24 to 55 Languages & Dialects (Deutsch et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2502.12404", title: "WMT24++, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://huggingface.co/datasets/google/wmt24pp", title: "google/wmt24pp dataset (Hugging Face)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/google/wmt24pp", title: "google/wmt24pp dataset card (Hugging Face, Apache-2.0)", trust: 0.9 }
 related: [benchmark/mmmlu, benchmark/global-piqa, benchmark/include]
 ---
 
 ## What It Tests
-Machine-translation quality from English into 55 languages and dialects, across four content
-domains — literary, news, social (social-media), and speech (transcripts). It is a
-generation task, not multiple-choice: the model must produce a full translation, which is then
-compared to human references.
+**Machine-translation quality** from English into 55 languages and dialects.
+
+- **Four domains** — literary, news, social (social-media posts) and speech (transcripts).
+- **Generation** — not multiple choice: the model writes a full translation, which is compared with a human reference.
+- **Coverage** — 46 new languages and dialects plus the 9 original WMT24 targets.
+
+**Who built it:** Daniel Deutsch and colleagues, mostly at **Google** (one author at Unbabel), arXiv February 2025. Professional translators in each region wrote the references and post-edits. A **post-edit** is a translator's correction of an existing translation.
 
 ## How It Scores
-**Automatic metrics** against human references and post-edits.
+**Automatic metrics** against the post-edited human references.
 
-- **Main paper** — MetricX-24 and its reference-free variant MetricX-24-QE.
-- **Appendix** — BLEU, chrF, XCOMET, XCOMET-QE and COMETKiwi-23.
+- **Main paper** — MetricX-24 and its reference-free variant MetricX-24-QE. MetricX gives an **error score**: lower is better.
+- **Appendix** — BLEU, chrF, XCOMET, XCOMET-QE, COMETKiwi-23 and Gemini-DA scores.
 - **Paper's finding** — LLMs were the best-performing MT systems in all 55 languages under these metrics (2025).
 
 ## Format
-Paragraph-level, English to target (en to xx). The 998 WMT24 English sources: literary 206, news 149, social 531, speech 111. The paper drops 38 low-quality sources, leaving 960.
+Paragraph-level, English to target (en to xx). The 998 English source segments:
+
+| Domain | Segments |
+|---|---|
+| Social | 531 |
+| Literary | 206 |
+| News | 149 |
+| Speech | 111 |
+| Canary (marker segment) | 1 |
+
+- **Removed** — the paper drops 38 low-quality sources from evaluation; the data flags them with `is_bad_source`.
+- **Data** — one 998-row file per language pair on [Hugging Face](https://huggingface.co/datasets/google/wmt24pp) (Apache-2.0), with `source`, `target` (post-edit, the recommended reference) and `original_target`.
 
 ## Limitations
 - **No human evaluation yet.** The authors leave it to future work.
-- **Metric bias.** Automatic metrics are known to score human translations too low.
+- **Metric bias.** Quality-estimation metrics rank human translations lower than human evaluators do.
 - **One direction.** English source only.
+- **Public items.** Sources and references can leak into training data.
 
 ## Example
-An English source paragraph from one of the four domains is translated into a target language, and the output is scored with MetricX-24 against that language's human reference.
+From the public data on the Hugging Face dataset card (Apache-2.0), segment 1 of the en-ar_EG pair is a **news** headline: "Siso's depictions of land, water center new gallery exhibition."
+
+- **Task** — translate it into Egyptian Arabic (and, in other pairs, into each of the other targets).
+- **Scoring** — the output is compared with the post-edited `target` reference using MetricX-24.

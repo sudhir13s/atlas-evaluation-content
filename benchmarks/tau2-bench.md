@@ -2,20 +2,22 @@
 id: benchmark/tau2-bench
 type: benchmark
 slug: tau2-bench
-schema_version: 1.0
+schema_version: 3.1
 title: "TAU2-Bench"
 name: "TAU2-Bench (τ²-bench)"
 category: Agent & Tool Use
 description: "A tool-agent-user benchmark where the user can also act, testing agents in a shared dual-control environment."
-what_is_it: "τ²-bench (tau-squared-bench) evaluates conversational agents that must coordinate with a simulated user to complete customer-service tasks. Unlike its predecessor τ-bench, the user is not passive: in the new Telecom domain both the agent and the user can call tools and change a shared world state, so the agent has to reason, ask, and guide the user through steps it cannot perform itself."
-why_people_use_it: "Its authors (Barres et al., 2025, Sierra with the University of Toronto) say earlier conversational-agent benchmarks are single-control, whereas in real technical support the user must also change the shared world. They report significant performance drops when agents move from a no-user mode, where the agent controls all tools, to dual control."
+what_is_it: "τ²-bench (tau-squared-bench) evaluates conversational agents that must coordinate with a simulated user to complete customer-service tasks. It was introduced in June 2025 by Barres, Dong, Ray, Si and Narasimhan (Sierra, with the University of Toronto and the Vector Institute). Unlike its predecessor τ-bench, the user is not passive: in the new Telecom domain both the agent and the user can call tools and change a shared world state, so the agent has to reason, ask and guide the user through steps it cannot perform itself. The paper's sets are retail 115 tasks, airline 50 and telecom 114."
+why_people_use_it: "Its authors say earlier conversational-agent benchmarks are single-control, whereas in real technical support the user must also change the shared world. They report significant performance drops when agents move from a no-user mode, where the agent controls all tools, to dual control. The tasks and code are public under the MIT licence, so results can be rerun."
 examples:
-  - "From the paper: in the Telecom domain the user reports 'no mobile data', and the agent is rewarded if the issue is fixed, as verified by the user's database state."
-method: "The environment is modelled as a decentralized partially observable Markov decision process (Dec-POMDP) in which agent and user each have tools on one shared state, and a user simulator constrained by its tools and observable state plays the customer. A programmatic generator composes tasks from atomic scenarios defined by initialization, solution and assertion functions; assertion functions state conditions the final state must meet."
-metric: "pass^k: the probability that the agent solves the same task in all k independent trials (pass^1 is the plain success rate)."
-format: "Multi-turn dialogue with tool use. Task counts in the paper: retail 115, airline 50, telecom 114 (2,285 in the full telecom set); the telecom user has 15 write and 15 read tools."
-limitations: "The user is an LLM simulator, so results depend on how faithfully it behaves. Dual control applies to the Telecom domain; retail and airline come from τ-bench, where only the agent uses tools. All three domains are customer-service tasks."
+  - "From the paper's Appendix A.2, task [service_issue]airplane_mode_on|unseat_sim_card: a user's phone has shown no service for a few hours; airplane mode is on and the SIM card is unseated, and the task passes when the service status ends up connected."
+method: "The environment is modelled as a decentralized partially observable Markov decision process (Dec-POMDP) in which agent and user each have tools on one shared state, and a user simulator constrained by its tools and observable state plays the customer. A programmatic generator composes tasks from atomic scenarios defined by initialization, solution and assertion functions. A task can be checked by database state, status assertions, natural-language assertions, a communication check and action matching; telecom tasks use assertion functions only."
+metric: "pass^k, a reliability measure the paper describes as the fraction of k independent runs of a task that succeed; higher k rewards consistent success rather than a lucky single run."
+format: "Multi-turn dialogue with tool use. Task counts in the paper: retail 115, airline 50, telecom 114 (a balanced sample of a full telecom set of 2,285); the telecom user has 15 write and 15 read tools."
+limitations: "The user is an LLM simulator, so results depend on how faithfully it behaves. Dual control applies to the Telecom domain; retail and airline come from τ-bench, where only the agent uses tools. The paper's three domains are all customer service. The repository has since grown (τ-bench 2.0 adds banking_knowledge and intake domains and other languages), so cite the version and task set with any score."
 citation: "https://arxiv.org/abs/2506.07982"
+openness: open
+openness_note: "The tasks, domain policies, tools, user simulator and scoring code are public in the sierra-research/tau2-bench repository under the MIT licence; no held-out test set is described."
 worked_examples:
   - task_type: "Dual-control customer-service agent (Telecom domain)"
     input: "User: 'My mobile data has stopped working.' The agent has read/diagnostic tools on the shared state; only the user's device tools can toggle settings like the APN or airplane mode."
@@ -68,11 +70,11 @@ worked_examples:
     checks: "Whether an agent completes a required authentication step before performing a sensitive account change."
     scoring: "pass^k — trial fails if an account change occurs without the prior identity verification."
 tags: [agent, tool-use, multi-turn, user-simulation, customer-service]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2506.07982", title: "τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment (Barres et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2506.07982", title: "τ²-Bench, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://github.com/sierra-research/tau2-bench", title: "sierra-research/tau2-bench (official repo)", trust: 0.9 }
+  - { url: "https://github.com/sierra-research/tau2-bench", title: "sierra-research/tau2-bench (official repo, MIT licence)", trust: 0.9 }
 related: [benchmark/tau-voice, benchmark/bfcl-v4, benchmark/vita-bench, benchmark/deepplanning]
 ---
 
@@ -84,18 +86,38 @@ and can change the shared state — so the agent must reason about what it can d
 must *instruct the user* to do, then confirm the outcome. That mirrors real technical support.
 
 ## How It Scores
-**pass^k**: the probability the agent succeeds on the same task in all *k* independent trials; pass^1 is the plain success rate.
+**pass^k** — a reliability measure over *k* independent runs of the same task, which the paper describes as the fraction of those runs that succeed.
 
-- **State check** — assertion functions state what the final state must satisfy.
-- **Two modes** — no-user mode (the agent controls all tools) versus dual control, to separate reasoning from coordination.
+A task can use any subset of five checks (paper, Section 3.3):
+
+- **Database check** — the final database matches the goal.
+- **Status assertions** — predefined functions test the final world state (the only check in telecom).
+- **Natural-language assertions** — the conversation is checked against a written description.
+- **Communication check** — required information was given to the user.
+- **Action matching** — every solution function appears in the trajectory.
+
+**Two modes** — no-user mode (the agent controls all tools) versus dual control, to separate reasoning from coordination.
 
 ## Format
-Multi-turn conversation in a Dec-POMDP: a tool-constrained user simulator and the agent both act on one shared state. Domains: retail (115 tasks), airline (50) and telecom (114; 2,285 in the full set).
+Multi-turn conversation in a **Dec-POMDP** (decentralized partially observable Markov decision process): a tool-constrained user simulator and the agent both act on one shared state.
+
+| Domain | Tasks (paper) | Control |
+|---|---|---|
+| Retail | 115 | Agent only (from τ-bench) |
+| Airline | 50 | Agent only (from τ-bench) |
+| Telecom | 114 (sampled from 2,285) | Dual: the user has 15 write and 15 read tools |
+
+**Data and code** — `sierra-research/tau2-bench`, **MIT licence**; leaderboard at taubench.com.
 
 ## Limitations
 - **Simulated user.** Scores depend on the simulator's fidelity.
 - **Dual control in telecom only.** Retail and airline are single-control, from τ-bench.
-- **Customer service.** No coding, browsing or research tasks.
+- **Customer service.** No coding, browsing or research tasks in the paper's set.
+- **Growing repository.** Later releases add domains and languages; cite the task set.
 
 ## Example
-The paper's telecom case: a user reports "no mobile data". The agent diagnoses with its own tools and guides the user through steps only the user's tools can perform; the run succeeds if the issue is fixed, as verified by the user's database state.
+From the paper's Appendix A.2, telecom task `[service_issue]airplane_mode_on|unseat_sim_card` (paraphrased; the paper is CC BY 4.0):
+
+- **Hidden state** — the user's phone has **airplane mode on** and an **unseated SIM card**.
+- **User scenario** — the simulated customer calls because the phone has shown no service for a few hours, follows the agent's suggestions and shows mild frustration if the first attempt fails.
+- **Success** — the agent must get the user to turn airplane mode off and reseat the SIM; the check is that the **service status ends up connected**.

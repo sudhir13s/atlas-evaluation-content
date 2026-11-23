@@ -2,21 +2,22 @@
 id: benchmark/bfcl-v4
 type: benchmark
 slug: bfcl-v4
-schema_version: 1.0
+schema_version: 3.1
 title: "BFCL-V4"
 name: BFCL-V4 (Berkeley Function-Calling Leaderboard v4)
 category: Agent & Tool Use
 description: "The Berkeley Function Calling Leaderboard from UC Berkeley's Gorilla team, which tests function (tool) calling; version 4 adds agentic web search, memory and format-sensitivity tests."
-what_is_it: "The Berkeley Function Calling Leaderboard (BFCL), from the Gorilla LLM team at UC Berkeley (Patil et al., ICML 2025), evaluates a model's ability to call functions (tools) accurately. It covers serial and parallel calls, expert-curated and user-contributed functions, multi-turn interaction and, in version 4, agentic web search, memory management and format sensitivity."
+what_is_it: "The Berkeley Function Calling Leaderboard (BFCL), from the Gorilla LLM team at UC Berkeley (Patil et al., ICML 2025), evaluates a model's ability to call functions (tools) accurately. It covers serial and parallel calls, expert-curated and user-contributed functions, multi-turn interaction and, in version 4 (blog posts from July 2025), agentic web search, memory management and format sensitivity. Code and data are public in the Gorilla repository under Apache 2.0."
 why_people_use_it: "Its Abstract Syntax Tree (AST) evaluation checks a call without running it and scales to thousands of functions. The authors write that since its preview BFCL has become the de facto standard for evaluating function calls (ICML 2025 paper)."
 examples:
-  - "Given schemas for get_weather(location, unit) and book_flight(origin, dest, date), and the request 'what's the weather in Paris in celsius and book me a flight there from London next Friday', emit the correct sequence of calls with correctly typed arguments."
-  - "Agentic web search: answer a 3-hop multihop question by issuing search-tool calls and returning a normalized answer string."
+  - "From the BFCL V4 web-search blog: 'Who is the founder of the US business that experiences the most growth during 2024?' The model searches, then returns the answer in a normalized answer field checked by exact match."
 method: "Single-turn categories (non-live and live) are checked with AST matching against the expected call; multi-turn categories run multi-step interactions. The v4 web-search category gives the model a search API and a page-fetch function and checks the normalized \"answer\" field by exact match. Memory and format-sensitivity categories were added in v4."
-metric: "Overall score in percent. The v4 blog's category table weights it Agentic 40%, Multi-Turn 30%, Live 10%, Non-Live 10% and Hallucination Measurement 10%; format sensitivity has no score impact. The leaderboard also estimates the cost (USD) of the whole benchmark and latency in seconds."
+metric: "Overall score in percent. The v4 blog gives the formula Agentic x 40% + Multi-Turn x 30% + Live x 10% + Non-Live x 10% + Hallucination x 10%, and lists format sensitivity as non-scoring; the leaderboard page itself describes Overall Accuracy as the unweighted average of all sub-categories. The leaderboard also estimates the cost (USD) of the whole benchmark and latency in seconds."
 format: "The model receives the user query and the function definitions and must emit calls; multi-turn and agentic categories run multi-step tool loops."
-limitations: "AST matching compares a call's structure with the expected call rather than running it. The web-search category depends on a live search service: the v4 blog describes the DuckDuckGo Search API, while the current repository README configures SerpAPI. The leaderboard changed from v1 to v4, so cite the version with any score."
+limitations: "AST matching compares a call's structure with the expected call rather than running it. The web-search category depends on a live search service: the v4 blog describes the DuckDuckGo Search API, while the current repository README configures SerpAPI, so answers can drift as the web changes. The maker's blog and leaderboard page describe the overall score differently (weighted formula versus unweighted average). The leaderboard changed from v1 to v4, so cite the version with any score."
 citation: "https://gorilla.cs.berkeley.edu/leaderboard.html"
+openness: open
+openness_note: "The test data, evaluation code and leaderboard statistics are public in the ShishirPatil/gorilla repository under Apache 2.0, and no held-out split is described; the web-search category needs a live search API to rerun."
 worked_examples:
   - task_type: "Single-turn function calling (correct tool + typed arguments)"
     input: "Schemas available: get_weather(location, unit), book_flight(origin, destination, date). Request: 'What's the weather in Paris in celsius, and book me a flight there from London next Friday?'"
@@ -69,13 +70,13 @@ worked_examples:
     checks: "Whether the agent runs a multi-hop search loop instead of guessing from parametric memory."
     scoring: "Exact-match on the normalized answer field over the agentic web-search track."
 tags: [agent, tool-use, function-calling, leaderboard]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://gorilla.cs.berkeley.edu/leaderboard.html", title: "Berkeley Function Calling Leaderboard (BFCL) V4", trust: 0.95 }
   - { url: "https://proceedings.mlr.press/v267/patil25a.html", title: "The Berkeley Function Calling Leaderboard (BFCL): From Tool Use to Agentic Evaluation of Large Language Models (Patil et al., ICML 2025)", trust: 0.95 }
   - { url: "https://gorilla.cs.berkeley.edu/blogs/15_bfcl_v4_web_search.html", title: "BFCL V4 Part 1: Agentic Web Search (Gorilla blog)", trust: 0.9 }
   - { url: "https://gorilla.cs.berkeley.edu/blogs/16_bfcl_v4_memory.html", title: "BFCL V4 Part 2: Agentic Memory Management (Gorilla blog)", trust: 0.9 }
-  - { url: "https://github.com/ShishirPatil/gorilla/blob/main/berkeley-function-call-leaderboard/README.md", title: "BFCL README — Gorilla repository", trust: 0.9 }
+  - { url: "https://github.com/ShishirPatil/gorilla/blob/main/berkeley-function-call-leaderboard/README.md", title: "BFCL README — Gorilla repository (code and data, Apache 2.0)", trust: 0.9 }
 related: [benchmark/tau2-bench, benchmark/vita-bench, benchmark/swe-bench]
 ---
 
@@ -88,20 +89,39 @@ Whether a model **calls functions (tools) correctly** from a request and a set o
 - **v4** — holistic agentic evaluation: web search, memory management, format sensitivity.
 
 ## How It Scores
-An **overall score** from weighted categories (v4 blog table): Agentic 40%, Multi-Turn 30%, Live 10%, Non-Live 10%, Hallucination Measurement 10%.
+An **overall score** in percent. The v4 blog (17 July 2025) gives the weighting:
 
-- **AST matching** — single-turn calls are compared structurally with the expected call.
-- **Web search** — exact match on the normalized "answer" field.
-- **Not scored** — the 26 format-sensitivity configurations (200 cases each) have no score impact.
+| Group | Weight |
+|---|---|
+| Agentic (web search, memory) | 40% |
+| Multi-Turn | 30% |
+| Live | 10% |
+| Non-Live | 10% |
+| Hallucination Measurement | 10% |
+| Format Sensitivity | No score impact |
+
+- **AST matching** — an Abstract Syntax Tree (AST) comparison checks the structure of a single-turn call against the expected call, without running it.
+- **Web search** — exact match on the normalized "answer" field (lower-cased, punctuation removed).
+- **Caveat** — the leaderboard page describes Overall Accuracy as the unweighted average of sub-categories, which differs from the blog's formula.
 - **Also reported** — estimated cost of the whole benchmark (USD) and latency (seconds).
 
 ## Format
-The model gets the query and function definitions and emits calls. The v4 web-search category has 100 human-crafted multihop questions, run as 200 cases (with and without snippets); the memory category has 465 cases across vector-store, key-value and recursive-summarization back ends.
+The model gets the query and function definitions and emits calls.
+
+- **Web search** — 100 human-crafted multihop questions (2 to 4 hops), run as 200 cases with and without search snippets; tools are a search call and a page-fetch call.
+- **Memory** — 465 cases: 155 each for vector-store, key-value and recursive-summarization back ends.
+- **Format sensitivity** — 26 prompt-format configurations x 200 cases (5,200), for prompt-based models.
+- **Data and code** — `ShishirPatil/gorilla/berkeley-function-call-leaderboard`, **Apache 2.0**; run with the `bfcl-eval` package.
 
 ## Limitations
 - **Structural check.** AST matching compares a call's structure with the expected one.
 - **Live search.** The web-search category depends on an outside search service (DuckDuckGo in the v4 blog, SerpAPI in the current README).
+- **Two score descriptions.** Blog formula and leaderboard wording differ.
 - **Versioned.** v1 to v4 differ; cite the version with any score.
 
 ## Example
-The v4 web-search blog gives this multihop question: "Who is the founder of the US business that experiences the most growth during 2024?" The model has to search for the business first, then for its founder, and return the result in the "answer" field, which is checked by exact match.
+From the v4 web-search blog, a multihop question: **"Who is the founder of the US business that experiences the most growth during 2024?"**
+
+- **Hop 1** — search for the business with the most growth in 2024.
+- **Hop 2** — search for that business's founder.
+- **Answer** — return the name in the "answer" field, which is normalized and checked by **exact match**.

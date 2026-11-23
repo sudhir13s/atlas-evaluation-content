@@ -31,8 +31,9 @@ examples) so it stays machine-parseable; the body carries explanation.
 - `tags`: lowercase, hyphen-separated.
 - `updated`: ISO date (`YYYY-MM-DD`).
 - `sources[]`: `{ url, title, trust }` — `trust` in `[0,1]`. Open-source-first; cite, do not copy.
-- `schema_version`: the `major.minor` the file was authored against. The repo is at `3.0`; `benchmark` and `evaluation-dataset` files were authored
-  against `1.0` and stay valid, because their types did not change.
+- `schema_version`: the `major.minor` the file was authored against. The repo is at `3.1`;
+  `benchmark` files carry `3.1` (they use `openness`); `evaluation-dataset` files were authored
+  against `1.0` and stay valid, because their type did not change.
 
 ## Body sections
 
@@ -46,6 +47,16 @@ examples) so it stays machine-parseable; the body carries explanation.
 - **benchmark** — carries `category` (one of the UI groups in the schema enum), `metric`, `method`, `format`,
   `saturation`, and `limitations`. `method`, `metric`, and `limitations` are required: **a score is
   never shown without them.** Body sections: What It Tests → How It Scores → Format → Limitations → Example.
+  - `openness` says how much of the benchmark anyone can inspect, judged from the maker's own
+    paper, page or repository: `open` (tasks or data and the scoring method are public),
+    `partly-open` (the method and some items are public, but the scored test set is private or
+    held out, for example against contamination), `closed` (the maker publishes only results and
+    a description). `openness_note` is one sentence saying what is public and what is not.
+  - A `closed` benchmark says at the top of What It Tests that its tasks are not published, and
+    its Example describes the task shape as the maker describes it. Never invent an item for it.
+  - An Example quoted or closely paraphrased from a benchmark's public data names where it is
+    from (paper, dataset card or repository) and stays a short excerpt that respects the data's
+    licence. `worked_examples` are site-written illustrations, labelled so on the site.
 - **evaluation-dataset** — the datasets and harnesses that *run* benchmarks (a harness like
   lm-evaluation-harness, a framework like HELM, a human-preference platform like LMArena, an
   LLM-as-judge set like MT-Bench, a live/contamination-free suite like LiveBench). Carries `category`,

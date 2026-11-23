@@ -36,6 +36,15 @@
     "saturation": { "type": "string", "enum": ["high", "medium", "low"], "description": "how close top models are to the ceiling" },
     "limitations": { "type": "string", "description": "honest limitations, contamination, saturation" },
     "citation": { "type": "string", "description": "canonical paper/site URL" },
+    "openness": {
+      "type": "string",
+      "enum": ["open", "partly-open", "closed"],
+      "description": "how much of the benchmark the public can inspect: open (tasks or data and the method are public), partly-open (the method and some items are public, but the scored test set is private or held out), closed (the maker publishes only results and a description)"
+    },
+    "openness_note": {
+      "type": "string",
+      "description": "one sentence, from the maker's own page, paper or repository: what is public and what is not"
+    },
     "worked_examples": {
       "type": "array",
       "description": "3-5 category-appropriate worked examples, shown as a navigable carousel. Each is one success-vs-plausible-failure contrast; the UI derives panel labels + footer from `category` + `metric`. Author DISTINCT examples (different sub-tasks, difficulties, or failure modes), not variations of one.",

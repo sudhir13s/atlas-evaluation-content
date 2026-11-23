@@ -2,21 +2,22 @@
 id: benchmark/dsbench
 type: benchmark
 slug: dsbench
-schema_version: 1.0
+schema_version: 3.1
 title: "DSBench"
 name: DSBench
 category: Agent & Tool Use
 description: "A data-science agent benchmark with two splits — 466 spreadsheet data-analysis questions and 74 end-to-end Kaggle data-modeling tasks."
-what_is_it: "DSBench (Jing et al., 2024, Tencent AI Lab with university collaborators) asks how far data-science agents are from being data-science experts. It has 466 data-analysis tasks collected from the ModelOff financial-modelling competition and 74 data-modelling tasks collected from Kaggle competitions. Tasks include long contexts, multimodal task backgrounds, large data files and multi-table structures."
-why_people_use_it: "It covers both answering questions over real spreadsheets and building an end-to-end modelling pipeline. In the paper, the best agent solved 34.12% of the data-analysis tasks and reached a 34.74% Relative Performance Gap on the modelling tasks, and the authors report a large gap between the most advanced agent system and humans."
+what_is_it: "DSBench (Jing et al.; arXiv, September 2024; ICLR 2025; University of Texas at Dallas and Tencent AI Lab) asks how far data-science agents are from being data-science experts. It has 466 data-analysis tasks collected from ModelOff, a financial data-analysis competition answered in Excel, and 74 data-modelling tasks collected from Kaggle competitions. Tasks include long contexts, multimodal task backgrounds, large data files and multi-table structures."
+why_people_use_it: "It covers both answering questions over real spreadsheets and building an end-to-end modelling pipeline. The authors measured human performance on both splits and report a large gap between the most advanced agent system and humans."
 examples:
-  - "Data analysis: a ModelOff question over an attached spreadsheet, answered with a final value."
-  - "Data modelling: a Kaggle competition's data and task description; the agent writes a pipeline and submits a prediction file, scored by the competition's metric."
-method: "Data analysis: the agent's final answer is compared with the ground truth. Data modelling: the submitted file is scored with each competition's own metric, and the Relative Performance Gap (RPG) normalises the different metrics against a baseline and the best human performance."
-metric: "Data analysis: accuracy. Data modelling: Relative Performance Gap (RPG), the normalised gap between a baseline and the best performance, averaged over competitions (higher is better)."
+  - "From the paper's Appendix I (Table 9), a data-analysis question over an attached workbook: How many voters are there in the Delta District? Options run from A (113) to I (121); the answer is I (121)."
+method: "Data analysis: GPT-4o acts as a semantic matcher, prompted to output True or False for whether the agent's final answer matches the ground truth; the authors checked 100 sampled predictions by hand and found full agreement. Data modelling: the submitted file is scored with each competition's own metric, and the Relative Performance Gap (RPG) normalises the different metrics."
+metric: "Data analysis: accuracy = questions answered correctly / questions. Data modelling: Relative Performance Gap (RPG) = for each competition, (agent score - baseline score) / (best score - baseline score), floored at 0, then averaged over competitions; the baseline is the score of the competition's original submission file (higher is better)."
 format: "Agentic tasks with attached data files; a final answer (analysis) or a prediction file from an end-to-end pipeline (modelling)."
-limitations: "The two splits use different metrics, so a DSBench score must name its split. The modelling split reuses public Kaggle competitions, and the paper's human performance figure for modelling is based on 10 sampled competitions."
+limitations: "The two splits use different metrics, so a DSBench score must name its split. The modelling split reuses public Kaggle competitions. The paper's human figures are partial: data-analysis human accuracy comes from 10 sampled competitions, and modelling human RPG from 22 competitions whose contestant code still ran. The dataset is released for non-commercial use only."
 citation: "https://arxiv.org/abs/2409.07703"
+openness: open
+openness_note: "All tasks, data files and evaluation code are public in the official GitHub repository, which restricts the dataset to non-commercial use."
 worked_examples:
   - task_type: "Spreadsheet aggregate with a code mapping (data-analysis split)"
     input: "Attached: an Excel workbook of election results where voter-district codes 105-194 map to 9 named districts across several sheets. Question: 'How many voters are there in the Delta District?' (multiple-choice values in the 113-121 range)."
@@ -69,12 +70,11 @@ worked_examples:
     checks: "Whether an agent produces a genuinely predictive model AND a valid, complete submission file."
     scoring: "Relative Performance Gap (RPG) computed from the competition's own RMSE metric, normalized across competitions."
 tags: [agent, data-science, code-generation, spreadsheet, kaggle, multimodal]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2409.07703", title: "DSBench: How Far Are Data Science Agents from Becoming Data Science Experts? (Jing et al., ICLR 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2409.07703", title: "DSBench, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://github.com/LiqiangJing/DSBench", title: "DSBench — official GitHub repository (data + evaluation)", trust: 0.9 }
-  - { url: "https://iclr.cc/virtual/2025/poster/30458", title: "DSBench — ICLR 2025 poster page", trust: 0.9 }
+  - { url: "https://github.com/LiqiangJing/DSBench", title: "DSBench — official GitHub repository (data, evaluation, non-commercial use)", trust: 0.9 }
 related: [benchmark/swe-bench, benchmark/bfcl-v4, benchmark/livecodebench]
 ---
 
@@ -87,16 +87,28 @@ The two halves of data-science work, as **separate splits**:
 ## How It Scores
 Each split has its own metric:
 
-- **Data analysis → accuracy** of the final answer against the ground truth.
-- **Data modelling → Relative Performance Gap (RPG).** Each competition's own metric is normalised between a baseline and the best performance, then averaged; higher is better.
-- **Paper's results (2024)** — the best agent reached 34.12% accuracy and 34.74% RPG.
+- **Data analysis → accuracy** = correct answers / questions. A GPT-4o matcher decides whether the final answer means the same as the ground truth.
+- **Data modelling → Relative Performance Gap (RPG).** Per competition: (agent score - baseline) / (best score - baseline), floored at 0, then averaged; higher is better.
+- **Human reference** — the paper measured humans on 10 sampled analysis competitions and 22 modelling competitions.
 
 ## Format
 Agentic tasks with attached data files. The agent returns a final answer for analysis tasks, or writes and runs a pipeline that produces a prediction file for modelling tasks.
 
+| Split | Tasks | Source | Metric |
+|---|---|---|---|
+| Data analysis | 466 | ModelOff competition | Accuracy |
+| Data modelling | 74 | Kaggle competitions | RPG |
+
+Data and evaluation scripts are in the `LiqiangJing/DSBench` GitHub repository, for **non-commercial use**.
+
 ## Limitations
 - **Two scores.** Accuracy and RPG measure different things; name the split.
 - **Public sources.** The modelling tasks reuse public Kaggle competitions.
+- **Partial human baselines.** Human figures cover a sample of competitions.
+- **LLM matcher.** Analysis answers are judged by GPT-4o, not exact match.
 
 ## Example
-A data-modelling task gives the agent a Kaggle competition's training and test data and its description. The agent builds a pipeline and submits predictions; the file is scored with the competition's metric and placed between the baseline and the best performance to give its RPG.
+From the paper's Appendix I (Table 9), a data-analysis item: the agent receives an election workbook and the question **"How many voters are there in the Delta District?"**, with options from A (113) to I (121).
+
+- **Correct answer** — I (121).
+- **Reported failure** — GPT-4o answered wrongly because it treated the district code as a voter identifier.

@@ -2,20 +2,22 @@
 id: benchmark/nl2repo
 type: benchmark
 slug: nl2repo
-schema_version: 1.0
+schema_version: 3.1
 title: "NL2Repo"
 name: NL2Repo-Bench
 category: Code Generation
 description: "A long-horizon benchmark: build a complete, installable Python repository from scratch given only a natural-language requirements document and an empty workspace."
-what_is_it: "NL2Repo-Bench (Ding et al., 2025, ByteDance Seed, M-A-P and university collaborators) measures whether a coding agent can turn a single natural-language requirements document into a complete, installable Python library, starting from an empty workspace. The agent must design the architecture, manage dependencies and implement multi-module logic itself. It has 104 tasks in nine categories of Python libraries, with input documents averaging about 18,800 tokens."
-why_people_use_it: "The authors say prior evaluations focus on localized code generation, scaffolded completion or short repairs. In their experiments (December 2025), even the strongest agents had average test pass rates below 40% and rarely completed an entire repository correctly; the failure modes they name include premature termination, loss of global coherence, fragile cross-file dependencies and inadequate planning."
+what_is_it: "NL2Repo-Bench (Ding et al., December 2025; ByteDance Seed, M-A-P, 2077AI, Humanlaya Data, Nanjing University, Peking University, Beijing University of Posts and Telecommunications and Beihang University) measures whether a coding agent can turn a single natural-language requirements document into a complete, installable Python library, starting from an empty workspace. The agent must design the architecture, manage dependencies and implement multi-module logic itself. It has 104 tasks in nine categories of Python libraries, with input documents averaging about 18,800 tokens."
+why_people_use_it: "The authors say prior evaluations focus on localized code generation, scaffolded completion or short repairs. The failure modes they name include premature termination, loss of global coherence, fragile cross-file dependencies and inadequate planning."
 examples:
-  - "A requirements document for one of the 104 Python libraries; the agent builds the library in an empty workspace, and the target repository's official test suite is run on it."
+  - "aiofiles task: the requirements document opens 'aiofiles is a Python library for asynchronous file operations' and covers goals, environment, architecture, an API usage guide and function-level implementation notes; the result is graded on the original library's test suite (211 test cases)."
 method: "Each task gives the agent one requirements document and an empty workspace. The generated library is evaluated in a dedicated Docker environment per task against the official test suite of the target repository."
-metric: "Average test pass rate, used as the task score."
+metric: "Average test pass rate: for each task, tests passed / tests in the target repository's suite, used as the task score and averaged over tasks."
 format: "A single specification document, an autonomous multi-step agent run, and execution-based grading against the target repository's test suite."
-limitations: "It covers Python libraries only (nine categories). A partly built repository can still pass some tests, so the pass rate is not the same as a working library."
+limitations: "It covers Python libraries only (nine categories). A partly built repository can still pass some tests, so the pass rate is not the same as a working library. The target libraries are public open-source projects, so their code can appear in training data. The repository states no licence."
 citation: "https://arxiv.org/abs/2512.12730"
+openness: open
+openness_note: "The requirements documents, test commands and evaluation toolkit are public in the multimodal-art-projection/NL2RepoBench repository, which the paper names as the release, though the repository states no licence."
 worked_examples:
   - task_type: "Data-analysis library from a spec"
     input: "An ~18,800-token requirements document for a small tabular-data utility library: it must expose `read_csv`, schema inference, row filtering, and `to_json` export, with a stated public API, error behavior, and packaging expectations. Workspace is empty; no tests are shown."
@@ -68,10 +70,12 @@ worked_examples:
     checks: "Declaring an accurate, minimal dependency set that matches what the code actually imports and what the spec allows."
     scoring: "Average test pass rate: zero on missing dependency vs full suite green."
 tags: [code-generation, coding-agent, long-horizon, repository, python]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2512.12730", title: "NL2Repo-Bench: Towards Long-Horizon Repository Generation Evaluation of Coding Agents (Ding et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2512.12730", title: "NL2Repo-Bench, full text (arXiv HTML)", trust: 0.95 }
+  - { url: "https://github.com/multimodal-art-projection/NL2RepoBench", title: "multimodal-art-projection/NL2RepoBench — tasks and evaluation toolkit", trust: 0.9 }
+  - { url: "https://raw.githubusercontent.com/multimodal-art-projection/NL2RepoBench/main/test_files/aiofiles/start.md", title: "NL2Repo-Bench task aiofiles, requirements document (start.md)", trust: 0.9 }
 related: [benchmark/swe-bench, benchmark/livecodebench, benchmark/humaneval, benchmark/mbpp]
 ---
 
@@ -86,16 +90,26 @@ The 104 tasks span nine library categories:
 Input documents average about **18,800 tokens**.
 
 ## How It Scores
-The generated library runs against the **official test suite of the target repository** in a dedicated Docker environment per task. The task score is the **average test pass rate**.
+The generated library runs against the **official test suite of the target repository** in a dedicated Docker environment per task.
 
-- **Paper's results (December 2025)** — the strongest agents stayed below 40% and rarely reproduced a whole repository.
+- **Task score** — tests passed / tests in the suite (the **test pass rate**).
+- **Benchmark score** — the average of task scores.
+- **Judge** — execution only, no LLM judge.
 
 ## Format
-One requirements document and an empty workspace, then an autonomous agent run. Grading is execution-based, with no LLM judge.
+One requirements document and an empty workspace, then an autonomous agent run.
+
+- **Data** — per-task documents, test commands and test counts in GitHub `multimodal-art-projection/NL2RepoBench` (no licence stated).
+- **Makers** — Ding et al., ByteDance Seed, M-A-P and university collaborators, December 2025.
 
 ## Limitations
 - **Python libraries only.** Nine categories; no applications or other languages.
 - **Partial credit.** A partly built repository can pass some tests.
+- **Public targets.** The original libraries are open source and may sit in training data.
 
 ## Example
-The agent receives the requirements document for one library, designs its modules and dependencies, and writes the code. The target repository's official tests then run on the result in that task's Docker environment, and the share of tests passed is the task score.
+From the public repository, the **aiofiles** task (`test_files/aiofiles/start.md`). The requirements document opens: "aiofiles is a Python library for asynchronous file operations, providing asynchronous processing capabilities".
+
+- **Sections** — project goals, the instruction, environment configuration, architecture, an API usage guide, and function-level implementation notes.
+- **Grading** — the library the agent builds runs against the original aiofiles test suite, 211 test cases.
+- **Score** — the share of those tests that pass.

@@ -2,7 +2,7 @@
 id: benchmark/<slug>
 type: benchmark
 slug: <slug>
-schema_version: 1.0
+schema_version: 3.1
 title: "<Benchmark Name>"
 name: <BENCHMARK NAME>
 category: Knowledge & Academic Reasoning   # see schema enum for the allowed categories
@@ -17,6 +17,8 @@ format: "<prompt format, e.g. 5-shot multiple-choice>"
 saturation: medium            # high | medium | low
 limitations: "<honest limitations, contamination, saturation>"
 citation: "<canonical paper/site URL>"
+openness: open                # open | partly-open | closed
+openness_note: "<one sourced sentence: what is public (tasks, data, code, grader) and what is not>"
 tags: [<tag>]
 updated: <YYYY-MM-DD>
 sources:

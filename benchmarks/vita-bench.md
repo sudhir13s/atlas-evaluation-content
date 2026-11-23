@@ -2,20 +2,22 @@
 id: benchmark/vita-bench
 type: benchmark
 slug: vita-bench
-schema_version: 1.0
+schema_version: 3.1
 title: "VitaBench"
 name: "VitaBench"
 category: Agent & Tool Use
 description: "An interactive agent benchmark with 66 tools across food delivery, in-store consumption and online travel, scored by a rubric-based sliding-window evaluator."
-what_is_it: "VitaBench (He et al., 2025, Meituan LongCat Team) tests LLM agents on interactive tasks drawn from food delivery, in-store consumption and online travel services, using 66 tools. A framework without domain-specific policies lets scenarios and tools be composed into 100 cross-scenario tasks (the main results) and 300 single-scenario tasks. Each task is derived from multiple real user requests."
-why_people_use_it: "Tasks require reasoning across time and place, using complex tool sets, clarifying ambiguous instructions and tracking shifting user intent over multi-turn conversations. In the paper (2025), the best model reached about 30% success on cross-scenario tasks and under 50% on single-scenario tasks; its error analysis attributes 61.8% of failures to reasoning, 21.1% to tool use and 7.9% to interaction management."
+what_is_it: "VitaBench (He et al., September 2025, Meituan LongCat Team; ICLR 2026) tests LLM agents on interactive tasks drawn from food delivery, in-store consumption and online travel (OTA, online travel agency) services, using 66 tools. A framework without domain-specific policies lets scenarios and tools be composed into 400 tasks: 100 cross-scenario tasks (the main results) and 100 single-scenario tasks in each of delivery, in-store and travel. Each task is derived from multiple real user requests."
+why_people_use_it: "Tasks require reasoning across time and place, using complex tool sets, clarifying ambiguous instructions and tracking shifting user intent over multi-turn conversations. The paper's error analysis of 76 failed rubric items from one model attributes 61.8% to reasoning, 21.1% to tool use, 7.9% to interaction and 9.2% to the user simulator. The tasks and code are public under the MIT licence."
 examples:
-  - "A user request that spans scenarios (for example travel and food delivery), handled over several turns with a simulated user and the 66 tools."
-method: "The agent talks with a simulated user over multiple turns and calls tools in the environment. A rubric-based sliding-window evaluator assesses the long trajectory, allowing diverse valid solution paths."
-metric: "Success rate (task completion)."
+  - "From the paper's Appendix C example trajectory, a simulated user turn: 'We have 6 people total, and we want to book a table for 12 noon on the 27th.'"
+method: "The agent talks with a simulated user over multiple turns and calls tools in the environment. A rubric-based sliding-window evaluator reads the trajectory in overlapping windows (10 turns with 2 overlapping) and records which rubric items are satisfied; an item once satisfied stays satisfied, which allows diverse valid solution paths. Each task is run four times."
+metric: "Success rate: a task succeeds only if all its rubric items are satisfied. The paper reports Avg@4 (mean success over four runs), Pass@k (probability that at least one of k runs succeeds) and Pass^k (probability that all k runs succeed)."
 format: "Multi-turn interactive dialogue with tool use; 100 cross-scenario and 300 single-scenario tasks."
-limitations: "Grading relies on a rubric-based LLM evaluator, and the user is simulated by an LLM, so both affect results. The domains are life services (food delivery, in-store, travel)."
+limitations: "Grading relies on a rubric-based LLM evaluator, and the user is simulated by an LLM, so both affect results; the paper itself attributes 9.2% of analysed failures to the user simulator. The domains are life services (food delivery, in-store, travel). All-or-nothing scoring means one missed rubric item fails a task."
 citation: "https://arxiv.org/abs/2509.26490"
+openness: open
+openness_note: "The 400 tasks, tools, environment data and evaluation code are public on Hugging Face (meituan-longcat/VitaBench) and GitHub under the MIT licence, with no held-out set described."
 worked_examples:
   - task_type: "Cross-scenario interactive agent (travel + food-delivery + in-store)"
     input: "User: 'I land in Kyoto Friday evening — find a well-reviewed ramen place near my hotel for that night, and have breakfast groceries delivered to the hotel for Saturday morning. Keep it under ¥8,000 total.' (66 tools available; no domain-specific policy scaffolding.)"
@@ -68,11 +70,13 @@ worked_examples:
     checks: "Whether an agent recovers from a failed tool call by finding a valid alternative instead of giving up."
     scoring: "Success rate — rubric credits recovering to a completed reservation over abandoning the task."
 tags: [agent, tool-use, multi-turn, interactive, real-world]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2509.26490", title: "VitaBench: Benchmarking LLM Agents with Versatile Interactive Tasks in Real-world Applications (He et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2509.26490", title: "VitaBench, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://vitabench.github.io/", title: "VitaBench project page (code, dataset, leaderboard)", trust: 0.9 }
+  - { url: "https://vitabench.github.io/", title: "VitaBench project page (code, dataset, leaderboard)", trust: 0.95 }
+  - { url: "https://huggingface.co/datasets/meituan-longcat/VitaBench", title: "meituan-longcat/VitaBench — Hugging Face dataset card (MIT licence)", trust: 0.9 }
+  - { url: "https://github.com/meituan-longcat/vitabench", title: "meituan-longcat/vitabench — official code repository", trust: 0.9 }
 related: [benchmark/tau2-bench, benchmark/bfcl-v4, benchmark/deepplanning]
 ---
 
@@ -83,17 +87,33 @@ Whether an agent can complete **interactive real-world tasks** in food delivery,
 - **Skills** — reasoning over time and place, clarifying ambiguous instructions, tracking shifting intent.
 
 ## How It Scores
-**Success rate.** A rubric-based sliding-window evaluator assesses the long trajectory, so different valid solution paths can pass.
+**Success rate**, all or nothing: a task succeeds only when **every rubric item** is satisfied.
 
-- **Paper's results (2025)** — about 30% on cross-scenario and under 50% on single-scenario tasks for the best model.
-- **Error analysis** — reasoning 61.8%, tool use 21.1%, interaction management 7.9%.
+- **Sliding window** — an LLM evaluator reads the trajectory in overlapping windows of 10 turns (2 overlapping) and keeps a running record of satisfied items, so different valid paths can pass.
+- **Avg@4** — mean success over four runs per task.
+- **Pass@k / Pass^k** — at least one of *k* runs succeeds / all *k* runs succeed.
+- **Error analysis** — of 76 failed rubric items from one model: reasoning 61.8%, tool use 21.1%, interaction 7.9%, user simulator 9.2%.
 
 ## Format
-Multi-turn dialogue with a simulated user and tool calls in the environment: 100 cross-scenario tasks (main results) and 300 single-scenario tasks.
+Multi-turn dialogue with a simulated user and tool calls in the environment.
+
+| Set | Tasks | Read / write / general tools |
+|---|---|---|
+| Cross-scenario (all tools combined) | 100 | 33 / 27 / 6 |
+| Delivery | 100 | 10 / 4 / 6 |
+| In-store | 100 | 10 / 9 / 5 |
+| Online travel (OTA) | 100 | 19 / 14 / 5 |
+
+**Data and code** — Hugging Face `meituan-longcat/VitaBench` and GitHub `meituan-longcat/vitabench`, **MIT licence**.
 
 ## Limitations
 - **LLM in the loop.** A rubric-based LLM evaluator and an LLM-simulated user.
+- **Strict scoring.** One missed rubric item fails the task.
 - **Life services only.** Food delivery, in-store and travel.
 
 ## Example
-A task derived from real user requests is given to the agent through the simulated user; the agent asks for missing details, calls the scenario tools, and the evaluator checks the trajectory against the task's rubric. Appendix C of the paper shows a full example trajectory.
+From the paper's Appendix C, a full example trajectory. One simulated-user turn reads:
+
+> "We have 6 people total, and we want to book a table for 12 noon on the 27th."
+
+The agent must use the scenario tools to act on such requests, asking for any missing details. The evaluator then checks the whole trajectory against the task's rubric items, and the task succeeds only if all are met.

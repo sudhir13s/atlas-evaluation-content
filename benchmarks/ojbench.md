@@ -2,20 +2,22 @@
 id: benchmark/ojbench
 type: benchmark
 slug: ojbench
-schema_version: 1.0
+schema_version: 3.1
 title: "OJBench"
 name: OJBench
 category: Code Generation
 description: "232 competition programming problems from NOI and ICPC, judged by whether a generated program passes all of the organisers' test cases."
-what_is_it: "OJBench (Wang et al., 2025, Beijing University of Posts and Telecommunications and collaborators) is a competition-level code benchmark of 232 problems: 159 from China's National Olympiad in Informatics (NOI) and 73 from the International Collegiate Programming Contest (ICPC). Each problem comes with the comprehensive test cases released by the competition organisers, and problems are labelled Easy (36), Medium (79) or Hard (117)."
-why_people_use_it: "It assesses competition-level code reasoning with the organisers' own test cases. The authors evaluated 37 models and report (June 2025) that even state-of-the-art reasoning-oriented models struggle with the hardest problems."
+what_is_it: "OJBench (Wang et al., 2025; Beijing University of Posts and Telecommunications, Tsinghua University, University of Chinese Academy of Sciences, Peking University and Moonshot AI) is a competition-level code benchmark of 232 problems: 159 from China's National Olympiad in Informatics (NOI) and 73 from the International Collegiate Programming Contest (ICPC). Each problem comes with the test cases released by the competition organisers (31.81 per problem on average), and problems are labelled Easy (36), Medium (79) or Hard (117)."
+why_people_use_it: "It assesses competition-level code reasoning with the organisers' own test cases, in both Python and C++. The authors evaluated 37 models in the June 2025 paper."
 examples:
   - "An NOI or ICPC problem statement in Markdown; the model writes a program in Python or C++, and it counts as correct only if it passes every test case."
 method: "The model generates a program for each problem statement, in Python or C++, and it is run on the problem's test cases. A solution is considered correct only if it passes all test cases. The paper reports pass@1 and pass@8 in each language, and pass@1 by difficulty."
-metric: "pass@k (the paper reports pass@1 and pass@8), per language."
+metric: "pass@k: the share of problems where at least one of k generated programs passes every test case (the paper generates eight candidates per problem and reports pass@1 and pass@8), per language."
 format: "Competition code generation in Python or C++, judged on the organisers' full test cases."
-limitations: "With 232 problems, a few problems move the score. Difficulty labels for NOI come from votes by contestants who solved the problem and for ICPC from team attempt ratios, so they are approximate. The problems come from past published contests."
+limitations: "With 232 problems, a few problems move the score. Difficulty labels for NOI come from votes by contestants who solved the problem and for ICPC from team attempt ratios, so they are approximate. The problems come from past published contests, so they can appear in training data."
 citation: "https://arxiv.org/abs/2506.16395"
+openness: open
+openness_note: "The problems and organisers' test data are public on Hugging Face (CC BY 4.0) and the judging code is on GitHub (AGPL-3.0), so anyone can rerun the benchmark."
 worked_examples:
   - task_type: "Tree path query (LCA)"
     input: "ICPC-level: given a weighted tree of up to 200,000 nodes, answer queries for the maximum edge weight on the path between two nodes. Earn Accepted only if every hidden test passes within the time and memory limits."
@@ -68,11 +70,12 @@ worked_examples:
     checks: "Reducing modulo at every operation rather than once at the end, to stay within the integer range."
     scoring: "Solve rate / pass@1: Accepted vs Wrong Answer from overflow."
 tags: [code-generation, competitive-programming, olympiad, pass-at-1]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2506.16395", title: "OJBench: A Competition Level Code Benchmark For Large Language Models (Wang et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2506.16395", title: "OJBench, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://github.com/He-Ren/OJBench", title: "OJBench GitHub repository", trust: 0.9 }
+  - { url: "https://github.com/He-Ren/OJBench", title: "OJBench GitHub repository (judging code, AGPL-3.0)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/He-Ren/OJBench_testdata", title: "He-Ren/OJBench_testdata — Hugging Face dataset (CC BY 4.0)", trust: 0.9 }
 related: [benchmark/livecodebench]
 ---
 
@@ -82,15 +85,18 @@ Competition-level **algorithmic code reasoning** on NOI and ICPC problems.
 - **Sources** — 159 NOI and 73 ICPC problems.
 - **Difficulty** — 36 Easy, 79 Medium, 117 Hard.
 - **Two languages** — Python and C++.
+- **Data** — test data on Hugging Face (`He-Ren/OJBench_testdata`, **CC BY 4.0**); judging code on GitHub (`He-Ren/OJBench`, **AGPL-3.0**).
 
 ## How It Scores
 A solution is correct only if it **passes all test cases**; the test cases are those released by the competition organisers and validated against contestants' correct submissions.
 
+- **pass@k** — the share of problems where at least one of k programs passes every test; the paper samples eight per problem.
 - **pass@1 and pass@8** — reported per language.
 - **By difficulty** — pass@1 for Easy, Medium and Hard.
+- **Judge** — the repository runs programs in the DMOJ judge server and returns a verdict such as AC (accepted), WA (wrong answer) or RE (runtime error).
 
 ## Format
-The model receives a problem statement in Markdown and returns a complete program in Python or C++, which runs on the problem's test cases (on average about 32 tests per problem).
+The model receives a problem statement in Markdown and returns a complete program in Python or C++, which runs on the problem's test cases: 31.81 per problem on average (NOI 17.21, ICPC 63.60).
 
 ## Limitations
 - **Small set.** 232 problems, so a few problems move the score.
@@ -98,4 +104,4 @@ The model receives a problem statement in Markdown and returns a complete progra
 - **Past contests.** The problems are from published competitions.
 
 ## Example
-The model reads an NOI or ICPC problem statement, writes a program in Python or C++, and the program is run on the organisers' test cases; it counts as solved only if every test case passes.
+No problem statement is quoted here: neither the paper nor the repository shows one as text, and the dataset has no preview. As the paper describes it, the model reads an NOI or ICPC statement in Markdown, writes a program in Python or C++, and the judge runs it on the organisers' test cases; it counts as solved only if every case passes.

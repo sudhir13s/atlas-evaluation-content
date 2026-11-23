@@ -2,20 +2,22 @@
 id: benchmark/mbpp
 type: benchmark
 slug: mbpp
-schema_version: 1.0
+schema_version: 3.1
 title: "MBPP"
 name: MBPP
 category: Code Generation
 description: "Mostly Basic Programming Problems: 974 short Python programming tasks for entry-level programmers, each with three test cases."
-what_is_it: "MBPP was introduced by Austin et al. (2021). It has 974 short Python tasks written by crowdworkers with basic Python knowledge; each has a short problem statement, a self-contained reference function and three test cases written as assert statements. The authors also inspected, edited and pruned a subset into 426 hand-verified questions (the edited dataset)."
+what_is_it: "MBPP was introduced by Austin et al. (2021, Google Research). It has 974 short Python tasks written by crowdworkers with basic Python knowledge; each has a short problem statement, a self-contained reference function and three test cases written as assert statements. The paper splits them into 10 few-shot prompt tasks, 500 test, 374 training and 90 validation tasks. The authors also inspected, edited and pruned a subset into 426 hand-verified questions (the edited set; the Hugging Face sanitized subset lists 427 rows). The data is on Hugging Face under CC BY 4.0."
 why_people_use_it: "It measures whether a model can write short Python programs from a natural-language description, checked by running the tests."
 examples:
-  - "Write a function to count the number of ways to tile a 2xn board with 2x1 tiles. (Fibonacci; tile_ways(4) == 5)"
+  - "Task 604: Write a function to reverse words in a given string. Tests: assert reverse_words(\"python program\")==(\"program python\"); assert reverse_words(\"java language\")==(\"language java\"); assert reverse_words(\"indian man\")==(\"man indian\")."
 method: "The model writes a function from the problem statement (often with a few examples in the prompt); it is executed against the three assert-based test cases."
-metric: "Share of tasks whose generated solution passes all test cases (pass@1 is the most reported)."
+metric: "Share of tasks whose generated solution passes all three test cases = tasks solved / tasks attempted (pass@1 is the most reported)."
 format: "Few-shot or zero-shot function synthesis; unit-test execution."
-limitations: "The tasks are short, self-contained Python functions. Each task has only three test cases. In the paper, few-shot performance on 100 problems found in both versions rose from 63% on the original wording to 79% on the edited wording, so results on the full and edited sets are not comparable."
+limitations: "The tasks are short, self-contained Python functions. Each task has only three test cases. In the paper, few-shot performance on 100 problems found in both versions rose from 63% on the original wording to 79% on the edited wording, so results on the full and edited sets are not comparable. The tasks are public, so they can appear in training data."
 citation: "https://arxiv.org/abs/2108.07732"
+openness: open
+openness_note: "All 974 tasks with reference solutions and test asserts, plus the edited subset, are public on Hugging Face under CC BY 4.0, and the scoring method is in the paper."
 worked_examples:
   - task_type: "Recurrence with a base case"
     input: "Write a function tile_ways(n) that counts the ways to tile a 2xn board with 2x1 tiles. asserts: tile_ways(3) == 3, tile_ways(4) == 5, tile_ways(5) == 8."
@@ -68,18 +70,26 @@ worked_examples:
     checks: "Handling the 0! = 1 boundary that a naive downward multiply misses."
     scoring: "pass@1 on the provided asserts: 3/3 vs 2/3 (fails factorial(0))."
 tags: [code, python, execution, pass-at-k]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2108.07732", title: "Program Synthesis with Large Language Models (Austin et al., 2021)", trust: 0.95 }
   - { url: "https://ar5iv.labs.arxiv.org/html/2108.07732", title: "MBPP paper, full text (ar5iv)", trust: 0.95 }
+  - { url: "https://huggingface.co/datasets/google-research-datasets/mbpp", title: "google-research-datasets/mbpp — Hugging Face dataset card (CC BY 4.0)", trust: 0.9 }
 related: [benchmark/humaneval, benchmark/swe-bench]
 ---
 
 ## What It Tests
 **Basic Python program synthesis** from a short description: small algorithms and string, list and dictionary operations.
 
+- **Makers** — Austin et al., Google Research, 2021; crowdworkers with basic Python knowledge wrote the tasks.
+- **Size and splits** — 974 tasks: 10 for few-shot prompts, 500 test, 374 training, 90 validation.
+- **Edited set** — 426 hand-verified tasks (427 rows in the Hugging Face "sanitized" subset).
+- **Data** — Hugging Face, **CC BY 4.0** licence.
+
 ## How It Scores
-Run the generated function against the task's **three assert statements**; the task counts as solved if all pass.
+Run the generated function against the task's **three assert statements**; the task counts as solved only if all three pass.
+
+- **Score** — tasks solved / tasks attempted, usually reported as pass@1.
 
 ## Format
 Few-shot or zero-shot prompts; code executes against the asserts.
@@ -87,10 +97,16 @@ Few-shot or zero-shot prompts; code executes against the asserts.
 ## Limitations
 - **Basic scope.** Short single functions in Python only.
 - **Thin tests.** Three asserts per task.
-- **Two versions.** The full 974-task set and the 426-task edited set score differently.
+- **Two versions.** The full 974-task set and the 426-task edited set score differently (63% vs 79% on 100 shared problems in the paper).
+- **Public items.** Tasks can leak into training data.
 
 ## Example
-"Write a function to count the number of ways to tile a 2×n board with 2×1 tiles." The count follows
-the Fibonacci recurrence: `tile_ways(3) == 3`, `tile_ways(4) == 5`. An efficient iterative solution
-passes; a naive recursion with a wrong base case (`tile_ways(0) == 0` instead of 1) fails the
-asserts.
+From the full subset on the Hugging Face dataset card (CC BY 4.0), **task 604**: "Write a function to reverse words in a given string."
+
+Its three tests:
+
+- `assert reverse_words("python program")==("program python")`
+- `assert reverse_words("java language")==("language java")`
+- `assert reverse_words("indian man")==("man indian")`
+
+A function such as `" ".join(s.split()[::-1])` passes all three, so the task counts as solved.

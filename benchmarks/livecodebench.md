@@ -2,7 +2,7 @@
 id: benchmark/livecodebench
 type: benchmark
 slug: livecodebench
-schema_version: 1.0
+schema_version: 3.1
 title: "LiveCodeBench v6"
 name: LiveCodeBench v6
 category: Code Generation
@@ -13,10 +13,12 @@ examples:
   - "A Codeforces-style problem published after a model's cutoff: given a natural-language statement and constraints, generate a program that passes all hidden tests within the time limit (code-generation scenario)."
   - "Test-output prediction: given a function and an input, predict the exact output without executing the code."
 method: "For code generation, the model reads a problem statement and writes a program, which is run against the problem's tests with a modified version of the APPS checker. Evaluation can be limited to problems released in a date window, such as after a model's training cutoff."
-metric: "pass@1 and pass@5 (the repository computes both)."
-format: "Code generation from a natural-language problem statement, plus self-repair, code-execution and test-output-prediction scenarios. Releases: v1 400 problems (May 2023-Mar 2024) up to v6 1,055 problems (May 2023-Apr 2025)."
-limitations: "A score depends on the release version and date window, so both must be stated. Only problems released after a model's training cutoff avoid contamination for that model. The problems are contest problems from three platforms."
+metric: "pass@1 and pass@5: the share of problems for which a sampled program passes all of the problem's tests, estimated from several samples per problem (the repository's default run draws 10 samples at temperature 0.2)."
+format: "Code generation from a natural-language problem statement, plus self-repair, code-execution and test-output-prediction scenarios. Releases: v1 400, v2 511, v3 612, v4 713, v5 880 and v6 1,055 problems, all starting May 2023 (v6 ends April 2025)."
+limitations: "A score depends on the release version and date window, so both must be stated. Only problems released after a model's training cutoff avoid contamination for that model. The problems are contest problems from three platforms. The default lite dataset uses pruned and sampled tests, so it can differ from runs on the original, larger test suites."
 citation: "https://arxiv.org/abs/2403.07974"
+openness: open
+openness_note: "The problems, tests and evaluation code are public: the repository is MIT-licensed and the datasets are on Hugging Face, whose card lists a Creative Commons licence without naming the variant."
 worked_examples:
   - task_type: "Array counting under a time budget"
     input: "Given an array of up to 100,000 integers and a target k, count the pairs (i, j) with i < j and a[i] + a[j] = k. Time limit 1 second."
@@ -69,11 +71,12 @@ worked_examples:
     checks: "Doing division under a modulus with modular inverses rather than integer division."
     scoring: "pass@1 over hidden tests: passes all vs Wrong Answer from invalid modular division."
 tags: [code-generation, competitive-programming, contamination-free, pass-at-1]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2403.07974", title: "LiveCodeBench: Holistic and Contamination Free Evaluation of Large Language Models for Code (Jain et al., 2024)", trust: 0.95 }
   - { url: "https://livecodebench.github.io/", title: "LiveCodeBench project site", trust: 0.9 }
-  - { url: "https://github.com/LiveCodeBench/LiveCodeBench", title: "LiveCodeBench GitHub (release version details)", trust: 0.95 }
+  - { url: "https://github.com/LiveCodeBench/LiveCodeBench", title: "LiveCodeBench GitHub (release versions, MIT licence)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/livecodebench/code_generation_lite", title: "livecodebench/code_generation_lite — Hugging Face dataset card", trust: 0.9 }
 related: [benchmark/ojbench, benchmark/humaneval]
 ---
 
@@ -84,16 +87,35 @@ related: [benchmark/ojbench, benchmark/humaneval]
 - **Self-repair** — fix a failing solution.
 - **Code execution** and **test-output prediction** — reason about what code outputs.
 
+Introduced by Jain et al. (2024); the paper's first snapshot had 400 problems.
+
 ## How It Scores
-**pass@1** (and pass@5): the share of problems whose generated program passes the tests. Each problem's release date lets evaluators score only problems published after a model's training cutoff.
+**pass@1** (and pass@5): the share of problems whose generated program passes all the tests.
+
+- **Checker** — a modified version of the APPS benchmark checker runs the program.
+- **Sampling** — the repository's default run draws 10 samples per problem at temperature 0.2.
+- **Date window** — each problem's release date lets evaluators score only problems published after a model's training cutoff.
 
 ## Format
-The model gets a natural-language problem statement and returns a program. Release versions grow over time, from v1 (400 problems, May 2023-Mar 2024) to v6 (1,055 problems, May 2023-Apr 2025).
+The model gets a natural-language problem statement and returns a program. Release versions grow over time:
+
+| Release | Problems | Window |
+|---|---|---|
+| v1 | 400 | May 2023 to Mar 2024 |
+| v2 | 511 | to May 2024 |
+| v3 | 612 | to Jul 2024 |
+| v4 | 713 | to Sep 2024 |
+| v5 | 880 | to Jan 2025 |
+| v6 | 1,055 | to Apr 2025 |
+
+- **Data** — Hugging Face datasets `livecodebench/code_generation_lite`, `execution` and `test_generation`.
+- **Code** — GitHub `LiveCodeBench/LiveCodeBench`, **MIT licence**; the dataset card lists a Creative Commons licence without naming the variant.
 
 ## Limitations
 - **Window-dependent.** State the release version and date window with any score.
 - **Contamination per model.** Only problems after a model's cutoff are unseen by it.
 - **Contest problems.** Three competition platforms only.
+- **Lite tests.** The default dataset prunes and samples tests; the original suites are larger.
 
 ## Example
-A problem published on one of the three platforms after a model's training cutoff gives a statement, input and output format and constraints. The model returns a program, which is run against the problem's tests; it counts as solved only if it passes them.
+No single item is quoted here: the dataset card shows no item preview, and its viewer is disabled. As the paper and card describe it, a problem from one of the three platforms gives a statement, input and output format, examples, constraints and a release date. The model returns a program, which runs against the hidden tests; it counts as solved only if it passes them all.

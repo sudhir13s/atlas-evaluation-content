@@ -2,21 +2,22 @@
 id: benchmark/terminal-bench
 type: benchmark
 slug: terminal-bench
-schema_version: 1.0
+schema_version: 3.1
 title: "Terminal-Bench"
 name: Terminal-Bench (v4.1)
 category: Agent & Tool Use
 description: "A command-line agent benchmark: an agent is dropped into a container and must complete real terminal tasks, graded by automated tests on the final state."
-what_is_it: "Terminal-Bench evaluates an agent-model system on real technical tasks completed entirely through a command-line interface. The current version is 4.1, which keeps the 66 tasks of 4.0 (down from 74 in 3.0) across software, machine learning, science, operations, security, hardware and media, and hardens their verifiers. Version 2.1, an earlier version, had 89 curated tasks spanning software engineering, machine learning, security, data processing, scientific computing, and system administration. The agent is given a written instruction and a purpose-built Docker container with the relevant files and tools; it can inspect the environment, run commands, edit files, install packages, and revise based on execution feedback. Automated tests then inspect the container's final state to decide pass or fail."
-why_people_use_it: "It measures end-to-end agentic competence in the environment engineers actually work in — the terminal — rather than one-shot code snippets. Because a run pairs a model with a harness (context management, terminal access, tool execution, error recovery), it surfaces how much the scaffold matters, not just the model. Built by Stanford and the Laude Institute, it has become a standard yardstick for CLI coding agents."
+what_is_it: "Terminal-Bench evaluates an agent-model system on real technical tasks completed entirely through a command-line interface. It is hosted by Stanford, Harbor and the Laude Institute, with project leadership from Ryan Marten, Alex Shaw, Andy Konwinski and Ludwig Schmidt. The first release appeared in May 2025; version 2.0 (November 2025) had 89 tasks, 3.0 (July 2026) started a new set of 74 tasks, 4.0 (August 2026) removed 8 of them, and 4.1 (November 2026) keeps the resulting 66 tasks and hardens their verifiers. The agent gets a written instruction and a purpose-built Docker container, and automated tests inspect the container's final state to decide pass or fail."
+why_people_use_it: "It measures end-to-end agentic work in the terminal rather than one-shot code snippets. Because a run pairs a model with a harness (context management, terminal access, tool execution, error recovery), it shows how much the scaffold matters, not just the model. The maker runs it as a continuous benchmark with tagged releases, and the tasks and verifiers are public, so anyone can rerun them."
 examples:
-  - "Given a container with a broken Python package, fix the build so its test suite passes."
-  - "Train a fastText classifier on the provided data until it reaches at least 0.62 accuracy on the held-out set."
-method: "An agent-model system is placed in a task-specific Docker container with a natural-language instruction and interacts through the terminal over multiple steps. After the agent finishes, hidden automated tests inspect the final container state; the task counts as solved only if those tests pass."
-metric: "Resolution rate — the proportion of task trials whose automated tests pass (task-resolution success rate). The leaderboard reports it with a 95% confidence interval from repeated trials, next to token use and cost."
+  - "From the public 4.x task data-anonymization: build a command-line tool that anonymizes a set of related CSV files under a per-column policy, keeping file structure intact, giving the same entity the same token across files, staying deterministic for a given seed and within a memory cap."
+method: "An agent-model system is placed in a task-specific Docker container with a natural-language instruction and interacts through the terminal over multiple steps. After the agent finishes, automated tests (the verifier) inspect the final container state; the task counts as solved only if those tests pass. Since 4.0 every task has a flat agent timeout of 8 hours."
+metric: "Resolution rate: resolved trials / all task trials, in percent. The leaderboard shows it with a 95% confidence interval from repeated trials."
 format: "Multi-step agentic loop, 0-shot; containerized terminal environment; pass/fail per task from final-state tests."
-limitations: "Version 2.1 was a correction of 2.0 that fixed 28 of the 89 tasks (broken external dependencies, too-tight resource budgets, instructions that did not match tests), and 4.0 removed eight tasks and revised twenty, so scores are not comparable across major versions — always cite the version. The maker re-graded the 4.0 leaderboard with the 4.1 verifiers and says all 35 agents' scores stayed within their original 95% confidence intervals, so 4.0 and 4.1 results on the same tasks can be read side by side. 'Cheating-adjusted accuracy', used in some vendor tables, is a third-party term that the maker's pages do not define, so check how a vendor computed it. With only 66 tasks the confidence intervals are wide, and results conflate model quality with harness quality (a strong model on a weak harness underperforms). The environment is Linux/CLI only, so it says nothing about GUI, multimodal, or long-context abilities."
+limitations: "Task sets change between major versions: 2.1 fixed 28 of the 89 tasks of 2.0, 3.0 is a new 74-task set, and 4.0 removed 8 tasks and revised 19, so scores are not comparable across major versions and the version must be cited. The maker re-graded the 4.0 leaderboard with the 4.1 verifiers and says all 35 agents' updated scores fall within their original 95% confidence intervals. 'Cheating-adjusted accuracy', used in some vendor tables, is not defined on the maker's pages, so check how a vendor computed it. With 66 tasks the confidence intervals are wide, and each score blends model quality with harness quality. The environment is Linux command line only."
 citation: "https://www.tbench.ai/"
+openness: open
+openness_note: "The tasks, environments and verifiers are public in the harbor-framework/terminal-bench repository under the Apache-2.0 licence and on the Harbor hub, so anyone can rerun them; the maker asks that the data never appear in training corpora."
 worked_examples:
   - task_type: "Build repair (software engineering)"
     input: "Container has a Python package whose `pip install -e .` fails and whose test suite errors on import. Instruction: 'Make the package installable and get its pytest suite to pass.' The agent has a shell and can read files, edit, and install."
@@ -69,15 +70,18 @@ worked_examples:
     checks: "Whether the agent identifies and edits the active configuration rather than an inert sample file."
     scoring: "Pass/fail: final-state tests check the port responds and the service is enabled on boot."
 tags: [agent, tool-use, terminal, cli, coding-agent, leaderboard]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://www.tbench.ai/", title: "Terminal-Bench — official site and leaderboard", trust: 0.95 }
+  - { url: "https://www.tbench.ai/news", title: "Terminal-Bench news — release dates of every version", trust: 0.95 }
   - { url: "https://www.tbench.ai/news/terminal-bench-4-1", title: "Terminal-Bench 4.1 — updating task verifiers (maker's release post)", trust: 0.95 }
+  - { url: "https://www.tbench.ai/news/terminal-bench-4-0", title: "Terminal-Bench 4.0 release post (8 removed, 19 revised, 8-hour timeout)", trust: 0.95 }
+  - { url: "https://www.tbench.ai/news/terminal-bench-3-0", title: "Terminal-Bench 3.0 release post (74 tasks across 7 domains)", trust: 0.95 }
+  - { url: "https://www.tbench.ai/news/terminal-bench-2-1", title: "Terminal-Bench 2.1 release post (89 tasks in 2.0, 28 fixed)", trust: 0.95 }
   - { url: "https://www.tbench.ai/leaderboard/terminal-bench/4.1", title: "Terminal-Bench 4.1 leaderboard", trust: 0.95 }
-  - { url: "https://snorkel.ai/leaderboard/terminal-bench-4-0", title: "Terminal-Bench 4.0 leaderboard (Snorkel AI)", trust: 0.85 }
-  - { url: "https://www.laude.org/updates/terminal-bench", title: "Terminal-Bench — Laude Institute", trust: 0.9 }
-  - { url: "https://snorkel.ai/leaderboard/terminal-bench-2-1/", title: "Terminal-Bench 2.1: LLM Terminal Agent Benchmark (Snorkel AI)", trust: 0.85 }
-  - { url: "https://snorkel.ai/blog/terminal-bench-2-0-raising-the-bar-for-ai-agent-evaluation/", title: "Terminal-Bench 2.0: Raising the bar for AI agent evaluation (Snorkel AI)", trust: 0.85 }
+  - { url: "https://github.com/harbor-framework/terminal-bench", title: "harbor-framework/terminal-bench — official repository (Apache-2.0)", trust: 0.9 }
+  - { url: "https://github.com/harbor-framework/terminal-bench/releases", title: "Terminal-Bench releases (v3.0.0 74 tasks, v4.0.0 removals, v4.1.0 no tasks added or removed)", trust: 0.9 }
+  - { url: "https://raw.githubusercontent.com/harbor-framework/terminal-bench/main/tasks/data-anonymization/instruction.md", title: "Terminal-Bench task data-anonymization — instruction", trust: 0.9 }
 related: [benchmark/swe-bench, benchmark/bfcl-v4, benchmark/tau2-bench, benchmark/terminal-bench-science]
 ---
 
@@ -86,59 +90,47 @@ Whether an agent can get real technical work done through a terminal — the env
 actually use. Each task hands the agent a container and an instruction and lets it
 loop: inspect, run commands, edit files, install packages, react to errors.
 
-**Versions at a glance:**
+**Versions at a glance** (from the maker's release posts and GitHub releases):
 
-- **2.1** — 89 curated tasks; a correction of 2.0 that fixed 28 tasks.
-- **3.0** — 74 tasks.
-- **4.0** — 66 tasks: eight removed, twenty revised, none added; compute and time allowances recalibrated.
-- **4.1** — the same 66 tasks with hardened verifiers. 44 tasks run agent-written code during verification, which could in theory tamper with grading, so that code now runs as an untrusted user in a separate process.
+| Version | Released | Tasks | What changed |
+|---|---|---|---|
+| 2.0 | Nov 2025 | 89 | Harder set, launched with the Harbor framework |
+| 2.1 | May 2026 | 89 | 28 tasks fixed (changed external dependencies, too-small resource budgets, misspecified instructions) |
+| 3.0 | Jul 2026 | 74 | New set from 100+ contributors and reviewers, across 7 domains |
+| 4.0 | Aug 2026 | 66 | 8 tasks removed, 19 revised, CPU and memory calibrated, flat 8-hour timeout |
+| 4.1 | Nov 2026 | 66 | No tasks added or removed; verifiers hardened |
 
-The maker's regrade of the 4.0 leaderboard changed 162 of 11,550 trials, about 1.16%.
+**Why 4.1 exists:** 44 tasks in 4.0 run agent-written code during verification, which could in theory tamper with grading. The maker's regrade of the 4.0 leaderboard changed **162 of 11,550 trials**, about 1.16%.
 
-The task pool is deliberately broad:
-
-- **Software engineering** — build repair, refactors, failing test suites.
-- **Machine learning** — train a model to a target metric.
-- **Security** — capture-the-flag-style challenges, file/permission work.
-- **Data processing, scientific computing, system administration** — pipelines, environment setup, ops.
-
-The point is holistic competence: planning, tool use, and recovery over many steps, not a single
-formatted answer.
+Task names in the public repository show the spread: CAD models, finance calculations, security (a UEFI bootkit task), GPU training speed-runs and database internals.
 
 ## How It Scores
-Every task ends with **hidden automated tests that inspect the container's final state**. A trial is
-**successful only if those tests pass**; the headline number is **accuracy** — the proportion of
-successful trials across all tasks — reported with a 95% confidence interval from repeated runs. The leaderboard calls this the resolution rate.
+Every task ends with **automated tests that inspect the container's final state**. A trial **passes only if those tests pass**.
 
-Because a run is an **agent-model system**, the model supplies reasoning and generation while the
-**harness** controls context management, terminal access, tool execution, and error recovery. Two
-systems using the same model can score differently, so results are always credited to the pair.
+- **Resolution rate** = resolved trials / all trials, in percent.
+- **Confidence interval** — the leaderboard shows a 95% interval from repeated trials.
+- **Credited to a pair** — the model supplies reasoning; the **harness** controls context, terminal access, tool execution and error recovery. Two systems with the same model can score differently.
 
 ## Format
-Zero-shot, multi-step, containerized. The agent receives one natural-language instruction and a
-Docker environment, then works through the terminal until it declares completion. No worked examples
-are provided. On version 2.1, top agent-model systems scored in the low-to-mid **80s percent**.
+Zero-shot, multi-step, containerized. The agent receives **one natural-language instruction** and a Docker environment, then works through the terminal until it declares completion.
+
+- **Data and code** — tasks, environments and verifiers are public in `harbor-framework/terminal-bench` (**Apache-2.0**) and on the Harbor hub.
+- **Canary** — the site asks that benchmark data never appear in training corpora.
 
 ## Limitations
-Version 2.1 **fixed 28 of the 89 tasks** from 2.0 — cases with external dependencies that changed,
-resource budgets too tight for valid solutions, or instructions that did not match their tests — and
-introduced continuous validation. Version 4.0 then removed eight tasks and revised twenty. Because of
-those changes, **scores are not comparable across major versions**; cite the version.
-
-Two points about 4.1:
-
-- **Same tasks, safer grading.** The maker re-graded every 4.0 submission with the 4.1 verifiers; all 35 agents stayed within their original 95% confidence intervals.
-- **'Cheating-adjusted accuracy'.** Some vendor tables use this term. It is a third-party label, and the maker's pages do not define it, so ask how a vendor computed it.
-
-With only 66 tasks, confidence intervals are wide. And every score
-blends **model quality with harness quality**, so a headline number reflects the whole system, not the
-model alone. The benchmark is Linux/CLI only, so it does not probe GUI, multimodal, or long-context
-skills.
+- **Version-bound.** Task sets change between major versions; cite the version with any score.
+- **4.0 versus 4.1.** The maker says all 35 re-graded agents stayed within their original 95% confidence intervals.
+- **Undefined vendor metrics.** 'Cheating-adjusted accuracy' is not defined on the maker's pages.
+- **Small set.** With 66 tasks, confidence intervals are wide.
+- **System, not model.** Every score blends model quality with harness quality.
+- **Terminal only.** Linux command line; no graphical interfaces.
 
 ## Example
-The agent gets a container with a Python package whose install and test suite are broken, and the
-instruction "make it installable and get pytest to pass." A correct run traces the failure to broken
-packaging metadata and a bad dependency pin, fixes both, reinstalls, and confirms the suite is green —
-the final-state tests then pass. A plausible wrong run installs an unrelated same-named package from
-PyPI to silence the import error; the symptom disappears but the graded tests still fail, so the task
-is scored unsolved.
+From the public task `data-anonymization` (paraphrased from its instruction file; the maker asks that task data stay out of training corpora, so it is not quoted):
+
+- **Build** a command-line tool at `/app/anon.py` that anonymizes a folder of related CSV files using per-column rules in a policy file.
+- **Keep** filenames, headers, column order, row order and row counts unchanged.
+- **Tokenize consistently** — the same real entity must get the same token in every file, including linked records.
+- **Stay deterministic** for a given `--seed`, and within a `--max-memory` cap.
+
+The verifier then runs the tool and checks the output files; the run passes only if every check holds.

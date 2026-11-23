@@ -2,20 +2,22 @@
 id: benchmark/gsm8k
 type: benchmark
 slug: gsm8k
-schema_version: 1.0
+schema_version: 3.1
 title: "GSM8K"
 name: GSM8K
 category: Math & Logic
 description: "Grade School Math 8K: 8.5K linguistically diverse grade-school math word problems that take 2 to 8 steps of basic arithmetic."
-what_is_it: "GSM8K was introduced by Cobbe et al. (2021) as 8.5K high-quality grade-school math word problems, split into 7.5K training and 1K test problems. Each problem takes between 2 and 8 steps to solve, mostly with elementary arithmetic, and comes with a natural-language solution."
+what_is_it: "GSM8K was introduced by Cobbe et al. (2021) as 8.5K high-quality grade-school math word problems created by human problem writers, segmented into about 7.5K training and 1K test problems (the Hugging Face card lists 7,473 training and 1,319 test rows). Each problem takes between 2 and 8 steps to solve, mostly with elementary arithmetic, and comes with a natural-language solution whose final number follows the marker ####."
 why_people_use_it: "The authors built it to diagnose why language models fail at multi-step mathematical reasoning on problems that are conceptually simple; the final numeric answer can be checked exactly."
 examples:
-  - "Janet's ducks lay 16 eggs/day. She eats 3 and bakes 4 into muffins. She sells the rest at $2 each. How much does she make daily? (answer: 9 * $2 = $18)"
-method: "The model solves each test problem, usually with step-by-step reasoning and a few worked examples in the prompt; the final number is extracted and compared with the gold answer."
-metric: "Accuracy (% of test problems with the correct final answer)."
+  - "From the public test split: Janet's ducks lay 16 eggs per day. She eats 3 for breakfast and uses 4 to bake muffins, and sells the rest at the farmers' market for $2 each. How much does she make there daily? (answer: 18)"
+method: "The model solves each test problem, usually with step-by-step reasoning and a few worked examples in the prompt; the final number is extracted and compared with the gold answer that follows #### in the reference solution."
+metric: "Accuracy = test problems whose final number matches the gold answer / total test problems, in percent."
 format: "Few-shot or zero-shot, usually with chain-of-thought; exact match on the final number."
 limitations: "Only the final number is graded, so a correct answer reached by faulty working still counts. The problems cover elementary arithmetic only. The GSM-Symbolic study (Mirzadeh et al., 2024) reports that the performance of all models it tested declines when only the numerical values in GSM8K-style questions are altered."
 citation: "https://arxiv.org/abs/2110.14168"
+openness: open
+openness_note: "All problems and step-by-step solutions (7,473 training and 1,319 test rows) are public on the Hugging Face dataset card under the MIT licence, and the final-answer check can be rerun by anyone."
 worked_examples:
   - task_type: "Multi-step word problem (referent parsing)"
     input: "Tom reads 12 pages on Monday, twice as many on Tuesday, and 5 fewer than Tuesday on Wednesday. How many pages did he read in total?"
@@ -68,23 +70,34 @@ worked_examples:
     checks: "Interpreting a percentage discount as a proportion of the price, not a dollar amount."
     scoring: "Exact-match accuracy on the final numeric answer."
 tags: [math, reasoning, chain-of-thought, word-problems]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2110.14168", title: "Training Verifiers to Solve Math Word Problems (Cobbe et al., 2021)", trust: 0.95 }
   - { url: "https://ar5iv.labs.arxiv.org/html/2110.14168", title: "GSM8K paper, full text (ar5iv)", trust: 0.95 }
   - { url: "https://arxiv.org/abs/2410.05229", title: "GSM-Symbolic: Understanding the Limitations of Mathematical Reasoning in Large Language Models (Mirzadeh et al., 2024)", trust: 0.85 }
-  - { url: "https://huggingface.co/datasets/openai/gsm8k", title: "GSM8K dataset (Janet's ducks test item)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/openai/gsm8k", title: "openai/gsm8k dataset card (MIT licence, 7,473 train / 1,319 test)", trust: 0.9 }
+  - { url: "https://datasets-server.huggingface.co/rows?dataset=openai/gsm8k&config=main&split=test&offset=0&length=1", title: "GSM8K test split, first row (Janet's ducks)", trust: 0.9 }
 related: [benchmark/math, benchmark/aime]
 ---
 
 ## What It Tests
 **Multi-step arithmetic reasoning** in word problems: read the scenario, plan the operations, carry them out in order.
 
+- **Makers** — Cobbe et al. (2021); the problems were written by **human problem writers**, first freelancers and later through Surge AI (paper, Appendix A).
+- **Size** — 8.5K problems: about 7.5K training and 1K test (7,473 and 1,319 rows on the dataset card).
+- **Depth** — each problem takes **2 to 8 steps**, mostly elementary arithmetic.
+
 ## How It Scores
-**Exact match** on the final numeric answer over the test split; the working is not graded.
+**Accuracy** = test problems whose final number matches the gold answer / total test problems.
+
+- **Gold answer** — the number after `####` at the end of each reference solution.
+- **Not graded** — the working; only the final number counts.
 
 ## Format
-Few-shot or zero-shot prompts, usually with step-by-step reasoning; the final number is extracted from the response.
+Few-shot or zero-shot prompts, usually with step-by-step (chain-of-thought) reasoning; the final number is extracted from the response.
+
+- **Reference solutions** — natural language with calculator annotations such as `<<48/2=24>>`.
+- **Data** — public on the `openai/gsm8k` Hugging Face card under the **MIT licence**, in a `main` and a `socratic` configuration.
 
 ## Limitations
 - **Answer-only grading.** Faulty working can still score.
@@ -92,6 +105,8 @@ Few-shot or zero-shot prompts, usually with step-by-step reasoning; the final nu
 - **Fragility.** GSM-Symbolic (2024) reports performance declines when only the numbers change.
 
 ## Example
-"Janet's ducks lay 16 eggs per day. She eats 3 for breakfast and bakes 4 into muffins. She sells the
-remainder at $2 per egg. How much does she make daily?" Reasoning: 16 − 3 − 4 = 9 eggs; 9 × $2 =
-**$18**. Emitting just "$18" with no steps scores correct too — a weakness of final-answer grading.
+From the public test split on the Hugging Face dataset card (MIT licence), first row, closely paraphrased:
+
+- **Problem** — Janet's ducks lay 16 eggs per day. She eats 3 for breakfast and uses 4 to bake muffins. She sells the rest at the farmers' market for $2 each. How much does she make there daily?
+- **Reference working** — 16 − 3 − 4 = 9 eggs sold; 9 × $2 = $18.
+- **Gold answer** — `#### 18`. A response ending in 18 scores correct, even with no working shown.

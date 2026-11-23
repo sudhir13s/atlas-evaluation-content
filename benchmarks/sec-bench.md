@@ -2,22 +2,26 @@
 id: benchmark/sec-bench
 type: benchmark
 slug: sec-bench
-schema_version: 1.0
+schema_version: 3.1
 title: "SEC-bench"
 name: SEC-bench (including SEC-bench Pro)
 category: Cybersecurity
-description: "A security-engineering benchmark for LLM agents: the original SEC-bench covers proof-of-concept generation and vulnerability patching, and SEC-bench Pro adds long-horizon bug hunting in browsers and Linux."
-what_is_it: "SEC-bench describes itself as the first fully automated framework for evaluating LLM agents on authentic security-engineering tasks. The original release (June 2025, accepted to NeurIPS 2025) has two tasks, proof-of-concept (PoC) generation and vulnerability patching. SEC-bench Pro launched on 2026-05-01 with a V8 board and is described as a self-evolving benchmark that measures agents' ability to hunt security bugs in critical software. Its Overall board combines V8, Firefox and Linux into 344 instances."
-why_people_use_it: "The tasks use real vulnerabilities and are checked by running the result, not by judging text. SEC-bench Pro adds large, hard targets with long runs, and its boards grow over time. Google DeepMind cites SEC-bench Pro among its cybersecurity benchmarks."
-method: "Each Pro instance ships a Docker image, metadata, a rendered prompt and a harness that starts the container, runs the agent with a timeout and collects files for checkers. In the original benchmark a PoC succeeds only if it creates a working artifact that triggers a valid sanitizer error. Three modes vary the information given: repository only, plus description, plus sanitizer report."
-metric: "Success rate in percent: the SEC-bench score on the original boards, and success out of instances on the Pro boards, shown with how many runs completed and how many timed out."
-format: "Agentic, 0-shot: PoC generation or patching on a real project; the live original leaderboard uses the repository, description and sanitizer-report mode ('poc-san')."
-limitations: "The site's pages show timeouts as a major factor for some systems, so a score reflects the agent's runtime as well as skill. A footnote says newer results for some Claude Opus and Mythos models are not available because of safeguard restrictions. Google's evaluation methodology for Gemini 4 Neon describes a '183-task May 2026 JavaScript engine split' scored with an LLM judge as an extra success route; that split does not appear on the maker's site, so vendor numbers cannot be matched to the board. The maker's site states no licence for the data."
+description: "A security-engineering benchmark for LLM agents: the original SEC-bench covers proof-of-concept generation and vulnerability patching, and SEC-bench Pro adds proof-of-concept tasks on the V8 and SpiderMonkey JavaScript engines."
+what_is_it: "SEC-bench, by Hwiwon Lee, Ziqi Zhang, Hanxiao Lu and Lingming Zhang (arXiv, June 2025; accepted to NeurIPS 2025), is an automated framework that builds security-engineering tasks for LLM agents from real vulnerabilities, at a reported cost of $0.87 per instance. It has two tasks, proof-of-concept (PoC) generation and vulnerability patching; OSS-Fuzz instances were added in December 2025. SEC-bench Pro, by Lee, Liu, Kim, Zhang, Xia and Zhang, launched a V8 board on 2026-05-01 and a SpiderMonkey (Firefox) board on 2026-05-05; its Overall board combines the two into 183 instances."
+why_people_use_it: "The tasks use real vulnerabilities and are checked by running the result, not by judging text. SEC-bench Pro targets large JavaScript engines and ships every instance as a container, so anyone can rerun it. Google DeepMind cites SEC-bench Pro among its cybersecurity benchmarks."
+method: "In PoC tasks a submission succeeds only if it creates a working PoC artifact that triggers a valid sanitizer error (a report from memory-error detectors built into the program). The original benchmark has three information modes: repository only, plus a description, plus a sanitizer report. Each Pro instance ships a Docker image, metadata, a rendered prompt and a harness that starts the container, runs the agent under a timeout and collects outputs for the checkers."
+metric: "Success rate in percent = successful instances / instances attempted, shown on the Pro boards as a fraction, for example 49/103."
+format: "Agentic, 0-shot: PoC generation or patching on a real project. The original leaderboard uses the repository, description and sanitizer-report mode ('poc-san'). Pro boards: V8 (103 instances), SpiderMonkey/Firefox (80), Overall (183)."
+limitations: "The harness runs each agent under a timeout, so a score reflects runtime limits as well as skill. Some board entries are marked as covering only a subset of a run, so check how many instances an entry solved out of. Google's evaluation methodology for Gemini 4 Neon reports a '183-task May 2026 JavaScript engine split' and adds an LLM judge as an extra success route when a PoC crashes both builds, which is not the maker's checker, so its numbers are not directly comparable with board entries."
 citation: "https://sec-bench.github.io"
+openness: open
+openness_note: "The SEC-bench Pro instances (183, Apache-2.0 on Hugging Face) and the evaluation harness (GitHub) are public, so anyone can rerun the tasks."
 tags: [security, vulnerability-discovery, poc-generation, patching, long-horizon]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
-  - { url: "https://sec-bench.github.io", title: "SEC-bench and SEC-bench Pro — project site and leaderboards", trust: 0.9 }
+  - { url: "https://sec-bench.github.io", title: "SEC-bench and SEC-bench Pro — project site and leaderboards", trust: 0.95 }
+  - { url: "https://arxiv.org/abs/2506.11791", title: "SEC-bench: Automated Benchmarking of LLM Agents on Real-World Software Security Tasks (arXiv:2506.11791)", trust: 0.95 }
+  - { url: "https://huggingface.co/datasets/SEC-bench/SEC-bench-Pro", title: "SEC-bench/SEC-bench-Pro — Hugging Face dataset (Apache-2.0)", trust: 0.9 }
   - { url: "https://storage.googleapis.com/deepmind-media/gemini/gemini_4_neon_model_evaluation.pdf", title: "Gemini 4 Neon model evaluation (Google DeepMind)", trust: 0.7 }
 related: [benchmark/cybergym, benchmark/cwe-bench]
 ---
@@ -25,25 +29,32 @@ related: [benchmark/cybergym, benchmark/cwe-bench]
 ## What It Tests
 Whether an agent can do **real security-engineering work** on real software.
 
-- **PoC generation** — craft a proof of concept that triggers a specific vulnerability.
-- **Vulnerability patching** — given a CVE description and the code, fix the root cause without breaking functionality.
-- **Pro bug hunting** — find security bugs in V8, Firefox and Linux with no pre-labelled target.
+- **PoC generation** — craft a proof of concept (an input or script) that triggers a specific vulnerability.
+- **Vulnerability patching** — fix the root cause without breaking functionality.
+- **Pro** — PoC tasks on two large JavaScript engines: V8 (Chromium) and SpiderMonkey (Firefox). The site also announced a Linux board on 2026-06-17 but shows no instance count for it.
 
 ## How It Scores
 Checkers run the result and report **success rate**.
 
-- **Original** — a PoC counts only if it triggers a valid sanitizer error.
-- **Pro** — a board shows successes out of instances, plus completed and timed-out counts.
-- **Boards** — V8 (103), Firefox (104), Linux (137) and Overall (344); a SpiderMonkey board launched on 2026-05-05.
+- **PoC rule** — a PoC counts only if it triggers a valid sanitizer error.
+- **Pro boards** — successes out of instances, such as 49/103.
+- **Subset entries** — some entries are marked as covering only part of a run.
 
 ## Format
-The original has three information modes: `poc-repo`, `poc-desc` and `poc-san`. Current original results use `poc-san`. OSS-Fuzz instances were added in December 2025.
+The original has three information modes: `poc-repo` (code only), `poc-desc` (plus a description) and `poc-san` (plus a sanitizer report). The original leaderboard uses `poc-san`.
+
+| Pro board | Instances | Launched |
+|---|---|---|
+| V8 | 103 | 2026-05-01 |
+| SpiderMonkey (Firefox) | 80 | 2026-05-05 |
+| Overall | 183 | 2026-06-17 |
+
+Each Pro row lists the project, bug ID, container image, target source files, vulnerability type, error type, description and fix patches.
 
 ## Limitations
-- **Timeouts.** A large share of runs for some systems time out.
-- **Missing models.** Some newer Claude results are unavailable due to safeguard restrictions.
-- **Vendor splits.** Google's 183-task JavaScript-engine split is not visible on the site.
-- **No licence stated.** The maker's site gives no data licence.
+- **Timeouts.** Agents run under a time limit, which shapes scores.
+- **Subset runs.** Read the solved-out-of count, not just the percentage.
+- **Vendor judge.** Google's runs add an LLM-judge success route the maker's checker does not use.
 
 ## Example
-In the original benchmark's **poc-san** mode the agent receives the vulnerable repository, a short description and the crash report from a sanitizer, and must produce a PoC input. It succeeds only if running that PoC makes the target build report a **valid sanitizer error**. In **poc-repo** mode it gets only the code and must find the bug itself.
+From the public **SEC-bench Pro** dataset on Hugging Face: one **V8** instance is labelled with the vulnerability type **type confusion**. The agent gets the container with the vulnerable engine build and a description, and must write a PoC. It succeeds only if running that PoC makes the build report a **valid sanitizer error**. Exploit code is not reproduced here.

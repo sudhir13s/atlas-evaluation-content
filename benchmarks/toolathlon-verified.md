@@ -2,20 +2,22 @@
 id: benchmark/toolathlon-verified
 type: benchmark
 slug: toolathlon-verified
-schema_version: 1.0
+schema_version: 3.1
 title: "Toolathlon-Verified"
 name: Toolathlon-Verified (The Tool Decathlon)
 category: Agent & Tool Use
 description: "The verified final release of Toolathlon: 108 long-horizon tool-use tasks across 32 applications, each checked by its own evaluation script."
-what_is_it: "Toolathlon (The Tool Decathlon; Li et al., 2025, HKUST NLP group with collaborators) is a benchmark of 108 manually sourced or crafted tasks for language agents, spanning 32 software applications and 604 tools, from Google Calendar and Notion to WooCommerce, Kubernetes, BigQuery and Snowflake. Most tools come from Model Context Protocol (MCP) servers, and 72 of the 108 tasks start from a realistic initial state such as a Canvas course with dozens of students. Toolathlon-Verified, released on 30 June 2026, is the verified final version, with task prompts, ground truths and evaluators reviewed and aligned."
+what_is_it: "Toolathlon (The Tool Decathlon; Li et al., October 2025, from the Hong Kong University of Science and Technology with All Hands AI, Carnegie Mellon University and Duke University) is a benchmark of 108 manually sourced or crafted tasks for language agents, spanning 32 software applications and 604 tools, from Google Calendar and Notion to WooCommerce, Kubernetes, BigQuery and Snowflake. The tools come from 32 Model Context Protocol (MCP) servers plus 7 local toolkits, and 72 of the 108 tasks start from a realistic initial state such as a Canvas course with dozens of students. Toolathlon-Verified, released on 30 June 2026, is the verified final version, with task prompts, ground truths and evaluators reviewed and aligned."
 why_people_use_it: "Tasks require interacting with multiple applications over around 20 turns on average, and each is verified by a dedicated, deterministic evaluation script rather than an LLM judge. The maker states that Toolathlon-Verified begins a new official score series, not directly comparable with scores from earlier versions."
 examples:
   - "From the paper: an administrative agent monitors a Snowflake database for customer tickets, finds the PDF operation manual on handling overdue tickets, and sends the required emails to managers and customers."
-method: "Each task has initial-state setup where needed and a manually crafted evaluation script that compares the outcome with static or dynamically generated ground-truth states. The Verified release revised task specifications, ground truth, evaluators, initial states and evaluation infrastructure."
-metric: "Pass@1 success rate (the leaderboard also shows Pass@3 and Pass^3); Verified scores form a new series."
+method: "Each task has initial-state setup where needed and a hand-written evaluation script that compares the outcome with a static snapshot of the ground-truth environment or follows a reference workflow to fetch real-time data. The Verified release reviewed and aligned task prompts, ground truths and evaluators."
+metric: "Pass@1 success rate: tasks whose evaluation script passes on a single attempt / 108, in percent, shown with an error margin. The leaderboard also shows Pass@3 and Pass^3 over three attempts, without defining them on the page; Verified scores form a new series."
 format: "Long-horizon agentic task over MCP-exposed applications and local toolkits; execution-based pass or fail per task."
-limitations: "Scores from the original Toolathlon and from Toolathlon-Verified are not directly comparable, so the version must be cited. With 108 tasks, the leaderboard reports Pass@1 with an error margin. Some ground truths are generated dynamically from live information such as real-time schedules."
+limitations: "Scores from the original Toolathlon and from Toolathlon-Verified are not directly comparable, so the version must be cited. With 108 tasks, the leaderboard reports Pass@1 with an error margin. Some evaluation scripts fetch real-time data to build the ground truth, so results can drift over time."
 citation: "https://arxiv.org/abs/2510.25726"
+openness: open
+openness_note: "Task definitions, initial-state setup and evaluation scripts are public in the hkust-nlp/Toolathlon repository (tasks/finalpool), and no held-out task set is described; the repository page fetched did not state a licence."
 worked_examples:
   - task_type: "Multi-tool orchestration (Canvas gradebook + spreadsheet)"
     input: "Initial state: a Canvas course with dozens of students and a spreadsheet of raw scores. Task: 'Compute each student's final grade using the syllabus rubric (drop the lowest quiz, weight exams 60%), then post the letter grades to Canvas.' The agent has MCP tools for the spreadsheet and Canvas."
@@ -68,12 +70,12 @@ worked_examples:
     checks: "Whether an agent correctly transforms a query result (aggregate, sort, slice) before writing it into a document."
     scoring: "Execution-based Pass@1: the Notion page end state must match the expected ranked list."
 tags: [agent, tool-use, mcp, long-horizon, multi-tool, leaderboard]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2510.25726", title: "The Tool Decathlon: Benchmarking Language Agents for Diverse, Realistic, and Long-Horizon Task Execution (Li et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2510.25726", title: "The Tool Decathlon, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://github.com/hkust-nlp/Toolathlon", title: "Toolathlon — official repo (HKUST-NLP), includes Toolathlon-Verified", trust: 0.9 }
-  - { url: "https://toolathlon.xyz/docs/leaderboard", title: "Toolathlon-Verified leaderboard", trust: 0.85 }
+  - { url: "https://toolathlon.xyz/docs/leaderboard", title: "Toolathlon-Verified leaderboard (maker's page; new score series statement)", trust: 0.9 }
 related: [benchmark/bfcl-v4, benchmark/tau2-bench, benchmark/vita-bench, benchmark/terminal-bench]
 ---
 
@@ -84,20 +86,31 @@ Whether a language agent can carry out **long-horizon work across several real a
 - **Real initial states** — 72 tasks start from a prepared state, such as a Canvas course with dozens of students.
 - **Long horizons** — around 20 turns per task on average.
 
-**Toolathlon-Verified** (30 June 2026) is the verified final release: task prompts, ground truths, evaluators, initial states and evaluation infrastructure were revised.
+**Toolathlon-Verified** (30 June 2026) is the verified final release: task prompts, ground truths and evaluators were reviewed and aligned.
+
+**Where tasks come from:** real-world websites, or crafted to match genuine user demands, in two stages — broad sourcing first, then targeted tasks for under-represented apps.
 
 ## How It Scores
-Each task has a **dedicated, deterministic evaluation script** that compares the final outcome with static or dynamically generated ground truth. No LLM judge.
+Each task has a **dedicated, hand-written evaluation script**. It either compares the final environment with a **static ground-truth snapshot** or follows a reference workflow to fetch **real-time data**. No LLM judge.
 
-- **Pass@1** — the main leaderboard number, with Pass@3 and Pass^3 alongside.
-- **New series** — Verified scores are not directly comparable with earlier Toolathlon scores.
+- **Pass@1** = tasks passed on one attempt / 108, the main leaderboard number, shown with an error margin.
+- **Pass@3 and Pass^3** — shown alongside, over three attempts.
+- **New series** — the maker says Verified results are not directly comparable with earlier Toolathlon scores.
 
 ## Format
 The agent gets a task, MCP tools and local toolkits, and works over many turns until it stops; the evaluation script then checks the resulting state.
 
+- **Task files** — `tasks/finalpool` in `hkust-nlp/Toolathlon` (for example `find-alita-paper`).
+- **Paper** — arXiv:2510.25726, CC BY 4.0, 21 authors.
+
 ## Limitations
 - **Version matters.** Original and Verified scores are separate series.
-- **Live data.** Some ground truths are generated dynamically, for example from real-time schedules.
+- **Live data.** Some ground truths are fetched at evaluation time, so they can change.
+- **Small set.** 108 tasks, so the leaderboard reports an error margin.
 
 ## Example
-The paper's example: an administrative agent monitors a Snowflake database for customer tickets, finds the PDF manual describing how to handle overdue tickets, and sends the required emails to managers and customers. The task's evaluation script then checks the emails and resulting state against ground truth.
+From the paper's Figure 1, Example #2 (paraphrased; the paper is CC BY 4.0):
+
+- **Setting** — an administrative agent watches a **Snowflake database** of customer tickets.
+- **Steps** — find the **PDF operation manual** on handling overdue tickets, apply it, and send the required **emails** to managers and customers.
+- **Grading** — the task's evaluation script checks the emails and resulting state against ground truth.

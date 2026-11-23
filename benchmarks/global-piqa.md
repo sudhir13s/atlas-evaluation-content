@@ -2,20 +2,22 @@
 id: benchmark/global-piqa
 type: benchmark
 slug: global-piqa
-schema_version: 1.0
+schema_version: 3.1
 title: "Global PIQA"
 name: Global PIQA
 category: Multilingual
 description: "A participatory commonsense reasoning benchmark in the format of PIQA, built by hand for 141 language varieties."
-what_is_it: "Global PIQA (Chang et al., 2025) was constructed by hand by over 350 researchers from over 65 countries. Its 141 language varieties cover five continents, 19 language families and 24 writing systems. Each item follows English PIQA (Physical Interaction: Question Answering): a goal and two solutions, one correct. Answering needs commonsense reasoning such as physical or temporal reasoning, cultural knowledge or basic world knowledge."
-why_people_use_it: "It tests everyday physical know-how, not expert knowledge, in over 100 languages including many low-resource ones — and because over half the questions reference local foods, customs, and traditions, it exposes cultural blind spots that translated benchmarks hide."
+what_is_it: "Global PIQA (Tyler A. Chang and 379 co-authors, 2025) was constructed by hand by over 350 researchers from over 65 countries. Its 141 language varieties cover five continents, 19 language families and 24 writing systems. Each item follows English PIQA (Physical Interaction: Question Answering, Bisk et al., 2020): a prompt and two candidate solutions, one correct. Answering needs commonsense reasoning such as physical or temporal reasoning, cultural knowledge or basic world knowledge."
+why_people_use_it: "It tests everyday know-how, not expert knowledge, in over 100 languages including many low-resource ones. The authors report that over half of the non-parallel examples reference local foods, customs, traditions or other culture-specific elements."
 examples:
-  - "Given a goal like preparing a local dish, choose which of two everyday physical actions correctly achieves it — with the objects and customs drawn from the question's own culture."
-method: "Each item can be run in a cloze setting (comparing completion probabilities, for pretrained-only models) or a generation setting (prompted, for instruction-tuned models). The non-parallel split has items written in each language, many culture-specific; the parallel split translates culturally agnostic items into 131 language varieties for direct comparison."
-metric: "Accuracy (% correct); with two solutions, random choice scores 50%."
-format: "Two-way choice (a goal and two candidate solutions). The official non-parallel split has exactly 100 examples per language for 136 language codes; every example was verified by a native speaker."
-limitations: "The authors note that each language has only 100 examples. The non-parallel split is not translated, so its difficulty can vary across languages. Two choices mean 50% by chance."
+  - "Mesopotamian Arabic, config acm_arab (Hugging Face mrlbenchmarks/global-piqa-nonparallel, CC BY-SA 4.0): prompt 'من نطبخ الهريس نستخدم' with solutions 'الدهن الحر' (When we cook harees, we use ghee.) and 'دبس التمر' (When we cook harees, we use date syrup.). Label 0: ghee."
+method: "Each item can be run in a cloze setting (pretrained-only models: the model's log-probability for each solution given the prompt is compared) or a generation setting (instruction-tuned models are prompted with a template and their reply is scored by string matching). The non-parallel split has items written in each language, many culture-specific; the parallel split translates culturally agnostic items into 131 language varieties for direct comparison."
+metric: "Accuracy = items where the correct solution is chosen / total items; with two solutions, random choice scores 50%."
+format: "Two-way choice (a prompt and two candidate solutions). The official non-parallel split has 100 examples per language for 136 language codes; every example was validated by at least one native speaker."
+limitations: "The authors note that each language has only 100 examples, that the non-parallel split varies substantially in difficulty across languages, and that the examples are snapshots from their authors rather than representative of whole cultures. Two choices mean 50% by chance."
 citation: "https://arxiv.org/abs/2510.24081"
+openness: open
+openness_note: "Both splits with labels are public on Hugging Face under CC BY-SA 4.0, with the authors' added rule that the data may be used for evaluation only and not to train AI systems; the paper describes the scoring."
 worked_examples:
   - task_type: "Physical commonsense (Swahili)"
     input: "Lengo (goal): Kufanya ugali uwe mnene ili uweze kukatwa vipande. (Make the ugali stiff enough to cut into pieces.) Chagua kitendo sahihi: (Choose the correct action.)"
@@ -83,11 +85,12 @@ worked_examples:
     checks: "Reasoning about a culturally-specific food transformation, not a generic mixing action."
     scoring: "Accuracy (% correct); random baseline is 50%."
 tags: [multilingual, commonsense, reasoning, culture, physical]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2510.24081", title: "Global PIQA: Evaluating Commonsense Reasoning Across 100+ Languages and Cultures (Chang et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2510.24081", title: "Global PIQA, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://github.com/mrlbenchmarks/global-piqa", title: "mrlbenchmarks/global-piqa — official repository", trust: 0.9 }
+  - { url: "https://github.com/mrlbenchmarks/global-piqa", title: "mrlbenchmarks/global-piqa — official repository (licence, no-training rule)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/mrlbenchmarks/global-piqa-nonparallel", title: "mrlbenchmarks/global-piqa-nonparallel — dataset card (CC BY-SA 4.0)", trust: 0.9 }
 related: [benchmark/hellaswag, benchmark/winogrande, benchmark/include]
 ---
 
@@ -97,20 +100,30 @@ related: [benchmark/hellaswag, benchmark/winogrande, benchmark/include]
 - **Kinds of reasoning** — physical, temporal, cultural knowledge, basic world knowledge.
 - **Culture-specific** — in the non-parallel split, over 50% of examples reference local foods, customs, traditions or other culture-specific elements.
 - **Coverage** — 141 language varieties, five continents, 19 language families, 24 writing systems.
+- **Makers** — Chang and over 350 contributing researchers from over 65 countries, 2025.
 
 ## How It Scores
-**Accuracy**: the share of items where the model picks the correct solution. Random choice gives 50%. The paper finds weaker performance in lower-resource languages, with up to a 68% accuracy gap between languages in the parallel split (2025 paper).
+**Accuracy** = items where the model picks the correct solution / total items. Random choice gives 50%. The paper finds weaker performance in lower-resource languages, with up to a 68% accuracy gap between languages in the parallel split (2025 paper).
+
+- **Cloze** (pretrained models) — correct when the model gives the right solution a higher normalised probability than the wrong one.
+- **Generation** (instruction-tuned models) — the model is prompted with a template, and its reply is scored by string matching.
 
 ## Format
-A goal (or sentence beginning, or question) and two solutions, one correct. Pretrained models are scored by completion probability; instruction-tuned models are prompted to choose. Splits:
+A prompt (a goal, sentence beginning or question) and two solutions, one correct. Splits:
 
-- **Non-parallel** — 100 examples per language for 136 language codes, written in each language.
+- **Non-parallel** — 100 examples per language for 136 language codes, written in each language and validated by at least one native speaker.
 - **Parallel** — culturally agnostic items translated into 131 language varieties.
+- **Data** — Hugging Face `mrlbenchmarks/global-piqa-nonparallel` and `global-piqa-parallel`, CC BY-SA 4.0; the authors do **not** allow training AI systems on it.
 
 ## Limitations
 - **Small per language.** 100 examples each, as the authors note.
 - **Uneven difficulty.** Non-parallel items differ by language.
+- **Not whole cultures.** The authors call the items snapshots from their contributors.
 - **Chance level.** Two choices: 50% by guessing.
 
 ## Example
-Figure 1 of the paper shows the format: one goal with two candidate solutions. A pretrained model is scored on which solution it finds more probable; an instruction-tuned model is asked which solution is correct.
+From the Mesopotamian Arabic (`acm_arab`) non-parallel subset on the Hugging Face dataset card (CC BY-SA 4.0), with the card's English translations:
+
+- **Solution 0** — "When we cook harees, we use ghee." (الدهن الحر)
+- **Solution 1** — "When we cook harees, we use date syrup." (دبس التمر)
+- **Label** — **0 (ghee)**. Picking the right one needs local cooking knowledge, not just physics.

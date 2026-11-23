@@ -2,20 +2,22 @@
 id: benchmark/mmlu-pro
 type: benchmark
 slug: mmlu-pro
-schema_version: 1.0
+schema_version: 3.1
 title: "MMLU-Pro"
 name: MMLU-Pro
 category: Knowledge & Academic Reasoning
 description: "An extension of MMLU with 12,032 more reasoning-focused questions in 14 disciplines and up to ten answer options."
-what_is_it: "MMLU-Pro was introduced by Wang et al. (2024). It extends the mostly knowledge-driven MMLU with more challenging, reasoning-focused questions, removes trivial and noisy MMLU questions, and expands the choices from four to ten. It has 12,032 questions in 14 disciplines, including mathematics, physics, chemistry, law, engineering, psychology and health; 83% of questions have ten options, and the average is 9.47."
+what_is_it: "MMLU-Pro was introduced by Yubo Wang, Xueguang Ma, Ge Zhang and 14 co-authors at TIGER-Lab (2024; NeurIPS 2024 Datasets and Benchmarks Track). It extends the mostly knowledge-driven MMLU with more challenging, reasoning-focused questions, removes trivial and noisy MMLU questions, and expands the choices from four to ten. It has 12,032 test questions in 14 disciplines, including mathematics, physics, chemistry, law, engineering, psychology and health: 6,810 kept from MMLU and 5,222 new ones from STEM websites, TheoremQA and SciBench. 83% of questions have ten options, and the average is 9.47. A separate 70-question validation split supplies the few-shot examples."
 why_people_use_it: "The authors report that models score 16% to 33% lower than on MMLU, and that sensitivity to prompt wording falls from 4-5% on MMLU to 2% on MMLU-Pro across 24 prompt styles, making it more discriminative."
 examples:
-  - "In quantum mechanics, which best describes the Born rule? (one correct answer among 10 options, e.g. 'it gives the probability of a measurement outcome from the squared amplitude of the wavefunction')"
-method: "The paper's reference setup is 5-shot chain-of-thought (CoT) prompting; the answer letter is extracted from the response."
-metric: "Accuracy (% correct)."
+  - "Health (Hugging Face test split, MIT licence): Which of the following is the body cavity that contains the pituitary gland? Options: Ventral, Dorsal, Buccal, Thoracic, Pericardial, Abdominal, Spinal, Pelvic, Pleural, Cranial. Answer: J (Cranial)"
+method: "The paper's reference setup is 5-shot chain-of-thought (CoT) prompting, meaning the model sees five worked examples and writes its reasoning before answering. The answer letter is extracted with a regular expression for 'answer is (X)', then a second pattern for 'answer:'; if both fail, a random option is chosen."
+metric: "Accuracy = correct answers / total questions; random guessing scores about 10% with ten options."
 format: "5-shot CoT multiple choice, up to ten options."
 limitations: "Answer extraction from a CoT response and the prompt template affect scores, so runs must use the same protocol to be compared. It tests knowledge and reasoning in multiple-choice form only, not generation, tool use or long context."
 citation: "https://arxiv.org/abs/2406.01574"
+openness: open
+openness_note: "The full test and validation questions with answers are public on Hugging Face under the MIT licence, and the paper describes the prompting and answer-extraction method."
 worked_examples:
   - task_type: "College physics — quantum mechanics"
     input: "In quantum mechanics, which statement best describes the Born rule?"
@@ -123,29 +125,40 @@ worked_examples:
     checks: "Recognizing that the balance invariant bounds the tree height and thus the search cost."
     scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, multiple-choice, reasoning]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2406.01574", title: "MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark (Wang et al., 2024)", trust: 0.95 }
-  - { url: "https://ar5iv.labs.arxiv.org/html/2406.01574", title: "MMLU-Pro paper, full text (ar5iv)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2406.01574", title: "MMLU-Pro paper, full text (arXiv HTML)", trust: 0.95 }
+  - { url: "https://huggingface.co/datasets/TIGER-Lab/MMLU-Pro", title: "TIGER-Lab/MMLU-Pro — dataset card (MIT licence, discipline counts)", trust: 0.9 }
+  - { url: "https://github.com/TIGER-AI-Lab/MMLU-Pro", title: "TIGER-AI-Lab/MMLU-Pro — official repository", trust: 0.9 }
 related: [benchmark/mmlu, benchmark/gpqa]
 ---
 
 ## What It Tests
 Broad **academic knowledge with a heavier reasoning load** than MMLU, across 14 disciplines.
 
+- **Makers** — Wang and colleagues at TIGER-Lab, 2024 (NeurIPS 2024 Datasets and Benchmarks Track).
+- **Where questions come from** — 6,810 filtered MMLU questions plus 5,222 new ones from STEM websites, TheoremQA and SciBench; an expert review verified each answer.
+
 ## How It Scores
-**Accuracy** over 12,032 questions. With up to ten options, random guessing scores about 10%.
+**Accuracy** = correct answers / total questions, over 12,032 test questions.
+
+- **Chance** — with up to ten options, random guessing scores about 10%.
+- **Answer extraction** — a regular expression finds "answer is (X)", then "answer:"; if neither matches, a random option is used.
 
 ## Format
-The reference protocol is 5-shot chain-of-thought; the final letter is parsed from the response.
+The reference protocol is **5-shot chain-of-thought (CoT)**: five worked examples from the 70-question validation split, then the model reasons step by step and states a letter.
+
+- **Options** — 83% of questions have ten; the average is 9.47.
+- **Data** — MIT licence, on Hugging Face (`TIGER-Lab/MMLU-Pro`); the dataset card links the GitHub repository.
 
 ## Limitations
 - **Protocol-sensitive.** Template and answer parsing change scores.
 - **Multiple choice only.** No generation, tool use or long context.
 
 ## Example
-"In the context of quantum mechanics, which of the following best describes the significance of the
-Born rule?" among ten options. The correct choice states that the Born rule gives the probability of
-a measurement outcome as the squared modulus of the corresponding amplitude of the wavefunction — a
-distractor that "it determines the energy levels of bound states" (that is the Schrödinger equation)
-is designed to catch shallow pattern-matching.
+From the health category of the test split on the Hugging Face dataset card (MIT licence):
+
+- **Question** — "Which of the following is the body cavity that contains the pituitary gland?"
+- **Ten options** — Ventral, Dorsal, Buccal, Thoracic, Pericardial, Abdominal, Spinal, Pelvic, Pleural, Cranial.
+- **Key** — **J (Cranial)**. With ten options, eliminating two or three obvious wrong answers still leaves a low guessing rate.

@@ -2,20 +2,22 @@
 id: benchmark/math
 type: benchmark
 slug: math
-schema_version: 1.0
+schema_version: 3.1
 title: "MATH"
 name: MATH
 category: Math & Logic
 description: "12,500 competition mathematics problems in seven subjects, each with a step-by-step solution and a final boxed answer."
-what_is_it: "MATH (Mathematics Aptitude Test of Heuristics) was introduced by Hendrycks et al. (2021). It has 12,500 competition mathematics problems, 7,500 for training and 5,000 for test. The seven subjects are Prealgebra, Algebra, Number Theory, Counting and Probability, Geometry, Intermediate Algebra and Precalculus. Each problem is tagged with a difficulty level from 1 to 5 following Art of Problem Solving (AoPS): early AMC 8 problems are often level 1, AIME problems level 5."
+what_is_it: "MATH (Mathematics Aptitude Test of Heuristics) was introduced by Hendrycks et al. (2021). It has 12,500 competition mathematics problems, 7,500 for training and 5,000 for test, each with a step-by-step solution. The seven subjects are Prealgebra, Algebra, Number Theory, Counting and Probability, Geometry, Intermediate Algebra and Precalculus. Each problem is tagged with a difficulty level from 1 to 5 following Art of Problem Solving (AoPS): early AMC 8 problems are often level 1, AIME problems level 5."
 why_people_use_it: "Each problem has a full step-by-step solution and a single final answer, so a model's answer can be checked automatically, and the difficulty levels and subjects show where a model breaks down."
 examples:
-  - "Find the number of positive integers n <= 1000 such that 15n is a perfect square. (answer: 8, via n = 15m^2)"
-method: "The model generates a solution ending in a final boxed answer, which is extracted and compared with the reference answer, usually after normalising the mathematical expression."
-metric: "Accuracy (% of test problems with a correct final answer)."
+  - "From the paper's Figure 1: Tom has a red marble, a green marble, a blue marble and three identical yellow marbles. How many different groups of two marbles can Tom choose? (answer: 7)"
+method: "The model generates a solution ending in a final answer inside \\boxed{}, which is extracted and compared with the reference answer after normalisation (equivalent forms such as \\frac{x}{y} and x/y match; units and spaces are ignored)."
+metric: "Accuracy = test problems whose normalised boxed answer exactly matches the reference / total test problems, in percent."
 format: "Free response with a boxed final answer; zero-shot or few-shot."
 limitations: "Answer checking needs expression normalisation (for example 1/2 versus 0.5), so extraction and equivalence rules change scores between harnesses. Subsets used in reports, such as the level-5 problems, are not comparable with the full test set; MATH Level 5 has its own record."
 citation: "https://arxiv.org/abs/2103.03874"
+openness: open
+openness_note: "The 12,500 problems with solutions, levels and subjects are public, linked from the official MIT-licensed repository to a Hugging Face copy, and the boxed-answer check can be rerun by anyone."
 worked_examples:
   - task_type: "Number theory (perfect squares)"
     input: "Find the number of positive integers n <= 1000 such that 15n is a perfect square."
@@ -68,31 +70,41 @@ worked_examples:
     checks: "Solving r^2 = 36 for r before applying the circumference formula."
     scoring: "Accuracy on the final answer under mathematical-equivalence checking."
 tags: [math, competition, reasoning, chain-of-thought]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2103.03874", title: "Measuring Mathematical Problem Solving With the MATH Dataset (Hendrycks et al., 2021)", trust: 0.95 }
   - { url: "https://ar5iv.labs.arxiv.org/html/2103.03874", title: "MATH paper, full text (ar5iv)", trust: 0.95 }
+  - { url: "https://github.com/hendrycks/math", title: "hendrycks/math — official repository (MIT licence, dataset download link)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/qwedsacf/competition_math", title: "competition_math — Hugging Face copy linked from the official repository (12,500 rows, MIT)", trust: 0.9 }
 related: [benchmark/gsm8k, benchmark/aime, benchmark/math-level-5]
 ---
 
 ## What It Tests
 **Competition mathematics**: choosing a strategy and reaching an exact answer across seven subjects.
 
-## How It Scores
-**Accuracy** on the final boxed answer over the 5,000 test problems.
+- **Makers** — Hendrycks, Burns, Kadavath, Arora, Basart, Tang, Song and Steinhardt (2021).
+- **Size** — 12,500 problems: **7,500 training, 5,000 test**.
+- **Subjects** — Prealgebra, Algebra, Number Theory, Counting and Probability, Geometry, Intermediate Algebra, Precalculus.
 
-- **Difficulty levels** — 1 to 5, following AoPS.
-- **Subjects** — seven, from Prealgebra to Precalculus.
+## How It Scores
+**Accuracy** = test problems whose boxed answer matches the reference / 5,000.
+
+- **Normalisation** — equivalent forms count as equal (for example `\frac{x}{y}` and `x/y`); units and spaces are ignored.
+- **Difficulty levels** — 1 to 5, following AoPS; results are often broken down by level and subject.
 
 ## Format
-The model writes a solution ending in `\boxed{...}`; the harness extracts and compares it.
+The model writes a solution ending in `\boxed{...}`, the LaTeX command that marks the final answer; the harness extracts and compares it.
+
+- **Fields** — each problem carries its text, a step-by-step solution, a level and a subject.
+- **Data** — linked from the official repository (MIT licence) to a Hugging Face copy.
 
 ## Limitations
 - **Answer checking.** Extraction and equivalence rules move scores.
 - **Subsets.** Level-5 or other subsets are not comparable with the full test set.
 
 ## Example
-"Find the number of positive integers n ≤ 1000 such that 15n is a perfect square." Because 15 = 3·5,
-n must supply the missing factors: n = 15m². Then 15n = (15m)². Require 15m² ≤ 1000 ⇒ m² ≤ 66.7 ⇒
-m ≤ 8, so there are **8** valid n. A brute-force search that enumerates a few cases and misses some
-fails — the algebraic insight is the point.
+From the paper's Figure 1, closely paraphrased:
+
+- **Problem** — Tom has a red marble, a green marble, a blue marble and three identical yellow marbles. How many different groups of two marbles can Tom choose?
+- **Working** — two yellows give 1 group; two different colours among the 4 colours give C(4,2) = 6 groups.
+- **Answer** — `\boxed{7}`. An answer of 15, which treats the yellow marbles as distinct, scores wrong.

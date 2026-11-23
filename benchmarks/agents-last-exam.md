@@ -2,21 +2,22 @@
 id: benchmark/agents-last-exam
 type: benchmark
 slug: agents-last-exam
-schema_version: 1.0
+schema_version: 3.1
 title: "Agents' Last Exam"
 name: Agents' Last Exam (ALE)
 category: Frontier / Hardest
-description: "A UC Berkeley frontier benchmark of real professional workflows where the best computer-use agents pass only ~2.6% of tasks overall."
-what_is_it: "Agents' Last Exam (ALE) is a benchmark from Berkeley RDI (the Center for Responsible Decentralized Intelligence) that grades generalist computer-use agents on 1,490 real, expert-authored professional workflows drawn from 55 occupational subdomains. Each task is a project a working professional actually completed; the agent must reproduce the deliverable inside a real desktop/CLI environment, and it is scored by deterministic scripts against the expert's own reference — not by an LLM judge."
-why_people_use_it: "Existing agent benchmarks were saturating, so ALE was built to restore headroom at the professional frontier: even the strongest agent tested passes only ~2.6% of tasks overall, and the hardest tier is near 0%. Because ~90% of the task pool is held private and grounded in the O*NET occupational taxonomy across 250+ real experts, scores are hard to contaminate or game, which makes ALE a credible frontier signal for real-work agent readiness."
+description: "A UC Berkeley-led benchmark of real professional workflows from 55 occupational subdomains, done by computer-use agents and graded against expert references."
+what_is_it: "Agents' Last Exam (ALE) is a benchmark led by the University of California, Berkeley (the rdi-berkeley group; first posted June 2026, with Yiyou Sun, Dawn Song and several hundred co-authors) that grades generalist computer-use agents on real professional workflows. The paper reports 1,490 task instances built from 960 expert-authored workflows, covering 55 subdomains grouped into 13 industry clusters and developed with 250+ industry experts. The agent must produce the deliverable inside a real desktop or command-line environment, and a script scores it against a hidden expert reference."
+why_people_use_it: "Tasks come from professional work across many occupations rather than from software tasks alone, and grading prefers deterministic checks over an LLM judge. Only about 10% of task instances are public, which the authors use to limit contamination."
 examples:
-  - "Given a client brief, a folder of raw CSVs, and a spreadsheet template, produce the finished financial-model workbook the domain expert delivered — graded by comparing computed cell values and structure to the reference, with a gate that the file must parse and contain no formula errors."
-  - "Reproduce a professional deliverable that interleaves GUI steps (navigating an app via screenshots) with CLI operations (running scripts, editing files) to reach a specified end state."
-method: "Generalist computer-use agents (GUI perception via screenshots + CLI operation) run each real professional workflow inside its environment and must reach a target world state. Grading is gate-and-score: a binary precondition (the gate — e.g. 'file parses', 'no toolpath collision') must pass before a continuous quality metric is evaluated; failing the gate forces the task score to 0. Checks are deterministic (exact/hashed values, numeric tolerances, geometric distances, structural and behavioral world-state comparisons), avoiding an LLM judge wherever a deterministic alternative exists."
-metric: "Full-pass rate (binary: did every gate and criterion pass) plus mean score (continuous, 0–1). Headline results are reported per difficulty tier and as an overall average."
-format: "Agentic, multi-step, long-horizon. The agent operates a real computer environment (GUI + CLI); no few-shot exemplars — it receives the task brief, input files, and tool access, then works to the deliverable."
-limitations: "It targets computer-use agents, so scores depend heavily on the harness (screenshot quality, tool orchestration, runtime substrate), not the base model alone — a weak scaffold can mask a strong model. Deterministic grading against one expert reference can penalize a correct deliverable produced a different way. The public slice is small (~150 tasks), so open reproduction is limited and most evaluation runs against the private pool the authors control. Absolute numbers are so low today that tier composition and partial-credit weighting materially shift rankings. Version 1.1 is a different, smaller task set (122 tasks) with its own board, so v1.0 and v1.1 numbers are not comparable."
+  - "From the paper's Section 2.1, given as a suitable task: move a running cheetah into another race video, which requires tracking, rotoscoping, compositing and colour matching."
+method: "Generalist computer-use agents (GUI perception via screenshots plus command-line operation) run each workflow inside its environment and must reach a target deliverable or world state. Grading is gate-and-score: a binary precondition (the gate, for example 'file parses' or 'no toolpath collision') must pass before a continuous quality score is computed, and a failed gate forces the task score to 0. Deterministic checks are preferred; tasks whose only scoring path is an LLM judge are rejected at quality control, and where a judge is needed it answers narrow, evidence-anchored yes/no probes."
+metric: "Full pass rate = tasks receiving full credit / all tasks; mean score = the mean of fine-grained task scores in [0, 1]. Results are reported per difficulty tier and overall."
+format: "Agentic, multi-step, long-horizon. The agent operates a real computer environment (GUI plus command line); no few-shot exemplars. It receives the task brief, input files and tool access, then works to the deliverable."
+limitations: "Scores depend heavily on the harness (screenshot handling, tool orchestration, runtime), not the base model alone. Deterministic grading against one expert reference can penalize a correct deliverable produced a different way. Only 150 of 1,490 instances are public, so most of the pool cannot be inspected or rerun outside the authors' group. The paper's own counts do not fully reconcile (its tier sizes sum to 160 while it also refers to a 152-task public set), and version 1.1 is a different, smaller set (122 active tasks after 30 retirements), so v1.0 and v1.1 numbers are not comparable."
 citation: "https://arxiv.org/abs/2606.05405"
+openness: partly-open
+openness_note: "The method, code (Apache-2.0) and a public slice of tasks (CC BY 4.0, about 150 of 1,490 instances) are released, while the remaining instances are kept private and reference outputs stay hidden until an agent finishes."
 worked_examples:
   - task_type: "Financial-modeling workflow (professional deliverable)"
     input: "Client brief plus raw data files and a blank workbook template. Task: build the three-statement financial model the expert delivered — populate the driver assumptions, link the income statement, balance sheet, and cash-flow tabs, and output the requested valuation summary. The environment exposes a spreadsheet GUI and a shell."
@@ -69,71 +70,62 @@ worked_examples:
     checks: "Whether the agent preserves a mandated document structure end-to-end, not merely the surface wording of edited passages."
     scoring: "Gate-and-score: document-parses gate, then structural comparison of sections/clauses against the expert reference."
 tags: [agent, frontier, computer-use, long-horizon, real-world]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
-  - { url: "https://arxiv.org/abs/2606.05405", title: "Agents' Last Exam (Berkeley RDI, arXiv:2606.05405)", trust: 0.95 }
-  - { url: "https://agents-last-exam.org/leaderboard", title: "Agents' Last Exam — v1.1 leaderboard", trust: 0.9 }
+  - { url: "https://arxiv.org/abs/2606.05405", title: "Agents' Last Exam (arXiv:2606.05405)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2606.05405", title: "Agents' Last Exam, full text (arXiv HTML)", trust: 0.95 }
+  - { url: "https://agents-last-exam.org/leaderboard", title: "Agents' Last Exam — v1.1 leaderboard (data CC BY 4.0, code Apache-2.0)", trust: 0.9 }
   - { url: "https://github.com/rdi-berkeley/agents-last-exam", title: "rdi-berkeley/agents-last-exam — official GitHub repository", trust: 0.9 }
-  - { url: "https://rdi.berkeley.edu/blog/agents-last-exam/", title: "Agents' Last Exam — Berkeley RDI blog", trust: 0.9 }
 related: [benchmark/bfcl-v4, benchmark/automationbench, benchmark/dsbench]
 ---
 
 ## What It Tests
 Whether a **generalist computer-use agent** can finish a **real professional project** end-to-end.
-Each task is a workflow a working professional actually completed, spanning **55 occupational
-subdomains** across **13 top-level industry clusters**, grounded in the **SOC 2018 / O\*NET**
-occupational taxonomy and authored with **250+ domain experts**. The agent needs the full stack —
-LLM reasoning, GUI perception from screenshots, CLI operation, tool invocation, and control flow —
-because tasks interleave clicking through an app with running scripts and editing files.
+Each task is a professional workflow authored with **250+ industry experts**, covering **55
+subdomains** in **13 industry clusters**, anchored in the **SOC 2018** (Standard Occupational
+Classification) and **O\*NET** occupational taxonomies. Tasks interleave clicking through an app
+with running scripts and editing files, so the agent needs GUI perception and command-line skill.
 
-The pool is **1,490 task instances** (960 expert-authored workflows), split into difficulty tiers:
+**Task pool in the paper (v4, October 2026):**
 
-- **Near-Term** (59 tasks) — top agents reach ~30% pass rate.
-- **Full-Spectrum** (55 tasks) — one instance per subdomain, a breadth sweep.
-- **Last-Exam** (35 tasks) — the hardest workflows, where most agents score ~0%.
+| Part | Instances |
+|---|---|
+| All instances (from 960 workflows) | 1,490 |
+| Public | 150 (about 10%) |
+| Private | 1,017 |
+| Pending quality control | 323 |
 
-**Version 1.1 board** (agents-last-exam.org, results updated 2026-11-14):
+**Difficulty tiers** (paper): Near-Term 67, Full-Spectrum 55, Last-Exam 38. The paper also mentions a 152-task public set, so these counts do not fully reconcile.
 
-- **Task set** — 122 tasks: 86 Linux and 36 Windows. The board cites a task-definitions commit dated 2026-10-27.
-- **Metrics** — Pass Rate is the share of runs with a perfect score; Score is the average partial credit. Both average over all 122 tasks, and missing or failed runs count as zero.
-- **Reading a row** — each row is a harness-and-model pair at its strongest effort level; vendor tables may report the averaged rubric Score, not the Pass Rate.
-- **Licences** — dataset under CC BY 4.0, code under Apache-2.0.
-- **Legacy board** — v1.0 stays on a separate page.
+**Version 1.1** (GitHub repository): 122 active tasks after 30 retirements, with a separate leaderboard; v1.0 stays on a legacy board.
 
 ## How It Scores
-The mechanism is **gate-and-score**. A **binary precondition (the gate)** — for example "the file
-parses" or "no toolpath collision" — must pass first; only then is a **continuous quality metric**
-evaluated. Fail the gate and the task scores **0**, no matter how much partial progress looks right.
+The mechanism is **gate-and-score**:
 
-Grading is **deterministic** wherever possible — exact or hashed values, numeric tolerances,
-geometric distances, structural comparisons, and behavioral world-state checks — deliberately
-avoiding an LLM-as-judge. Headline numbers are a **full-pass rate** (binary) plus a **mean score**
-(0–1), reported per tier and overall.
+- **Gate** — a binary precondition such as "the file parses" or "no toolpath collision" must pass first.
+- **Score** — only then is a continuous quality score in [0, 1] computed against the hidden reference.
+- **Fail the gate** — the task scores **0**, however much partial progress there is.
 
-Reported results show how brutal it is: the overall average pass rate is **2.6%**. Codex
-(GPT-5.5) leads at **26.2% overall** (42.4% Near-Term, 20.0% Full-Spectrum, 8.6% Last-Exam); Claude
-Code (Sonnet 4.6) reaches **17.1% overall**.
+**Checks** are deterministic where possible. Tasks that could only be scored by an LLM judge are rejected at quality control; where a judge is used, it answers narrow yes/no questions tied to evidence.
+
+**Headline numbers:** full pass rate = tasks with full credit / all tasks, and mean score = average task score, per tier and overall.
 
 ## Format
-Agentic and long-horizon — no few-shot exemplars. The agent is dropped into the task's real
-environment (spreadsheet/app GUI plus a shell), given the brief and input files, and must drive to
-the deliverable itself. A focused **ALE-CLI** subset of **106 Linux-only tasks** lets CLI agents be
-compared directly; there, Codex scores **25.2%** even though the same agent posts **82% on
-Terminal-Bench** — a concrete measure of how much harder ALE is than prior agent tests.
+Agentic and long-horizon, no few-shot exemplars. The agent is dropped into the task's real environment (application GUI plus a shell), given the brief and input files, and must drive to the deliverable itself.
+
+- **ALE-CLI** — the paper evaluates command-line agents on 105 Linux-only instances; the repository's v1.1 CLI list has 86 tasks.
+- **Repository** — each task is an executable `main.py` in `tasks/`; code under **Apache-2.0**, task data under **CC BY 4.0**.
 
 ## Limitations
-Scores reflect the **agent harness** (screenshot fidelity, tool orchestration, runtime substrate),
-not the base model alone, so scaffolding choices can mask or flatter a model. Deterministic grading
-against a **single expert reference** can mark a correct-but-different deliverable wrong. The
-**public slice is small (~150 of 1,490 tasks; ~90% stays private)**, which is what keeps the
-benchmark contamination-resistant but also limits independent reproduction — most runs execute
-against the authors' private pool. With absolute pass rates this low, tier composition and
-partial-credit weighting move rankings noticeably, so always cite the tier.
+- **System, not model.** The harness (screenshots, tool orchestration, runtime) shapes the score.
+- **One reference.** A correct deliverable made a different way can be marked wrong.
+- **Mostly private.** About 90% of instances are not public, which limits independent reproduction.
+- **Shifting counts.** Paper revisions and v1.1 use different task sets; cite the version and tier.
 
 ## Example
-Give an agent a client brief, raw data files, and a blank workbook template, and ask it to rebuild
-the three-statement financial model the expert delivered. A **passing** run links the tabs, computes
-the driver-based projections, writes the valuation summary, and produces a file that parses cleanly
-with values matching the reference. A **failing** run returns a plausible workbook with the right
-labels but hard-codes figures and leaves a broken cross-sheet `#REF!` — which trips the gate and
-forces the score to 0, regardless of how finished the layout appears.
+The paper's Section 2.1 gives this as a suitable task: **"Move a running cheetah into another race video."**
+
+- **Why it qualifies** — it needs tracking, rotoscoping, compositing and colour matching, a real professional video-effects workflow.
+- **How a task like this is graded** — a gate (for example, the output file exists and parses) and then a deterministic comparison with the expert's hidden reference.
+
+The public tasks themselves can be browsed in the repository's `tasks/` folder.

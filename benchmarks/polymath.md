@@ -2,20 +2,22 @@
 id: benchmark/polymath
 type: benchmark
 slug: polymath
-schema_version: 1.0
+schema_version: 3.1
 title: "PolyMath"
 name: PolyMath
 category: Multilingual
 description: "A multilingual mathematical reasoning benchmark: the same problems in 18 languages, at four difficulty levels."
-what_is_it: "PolyMath (Wang et al., 2025, Qwen team) has four difficulty levels (low, medium, high, top) spanning K-12 to Olympiad and advanced frontier mathematics. Each level has 125 problems, and every problem is available in 18 language versions, so each language has 500 problems. Translations are calibrated by language experts rather than taken directly from LLM output."
+what_is_it: "PolyMath (Wang et al., 2025, Qwen team; NeurIPS 2025 Datasets and Benchmarks track) has four difficulty levels (low, medium, high, top) spanning K-12 to Olympiad and advanced frontier mathematics. Each level has 125 problems, and every problem is available in 18 language versions, so each language has 500 problems and the set has 9,000 rows. GPT-4o drafts each translation, then math experts fix key terms and language experts calibrate the text."
 why_people_use_it: "Because the problems are parallel across languages, differences between languages show directly. The authors report that reasoning performance varies widely across languages and that input-output language consistency is low in reasoning LLMs (paper, 2025)."
 examples:
-  - "A problem from one of the four levels, given in each of the 18 languages; the model writes a solution and its final answer is checked."
-method: "The model solves each problem and its final answer is checked. The benchmark score is Difficulty-Weighted Accuracy (DW-ACC): problems at the low, medium, high and top levels carry weights 1, 2, 4 and 8."
-metric: "Difficulty-Weighted Accuracy (DW-ACC), per language and overall; accuracy per level is also reported."
+  - "From the English low-level split on the Hugging Face dataset card (row low-en-0): Janet's ducks lay 16 eggs per day; after she eats some and bakes some into muffins, she sells the rest at $2 each. How much does she make daily? (answer: 18)"
+method: "The model solves each problem and a rule-based script checks its final answer (the authors report over 98% precision on human spot checks). Accuracy is pass@1; open reasoning models are sampled 16 times and averaged, with up to 65,536 output tokens. The benchmark score is Difficulty-Weighted Accuracy (DW-ACC): problems at the low, medium, high and top levels carry weights 1, 2, 4 and 8."
+metric: "Difficulty-Weighted Accuracy (DW-ACC) = weighted average of per-level accuracy with weights 1, 2, 4, 8 for low, medium, high, top; reported per language and overall, with per-level accuracy and language consistency alongside."
 format: "Free-response mathematics with a final answer; 125 problems per level per language."
-limitations: "The language versions are translations of the same problems, so they test reasoning in each language rather than mathematics native to it. Under DW-ACC, a top-level problem counts eight times as much as a low-level one, so a few hard problems carry much of the score."
+limitations: "The language versions are translations of the same problems, so they test reasoning in each language rather than mathematics native to it. Under DW-ACC, a top-level problem counts eight times as much as a low-level one, so a few hard problems carry much of the score. Low-level problems come from MGSM and P-MMEval and higher levels from public contests such as AIME, so some items may already be in training data."
 citation: "https://arxiv.org/abs/2504.18428"
+openness: open
+openness_note: "All 9,000 problems with answers are public on the Qwen/PolyMath Hugging Face dataset and the scoring script is in the Apache-2.0 QwenLM/PolyMath repository; the dataset card itself names no licence."
 worked_examples:
   - task_type: "Multilingual math — counting (Swahili)"
     input: "Ni nambari ngapi kamili chanya chini ya 100 zinazogawanywa na 3 au 5? (How many positive integers less than 100 are divisible by 3 or 5?)"
@@ -68,11 +70,13 @@ worked_examples:
     checks: "Distinguishing diagonals from all vertex-pairs when applying the polygon formula, across languages."
     scoring: "Accuracy (% correct)."
 tags: [multilingual, math, reasoning, generation]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2504.18428", title: "PolyMath: Evaluating Mathematical Reasoning in Multilingual Contexts (Wang et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2504.18428", title: "PolyMath, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://github.com/QwenLM/PolyMath", title: "QwenLM/PolyMath — NeurIPS 2025 D&B evaluation repo", trust: 0.9 }
+  - { url: "https://github.com/QwenLM/PolyMath", title: "QwenLM/PolyMath — NeurIPS 2025 D&B evaluation repo (Apache-2.0)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/Qwen/PolyMath", title: "Qwen/PolyMath dataset card (18 languages x 500 problems)", trust: 0.9 }
+  - { url: "https://datasets-server.huggingface.co/rows?dataset=Qwen/PolyMath&config=en&split=low&offset=0&length=2", title: "PolyMath English low split, first rows", trust: 0.9 }
 related: [benchmark/math, benchmark/aime, benchmark/gsm8k]
 ---
 
@@ -82,15 +86,35 @@ Chinese, Spanish, Arabic, French, Bengali, Portuguese, Russian, Indonesian, Germ
 Swahili, Vietnamese, Italian, Telugu, Korean, Thai, and Malay — spanning four difficulty tiers
 that mix *thought depth* and *knowledge breadth*, from elementary word problems up to frontier math.
 
+Where each level comes from (paper):
+
+| Level | Sources |
+|---|---|
+| Low | MGSM, plus four languages from P-MMEval |
+| Medium | College math exercises, Gaokao and postgraduate entrance exams, AMC, provincial CNMO selection contests |
+| High | AIME and CNMO |
+| Top | 100 Olympiad problems (IMO, shortlists, national Olympiads, Putnam) and 25 frontier problems from Humanity's Last Exam (HLE) |
+
 ## How It Scores
-**Difficulty-Weighted Accuracy (DW-ACC)**: correct answers weighted 1, 2, 4 and 8 for the low, medium, high and top levels. Reported per language and overall, with accuracy per level alongside.
+**Difficulty-Weighted Accuracy (DW-ACC)**: the weighted average of per-level accuracy, with weights 1, 2, 4 and 8 for the low, medium, high and top levels. Eight low-level solves count as much as one top-level solve.
+
+- **Answer check** — a rule-based script; the authors report over 98% precision on human spot checks.
+- **Sampling** — pass@1; open reasoning models are run 16 times and averaged.
+- **Language consistency** — the share of outputs written in exactly one language, the same as the input (detected with the langdetect library).
 
 ## Format
-Free-response problems with a final answer: 125 per level, four levels, so 500 per language. The 18 language versions are expert-calibrated translations of the same problems.
+Free-response problems with a final answer: 125 per level, four levels, so 500 per language and 9,000 in all.
+
+- **Translation** — GPT-4o drafts, math experts fix key terms, language experts calibrate; the authors found GPT-4o drafts had content errors in every language.
+- **Data** — on the `Qwen/PolyMath` Hugging Face dataset; evaluation code in the Apache-2.0 `QwenLM/PolyMath` repository.
 
 ## Limitations
 - **Translated set.** Reasoning in a language, not mathematics native to it.
 - **Weighted score.** Top-level problems count eight times as much as low-level ones.
+- **Reused sources.** Many items come from public benchmarks and contests, so they may be in training data.
 
 ## Example
-A problem from one level is posed in each of the 18 languages; the model's final answer in each language is checked, and the per-language DW-ACC scores are compared.
+From the English low-level split on the Hugging Face dataset card, row `low-en-0`, closely paraphrased:
+
+- **Problem** — Janet's ducks lay 16 eggs per day. She eats 3 for breakfast and uses 4 to bake muffins, and sells the rest at the farmers' market for $2 each. How much does she make daily?
+- **Answer** — **18**. The same problem appears in each of the 18 language versions, and the per-language scores are compared.

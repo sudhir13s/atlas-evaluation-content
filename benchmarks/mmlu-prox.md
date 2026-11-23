@@ -2,20 +2,22 @@
 id: benchmark/mmlu-prox
 type: benchmark
 slug: mmlu-prox
-schema_version: 1.0
+schema_version: 3.1
 title: "MMLU-ProX"
 name: MMLU-ProX
 category: Multilingual
-description: "MMLU-Pro's 10-option questions carried into 29 languages, with the same 11,829 questions in every language."
-what_is_it: "MMLU-ProX (Xuan et al., 2025) is a multilingual benchmark built on the English MMLU-Pro. Each of its 29 language versions has the same 11,829 questions, translated by several LLMs and then reviewed by experts; a lite version has 658 questions per language."
+description: "MMLU-Pro's questions of up to ten options carried into 29 languages, with the same 11,829 questions in every language."
+what_is_it: "MMLU-ProX (Weihao Xuan, Irene Li and 30 co-authors; arXiv 2025, EMNLP 2025 main conference) is a multilingual benchmark built on the English MMLU-Pro. Each of its 29 language versions, from Afrikaans and Arabic to Wolof, Yoruba and Zulu, has the same 11,829 questions. The paper says Claude Sonnet 3.7 produced the translations, other LLMs checked them, and two professional native-speaker translators reviewed each language. A lite version has 658 questions per language."
 why_people_use_it: "Because every language has the identical question set, scores can be compared directly across languages. The authors report that the 36 models they tested do well in high-resource languages and decline in low-resource ones, with gaps of up to 24.3% (paper, 2025)."
 examples:
-  - "An MMLU-Pro item with ten answer options, presented with the same content in each of the 29 languages."
-method: "Following MMLU-Pro, the paper primarily uses 5-shot chain-of-thought (CoT) prompting and also reports 0-shot results. 70 validation questions per language build the few-shot prompts, so assessment runs on 11,759 questions (full) or 588 (lite)."
-metric: "Accuracy (% correct), per language and averaged."
-format: "Multiple choice with ten options (inherited from MMLU-Pro); 5-shot CoT as the main setting."
-limitations: "The questions are translations of an English benchmark (LLM translation followed by expert review), not material written in each language. The paper reports clear differences between 0-shot and 5-shot results, so a score needs its prompting setting."
+  - "Afrikaans health item (Hugging Face li-lab/MMLU-ProX, MIT licence): Waarom is parvovirusse 'n hoogs impakvolle parasiet? (Why are parvoviruses a highly impactful parasite?) Seven options; key B: Omdat hulle geen nukleïensuur het nie (Because they have no nucleic acid)."
+method: "Following MMLU-Pro, the paper primarily uses 5-shot chain-of-thought (CoT) prompting, where the model sees five worked examples and reasons before answering, and also reports 0-shot results. 70 validation questions per language build the few-shot prompts, so assessment runs on 11,759 questions (full) or 588 (lite). The repository runs it through EleutherAI's lm-evaluation-harness (tasks mmlu_prox_<lang>)."
+metric: "Accuracy = correct answers / total questions, per language and averaged across languages."
+format: "Multiple choice with up to ten options (inherited from MMLU-Pro); 5-shot CoT as the main setting."
+limitations: "The questions are translations of an English benchmark (LLM translation followed by expert review), not material written in each language. The paper finds that 5-shot prompting generally helps but by varying amounts, so a score needs its prompting setting."
 citation: "https://arxiv.org/abs/2503.10497"
+openness: open
+openness_note: "All questions, options and answers in all 29 languages are public on Hugging Face under the MIT licence, and the paper and GitHub repository give the evaluation setup."
 worked_examples:
   - task_type: "Advanced economics reasoning (Swahili)"
     input: "Kwa nini kampuni katika ushindani wa kimonopoli hupata faida sifuri ya kiuchumi kwa muda mrefu? (Why does a monopolistically competitive firm earn zero economic profit in the long run?)"
@@ -119,11 +121,12 @@ worked_examples:
     checks: "Applying the elasticity formula in the correct direction among numeric distractors in a high-resource language."
     scoring: "Accuracy (% correct); random baseline ~10% on 10 options."
 tags: [multilingual, knowledge, reasoning, multiple-choice]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2503.10497", title: "MMLU-ProX: A Multilingual Benchmark for Advanced Large Language Model Evaluation (Xuan et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2503.10497", title: "MMLU-ProX, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://github.com/weihao1115/MMLU-ProX", title: "weihao1115/MMLU-ProX — official EMNLP 2025 repo", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/li-lab/MMLU-ProX", title: "li-lab/MMLU-ProX — dataset card (MIT licence, 29 languages)", trust: 0.9 }
 related: [benchmark/mmlu-pro, benchmark/mmmlu, benchmark/mmlu]
 ---
 
@@ -132,19 +135,28 @@ Academic knowledge and reasoning on MMLU-Pro's questions, asked in **29 language
 
 - **Parallel** — the same 11,829 questions in every language.
 - **Cross-lingual comparison** — differences between languages show directly.
+- **Makers** — Xuan, Li and colleagues; arXiv 2025, EMNLP 2025.
+- **Translation** — Claude Sonnet 3.7 translated, other LLMs verified, and two professional native-speaker translators reviewed each language (paper).
 
 ## How It Scores
-**Accuracy**, per language and averaged.
+**Accuracy** = correct answers / total questions, per language and averaged.
 
-- **Full and lite** — 11,829 or 658 questions per language; 70 of them build the few-shot prompts.
+- **Full and lite** — 11,829 or 658 questions per language; 70 of them build the few-shot prompts, leaving 11,759 or 588 scored.
 - **Paper's finding** — gaps of up to 24.3% between high- and low-resource languages (2025).
 
 ## Format
-Multiple choice with **ten options**, as in MMLU-Pro. The paper's main setting is 5-shot chain-of-thought; it also reports 0-shot.
+Multiple choice with **up to ten options**, as in MMLU-Pro. The paper's main setting is **5-shot chain-of-thought (CoT)**: five worked examples, then step-by-step reasoning and a letter. It also reports 0-shot.
+
+- **Languages** — af, ar, bn, cs, de, en, es, fr, hi, hu, id, it, ja, ko, mr, ne, pt, ru, sr, sw, te, th, uk, ur, vi, wo, yo, zh, zu.
+- **Data** — MIT licence on Hugging Face (`li-lab/MMLU-ProX`, `li-lab/MMLU-ProX-Lite`); harness tasks `mmlu_prox_<lang>`.
 
 ## Limitations
 - **Translated content.** LLM translation plus expert review of an English benchmark.
-- **Setting-dependent.** 0-shot and 5-shot results differ, so a score needs its setting.
+- **Setting-dependent.** 5-shot usually helps, by different amounts per model, so a score needs its setting.
 
 ## Example
-An MMLU-Pro question with ten options appears with the same content in each of the 29 languages, and the model's chosen option is scored against the key.
+From the Afrikaans (`af`) test split on the Hugging Face dataset card (MIT licence), a health item translated from MMLU-Pro:
+
+- **Question** — "Waarom is parvovirusse 'n hoogs impakvolle parasiet?" (Why are parvoviruses a highly impactful parasite?)
+- **Seven options**, including "Hulle kan verskeie spesies infekteer" (They can infect multiple species) and "Repliseer slegs in delende selle" (Replicate only in dividing cells).
+- **Key** — **B**, "Omdat hulle geen nukleïensuur het nie" (Because they have no nucleic acid). Every language version carries the same questions.

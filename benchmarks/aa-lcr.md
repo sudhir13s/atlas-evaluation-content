@@ -2,21 +2,22 @@
 id: benchmark/aa-lcr
 type: benchmark
 slug: aa-lcr
-schema_version: 1.0
+schema_version: 3.1
 title: "AA-LCR"
 name: AA-LCR
 category: Long Context
 description: "Artificial Analysis Long Context Reasoning: 100 text-based questions that need reasoning across sets of real documents averaging about 100k tokens each."
-what_is_it: "Artificial Analysis Long Context Reasoning (AA-LCR), released by Artificial Analysis in August 2025, has 100 questions over 30 document sets (234 documents). Each question needs information from several documents, and the answer is not stated directly: it has to be inferred from several pieces of information. Questions were written and validated by the Artificial Analysis team and more than a dozen undergraduate students."
+what_is_it: "Artificial Analysis Long Context Reasoning (AA-LCR), announced by Artificial Analysis on 5 August 2025, has 100 questions over 30 document sets (234 documents, about 2.98 million tokens in total, roughly 99k tokens per set). Each question needs information from several documents, and the answer is not stated directly: it has to be inferred from several pieces of information. Questions were written and validated by members of the Artificial Analysis research team and more than a dozen undergraduate students on short-term contracts."
 why_people_use_it: "Artificial Analysis built it to replicate reasoning tasks knowledge workers expect models to do, unlike synthetic long-context tasks such as Needle in the Haystack. It is part of the Artificial Analysis evaluations."
 examples:
-  - "Given four company annual reports and an industry report (~100k tokens), determine which segment drove the largest year-over-year margin change — a figure not printed anywhere but derivable by combining revenue and cost tables across documents."
-  - "Across a set of government consultation responses, identify the single position endorsed by a majority of respondents once conflicting terminology is reconciled."
-method: "The model receives one document set (about 100k input tokens, measured with the cl100k_base tokenizer) and one question. An LLM-based equality checker, given a judge system prompt, decides whether the answer matches the official answer."
-metric: "Accuracy (% of questions answered correctly)."
+  - "For the company and quarter where the company reported a 13.5% decline on the prior quarters operating income. What was their adjusted EBITDA? List the company name and adjusted EBITDA. (official answer: Equinix, $901 million; sample question from the dataset card)"
+method: "The prompt holds one document set, inserted between BEGIN and END INPUT DOCUMENTS markers in a fixed order, followed by the question (about 100k input tokens, counted with the cl100k_base tokenizer). An LLM-based equality checker decides whether the free-text answer matches the official answer; version 1.1 gives the checker a judge system prompt."
+metric: "Accuracy = questions judged correct / 100 questions, in percent."
 format: "Open-ended question answering over a multi-document input of about 100k tokens."
 limitations: "The set has 100 questions, so each question moves the score by one percentage point. The documents are text-only, across seven document types. Version 1.1 (September 2026) corrected sixteen answer keys and added the judge system prompt; the maker says scores on version 1.0.0 are not directly comparable with scores on version 1.1."
 citation: "https://artificialanalysis.ai/articles/announcing-aa-lcr"
+openness: open
+openness_note: "The questions and official answers are on Hugging Face under Apache-2.0, with pre-extracted document text and links to the original public documents, so anyone can rerun it."
 worked_examples:
   - task_type: "Multi-document financial reasoning (~100k-token input)"
     input: "Given four company annual reports and one industry report (~100k tokens total), answer: which business segment drove the largest year-over-year operating-margin change? The figure is printed in no single table."
@@ -69,10 +70,10 @@ worked_examples:
     checks: "Whether a model combines a weighting scheme and scores drawn from separate long documents instead of reporting one salient figure."
     scoring: "Accuracy — free-text answer graded against a reference answer for correctness."
 tags: [long-context, reasoning, multi-document, open-ended]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://artificialanalysis.ai/articles/announcing-aa-lcr", title: "Announcing Artificial Analysis Long Context Reasoning (AA-LCR)", trust: 0.95 }
-  - { url: "https://huggingface.co/datasets/ArtificialAnalysis/AA-LCR", title: "ArtificialAnalysis/AA-LCR dataset card (Hugging Face)", trust: 0.95 }
+  - { url: "https://huggingface.co/datasets/ArtificialAnalysis/AA-LCR", title: "ArtificialAnalysis/AA-LCR dataset card (Hugging Face)", trust: 0.9 }
 related: [benchmark/longbench-v2]
 ---
 
@@ -81,17 +82,34 @@ Reasoning across **several long documents at once**.
 
 - **Multi-document** — each answer needs information from more than one document.
 - **Multi-step** — the answer is not stated; it is inferred from several facts.
-- **Real documents** — seven text-only types: company reports, industry reports, government consultations, academia, legal, marketing materials and survey reports.
+- **Real documents** — seven text-only types. Question counts per type, from the dataset card:
+
+| Document type | Questions |
+|---|---|
+| Company documents | 63 |
+| Government consultations | 11 |
+| Industry reports | 8 |
+| Legal | 6 |
+| Marketing | 6 |
+| Academia | 5 |
+| Survey reports | 1 |
+
+**Who built it:** the Artificial Analysis research team plus more than a dozen contracted undergraduate students, who checked difficulty against older, smaller models so that frontier models were not targeted.
 
 ## How It Scores
 **Accuracy** over 100 questions from 30 document sets (234 documents).
 
-- **Judge** — an LLM-based equality checker compares each answer with the official answer.
+- **Formula** — accuracy = questions judged correct / 100; each question is worth one percentage point.
+- **Judge** — an **LLM-based equality checker** (a language model asked whether two answers mean the same thing) compares each answer with the official answer.
 - **Human check** — the maker reports evaluators typically answered 40-60% correctly on a first attempt, and every question was answered correctly by at least one human tester.
-- **Versions** — version 1.1 (September 2026) corrected sixteen answer keys and added a judge system prompt; 1.0.0 and 1.1 scores are not directly comparable.
+- **Versions** — version 1.1 (September 2026) corrected sixteen answer keys (four of them substantive) and added a judge system prompt; 1.0.0 and 1.1 scores are not directly comparable.
 
 ## Format
-The whole document set (about 100k tokens, cl100k_base tokenizer) and one question go into the prompt; the model writes a free-text answer.
+The whole document set and one question go into the prompt; the model writes a **free-text answer**.
+
+- **Prompt shape** — documents sit between BEGIN and END INPUT DOCUMENTS markers, then the question.
+- **Length** — about 100k tokens per prompt, counted with the `cl100k_base` tokenizer.
+- **Data** — `AA-LCR_Dataset.csv` (questions and answers, Apache-2.0) and `AA-LCR_extracted-text.zip` (document text) on [Hugging Face](https://huggingface.co/datasets/ArtificialAnalysis/AA-LCR). The maker places no licence over the document text, which comes from public documents.
 
 ## Limitations
 - **Small set.** 100 questions: one question is one percentage point.

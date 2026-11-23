@@ -2,21 +2,22 @@
 id: benchmark/hmmt
 type: benchmark
 slug: hmmt
-schema_version: 1.0
+schema_version: 3.1
 title: "HMMT"
 name: HMMT
 category: Math & Logic
 description: "Final-answer problems from the Harvard-MIT Mathematics Tournament, run by MathArena on each new contest (HMMT February 2025, November 2025, February 2026)."
 what_is_it: "HMMT (Harvard-MIT Mathematics Tournament), founded in 1998, is a student-organized high school mathematics competition run by students at Harvard, MIT and nearby schools, with tournaments in November and February. MathArena (ETH Zurich and INSAIT; Balunović et al., 2025) evaluates models on the final-answer problems of each new HMMT contest; the HMMT February 2025 set has 30 problems."
-why_people_use_it: "MathArena evaluates models as soon as a competition's problems are released, which its authors say effectively eliminates the risk of contamination (2025 paper)."
+why_people_use_it: "MathArena, whose paper is titled Evaluating LLMs on Uncontaminated Math Competitions, uses newly released contests so that problems are unlikely to be in training data; the same paper reports strong signs of contamination in the older AIME 2024 set."
 examples:
-  - "HMMT February 2025, algebra: compute a specific value defined by a functional or number-theoretic condition — the model must output the exact integer/closed-form answer, which is checked against the gold answer."
-  - "HMMT February 2025, combinatorics: count configurations satisfying stated constraints; the single numeric answer is auto-graded."
-method: "MathArena prompts the model with one problem, extracts the final answer from \\boxed{} with a custom rule-based parser that turns LaTeX into structured values, and compares it with the official answer. Each model runs four times per problem."
-metric: "Accuracy (pass@1, % of problems solved), averaged over the four runs."
+  - "HMMT February 2025, Problem 1 (MathArena dataset card): Compute the sum of the positive divisors of 9! that have units digit 1. (answer: 103)"
+method: "MathArena prompts the model with one problem and asks for the answer inside \\boxed{}. The boxed answer is extracted and parsed by rules, an LLM judge (Gemini-2.5-Flash in the paper) checks equivalence with the official answer, and disagreements are reviewed by hand. Each model runs four times per problem."
+metric: "Accuracy (pass@1) = problems whose final answer matches the official one / problems in the set, averaged over the four runs."
 format: "Final-answer competition mathematics; one numeric or closed-form answer per problem."
 limitations: "A contest set is small (30 problems for HMMT February 2025), so one problem is about 3.3 percentage points. Only the final answer is graded, not the reasoning. Each contest is a separate set, so cite which one (for example HMMT February 2025) with a score."
 citation: "https://matharena.ai/"
+openness: open
+openness_note: "MathArena publishes each HMMT set with its official answers on Hugging Face under CC BY-NC-SA 4.0 (30 problems for February 2025) and its evaluation code on GitHub, so anyone can rerun it."
 worked_examples:
   - task_type: "Number theory (modular casework)"
     input: "Find the number of positive integers n < 100 such that n^2 + n + 1 is divisible by 3."
@@ -69,13 +70,14 @@ worked_examples:
     checks: "Case-splitting on the units digit because a trailing 0 changes how many leading-digit choices remain."
     scoring: "Accuracy (final answer matches gold), averaged over 4 runs per problem."
 tags: [math, competition-math, reasoning, final-answer]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://matharena.ai/", title: "MathArena: Evaluating LLMs on Uncontaminated Math Competitions", trust: 0.9 }
   - { url: "https://arxiv.org/abs/2505.23281", title: "MathArena: Evaluating LLMs on Uncontaminated Math Competitions (Balunović et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2505.23281", title: "MathArena, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://www.hmmt.org/", title: "HMMT — official site", trust: 0.9 }
-  - { url: "https://huggingface.co/datasets/MathArena/hmmt_feb_2025", title: "MathArena/hmmt_feb_2025 dataset (Hugging Face)", trust: 0.95 }
+  - { url: "https://huggingface.co/datasets/MathArena/hmmt_feb_2025", title: "MathArena/hmmt_feb_2025 dataset — 30 problems (CC BY-NC-SA 4.0)", trust: 0.9 }
+  - { url: "https://github.com/eth-sri/matharena", title: "eth-sri/matharena — MathArena evaluation code", trust: 0.9 }
 related: [benchmark/aime]
 ---
 
@@ -85,11 +87,16 @@ related: [benchmark/aime]
 - **Source** — HMMT, a student-organized high school competition (Harvard, MIT and nearby schools).
 - **Sets on MathArena** — HMMT February 2025, November 2025 and February 2026, each a separate set.
 
+- **Evaluator** — MathArena, from ETH Zurich and INSAIT (Balunović et al., 2025).
+
 ## How It Scores
-**Accuracy** (pass@1): the share of problems whose extracted final answer matches the official one, averaged over four runs per problem. No partial credit.
+**Accuracy** (pass@1): problems whose extracted final answer matches the official one / problems in the set, averaged over four runs per problem. No partial credit.
 
 ## Format
-One problem per prompt; the model puts its final answer in `\boxed{}`. A rule-based parser converts the LaTeX answer to a structured value before comparison.
+One problem per prompt; the model puts its final answer in `\boxed{}`.
+
+- **Checking** — rule-based parsing of the boxed answer, an LLM judge for equivalence, and manual review where they disagree.
+- **Data** — each set is on the MathArena Hugging Face page (CC BY-NC-SA 4.0); code is at `eth-sri/matharena` on GitHub.
 
 ## Limitations
 - **Small sets.** 30 problems in HMMT February 2025: one problem is about 3.3 points.
@@ -97,4 +104,7 @@ One problem per prompt; the model puts its final answer in `\boxed{}`. A rule-ba
 - **Per contest.** Scores on different HMMT contests are not interchangeable.
 
 ## Example
-A problem shown in the MathArena paper's pipeline figure: "Compute the sum of the positive divisors of 9! that have units digit 1." The official answer is 103; the model's boxed answer is parsed and compared with it.
+From the MathArena HMMT February 2025 dataset card (CC BY-NC-SA 4.0), Problem 1, also shown in the paper's pipeline figure:
+
+- **Problem** — Compute the sum of the positive divisors of 9! that have units digit 1.
+- **Gold answer** — **103** (the divisors are 1, 21 and 81). The model's boxed answer is parsed and compared with it.

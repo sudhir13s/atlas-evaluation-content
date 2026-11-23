@@ -2,21 +2,22 @@
 id: benchmark/deepplanning
 type: benchmark
 slug: deepplanning
-schema_version: 1.0
+schema_version: 3.1
 title: "DeepPlanning"
 name: "DeepPlanning"
 category: Agent & Tool Use
 description: "A long-horizon planning benchmark with code-verifiable constraints over travel-itinerary and shopping-cart tasks."
-what_is_it: "DeepPlanning (Zhang et al., 2026, Qwen Team, Alibaba Group) is a benchmark of multi-day travel planning and multi-product shopping tasks. Each task needs proactive information gathering through tools, local constrained reasoning and global constrained optimization, such as time and money budgets. Plans are checked by code."
+what_is_it: "DeepPlanning (Zhang, Jiang, Li, Tu and others, January 2026, Qwen Team, Alibaba Group) is a benchmark of multi-day travel planning and multi-product shopping tasks: 120 travel tasks, each in Chinese and English, and 120 English shopping tasks. Each task needs proactive information gathering through tools, local constrained reasoning and global constrained optimization, such as time and money budgets. Travel data come from real public sources for cities in China; shopping product data are synthesized. Plans are checked by code."
 why_people_use_it: "The authors built it because most agent benchmarks emphasise local, step-level reasoning rather than global constrained optimization, and planning benchmarks underrepresent active information gathering and fine-grained local constraints (2026 paper)."
 examples:
-  - "Travel: plan a multi-day itinerary that respects transport connections, attraction opening hours, minute-level scheduling, per-day activity diversity, and a total cost budget — pulling live options from a sandboxed database via tool calls."
-  - "Shopping: assemble a cart that meets brand and size preferences, shipping-time limits, and coupon-combination rules while minimizing cost, matched against a ground-truth optimal cart."
+  - "From the paper's Appendix D travel prompt example: 'Can you create a travel plan for 2 people from Shanghai to Beijing, from Nov 4th to Nov 6th, 2025, one room, budget 10,000 RMB?'"
 method: "Each task runs in an isolated sandbox the agent queries through APIs (9 for travel, 15 for shopping). Travel plans are checked by code on eight commonsense dimensions spanning 21 checkpoints (route consistency, sandbox compliance, itinerary structure, time feasibility, business hours compliance, duration rationality, cost calculation accuracy, activity diversity) plus the user's personalized constraints. Shopping carts are compared with a ground-truth cart."
-metric: "Case accuracy: a task counts only if every check passes (travel: perfect commonsense and personalized scores; shopping: the cart exactly matches the ground truth). The paper also reports commonsense, personalized and composite scores for travel and a match score for shopping; the headline is mean case accuracy across both domains."
+metric: "Case accuracy: tasks that pass every check / all tasks (travel: perfect commonsense and personalized scores; shopping: every cart product exactly matches the ground truth). The paper also reports a commonsense score (8 dimensions worth 1/8 each), a personalized score and their average, the composite score, for travel, and a match score for shopping (matching products / ground-truth products). Results are averaged over four runs."
 format: "Single-turn, multi-step planning with tool calls: 120 travel tasks (each in Chinese and English) and 120 English shopping tasks."
-limitations: "The authors note that user queries are synthesized by adding multi-level constraints, which may differ from real user queries, and that the tasks are single-turn; multi-turn user-agent interaction is left for future work. Shopping product data are synthesized. Only two domains are covered."
+limitations: "The authors note that user queries are synthesized by adding constraints, which may shift them away from real user queries, and that the tasks are single-turn; multi-turn user-agent interaction is left for future work. Shopping product data are synthesized. Only two domains are covered."
 citation: "https://arxiv.org/abs/2601.18137"
+openness: open
+openness_note: "The benchmark data are public, ungated, in the Qwen/DeepPlanning dataset on Hugging Face under the Apache-2.0 licence, and the checking method is described in the paper; no held-out set is described."
 worked_examples:
   - task_type: "Long-horizon constrained planning (travel itinerary)"
     input: "Plan a 3-day city itinerary under a fixed total budget. Query the sandbox database (tools) for transport, lodging, attractions, and dining; every venue must be visited within its business hours and travel times must connect."
@@ -32,7 +33,7 @@ worked_examples:
     input: "Assemble a cart matching stated brand and size preferences and a shipping deadline, applying coupons to minimize cost — matched against a ground-truth optimal cart. Rule: coupon A ('15% off') and coupon B ('$10 off') cannot be stacked on the same item."
     success:
       answer: "query_products(brand, size) → compare per-item the better of coupon A vs B → apply exactly one coupon per item → submit the cart whose total equals the ground-truth optimal."
-      why: "It respects the mutual-exclusion coupon rule while still minimizing cost, so the cart matches the ground-truth optimal within the checker's tolerance."
+      why: "It respects the mutual-exclusion coupon rule while still minimizing cost, so every product in the cart matches the ground-truth cart."
     failure:
       answer: "Stacks both coupon A and coupon B on the priciest item to push the total lower than the reference cart."
       why: "Wrong action — violates the coupon-combination rule; the code checker invalidates the stack and the cart fails to match the ground-truth optimal."
@@ -69,11 +70,11 @@ worked_examples:
     checks: "Whether an agent satisfies a diversity constraint instead of greedily picking the highest-rated items."
     scoring: "Accuracy — activity-diversity verifier must pass for every day."
 tags: [agent, planning, tool-use, long-horizon, constraints]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2601.18137", title: "DeepPlanning: Benchmarking Long-Horizon Agentic Planning with Verifiable Constraints (Zhang et al., Qwen Team, Alibaba Group, 2026)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2601.18137", title: "DeepPlanning, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://huggingface.co/datasets/Qwen/DeepPlanning", title: "Qwen/DeepPlanning dataset (Hugging Face)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/Qwen/DeepPlanning", title: "Qwen/DeepPlanning dataset (Hugging Face, Apache-2.0)", trust: 0.9 }
 related: [benchmark/tau2-bench, benchmark/vita-bench, benchmark/bfcl-v4]
 ---
 
@@ -87,17 +88,32 @@ Whether an agent can make a **long-horizon plan that satisfies every constraint*
 ## How It Scores
 **Case accuracy**, computed by code: a task counts only when every check passes.
 
-- **Travel** — eight commonsense dimensions (21 checkpoints) plus personalized constraints from the query.
-- **Shopping** — the cart must exactly match the ground-truth cart; a partial match score is also reported.
-- **Headline** — mean case accuracy across the two domains, averaged over four runs in the paper.
+- **Travel** — eight commonsense dimensions with 21 checkpoints, each dimension worth 1/8 and awarded only if all its checkpoints pass, plus personalized constraints from the query.
+- **Shopping** — every product in the cart must match the ground-truth cart; a match score (matching products / ground-truth products) is also reported.
+- **Runs** — each task is run four times and results are averaged.
+
+The eight travel dimensions: route consistency, sandbox compliance, itinerary structure, time feasibility, business hours, duration rationality, cost calculation accuracy and activity diversity.
 
 ## Format
-Single-turn, multi-step planning in a sandbox: 120 travel tasks (Chinese and English versions, 9 APIs) and 120 English shopping tasks (15 APIs). The agent queries, then submits one itinerary or cart.
+Single-turn, multi-step planning in a sandbox. The agent queries, then submits one itinerary or cart.
+
+| Domain | Tasks | APIs | Data source |
+|---|---|---|---|
+| Travel | 120, each in Chinese and English | 9 | Real public sources (Fliggy, Amap, web search), cities in China |
+| Shopping | 120, English | 15 | Synthesized product data |
+
+**Data** — Hugging Face `Qwen/DeepPlanning`, **Apache-2.0**.
 
 ## Limitations
-- **Synthesized queries.** The authors say they may differ from real user queries.
+- **Synthesized queries.** The authors say they may shift away from real user queries.
 - **Single-turn.** Multi-turn interaction with a user is not tested.
 - **Two domains.** Travel and shopping only; shopping product data are synthesized.
 
 ## Example
-A travel task asks for a multi-day itinerary within a budget. The agent queries the sandbox for transport, hotels, attractions and restaurants, then submits a timed day-by-day plan with a budget summary. The checkers verify, among other things, that each venue exists in the sandbox, is visited within its business hours and that costs add up.
+From the travel prompt example in the paper's Appendix D:
+
+> "Can you create a travel plan for 2 people from Shanghai to Beijing, from Nov 4th to Nov 6th, 2025, one room, budget 10,000 RMB?"
+
+- **Agent** — queries the sandbox for transport, hotels, attractions and restaurants, then submits a timed day-by-day plan.
+- **Checkers** — code verifies, among other things, that each venue exists in the sandbox, is visited within its business hours and that costs add up within the budget.
+- **Case accuracy** — the task counts only if every commonsense and personalized check passes.

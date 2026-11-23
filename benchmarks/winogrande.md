@@ -2,20 +2,22 @@
 id: benchmark/winogrande
 type: benchmark
 slug: winogrande
-schema_version: 1.0
+schema_version: 3.1
 title: "WinoGrande"
 name: WinoGrande
 category: Knowledge & Academic Reasoning
 description: "44k fill-in-the-blank problems in the style of the Winograd Schema Challenge, where the right referent of a blank needs commonsense."
-what_is_it: "WinoGrande was introduced by Sakaguchi et al. (2019) as a large-scale dataset of 44k problems inspired by the Winograd Schema Challenge (WSC), adjusted to improve scale and hardness. Problems were crowdsourced as twin sentences that differ slightly and flip the answer, then filtered with AfLite, an algorithm that removes problems with machine-detectable embedding associations. Each problem has two options for the blank. In the paper, human performance is 94.0%."
+what_is_it: "WinoGrande was introduced in 2019 by Sakaguchi, Le Bras, Bhagavatula and Choi as a large-scale dataset of 44k problems inspired by the Winograd Schema Challenge (WSC), adjusted to improve scale and hardness. Problems were crowdsourced and then filtered with AfLite, an algorithm that turns human-detectable word associations into machine-detectable embedding associations and removes problems that carry them. Each problem has two options for the blank. In the paper, human performance is 94.0%. The Hugging Face copy has training sets of five sizes (160 to 40,398 items, plus a 9,248-item debiased set), a 1,267-item validation set and a 1,767-item test set."
 why_people_use_it: "The authors built it to test whether models have robust commonsense or rely on dataset-specific biases, which they argue led to overestimating machine commonsense on earlier benchmarks."
 examples:
-  - "The trophy doesn't fit into the brown suitcase because _ is too large. (correct: the trophy)"
-method: "The model chooses which of the two options fills the blank, zero-shot or few-shot."
-metric: "Accuracy (% correct)."
+  - "From the debiased train split on the Hugging Face dataset card: 'The fish swam away from Neil and towards Robert because _ was pouring the food in the aquarium.' Options: Neil / Robert (answer: Robert)"
+method: "The model chooses which of the two options fills the blank, zero-shot or few-shot. Test labels are withheld: the maker scores the test set through a leaderboard submission, so reports should say whether they used the public validation set."
+metric: "Accuracy (% correct): problems where the chosen option is the right one, divided by total problems."
 format: "Two-option fill-in-the-blank; zero-shot or few-shot."
-limitations: "With two options, random guessing scores 50%, which compresses the useful range. The paper argues that algorithmic bias reduction such as AfLite mitigates, but human-written problems still contain annotation artifacts. Scores depend on the number of shots and the scoring method."
+limitations: "With two options, random guessing scores 50%, which compresses the useful range. The paper argues that algorithmic bias reduction such as AfLite mitigates, but human-written problems still contain annotation artifacts. Scores depend on the number of shots, the scoring method and whether the validation or leaderboard test set was used."
 citation: "https://arxiv.org/abs/1907.10641"
+openness: partly-open
+openness_note: "Train and validation problems with answers are public under CC-BY, while test.jsonl ships without labels and is scored only through the maker's leaderboard."
 worked_examples:
   - task_type: "Commonsense coreference — relative size"
     input: "Fill the blank with the correct referent: 'The trophy doesn't fit into the brown suitcase because _ is too large.'"
@@ -83,28 +85,39 @@ worked_examples:
     checks: "Reasoning about containment: a too-short container fails to hold its contents."
     scoring: "Exact-match accuracy on the selected referent."
 tags: [common-sense, coreference, multiple-choice]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/1907.10641", title: "WinoGrande: An Adversarial Winograd Schema Challenge at Scale (Sakaguchi et al., 2019)", trust: 0.95 }
   - { url: "https://ar5iv.labs.arxiv.org/html/1907.10641", title: "WinoGrande paper, full text (ar5iv)", trust: 0.95 }
+  - { url: "https://github.com/allenai/winogrande", title: "allenai/winogrande — official repository (data CC-BY, test labels withheld)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/allenai/winogrande", title: "allenai/winogrande — Hugging Face dataset card", trust: 0.9 }
 related: [benchmark/hellaswag, benchmark/arc-challenge]
 ---
 
 ## What It Tests
-**Commonsense coreference**: filling a blank with the right entity from world knowledge, not grammar.
+**Commonsense coreference**: filling a blank with the right entity from world knowledge, not grammar. Coreference means working out which person or thing a word refers to.
 
 ## How It Scores
-**Accuracy** on a two-option choice. Random guessing scores 50%; the paper reports 94.0% for humans.
+**Accuracy**: problems answered correctly divided by total problems.
+
+- **Floor** — random guessing scores 50%.
+- **Human baseline** — the paper reports 94.0%.
+- **Test set** — labels are not in `test.jsonl`; the maker scores test runs through its leaderboard.
 
 ## Format
-A sentence with a blank and two candidate fillers. Problems come as twin sentences that flip the answer.
+A sentence with a blank and two candidate fillers.
+
+- **Splits** — training sets XS (160), S (640), M (2,558), L (10,234), XL (40,398) and a debiased set (9,248); validation 1,267; test 1,767 (Hugging Face card).
+- **Data** — the official repository states the dataset is licensed **CC-BY** (Creative Commons Attribution); the code is Apache 2.0.
 
 ## Limitations
 - **Binary.** A 50% floor compresses the range.
 - **Residual artifacts.** AfLite reduces but does not remove dataset bias.
-- **Setup-dependent.** Shot count and scoring change the number.
+- **Setup-dependent.** Shot count, scoring and split (validation or leaderboard test) change the number.
 
 ## Example
-"The trophy doesn't fit into the brown suitcase because _ is too large." The blank resolves to **the
-trophy** (it is the large thing). Swap "large" for "small" and the answer flips to "the suitcase" —
-the twin design that forces genuine reasoning.
+From the debiased train split on the Hugging Face dataset card:
+
+- **Sentence** — "The fish swam away from Neil and towards Robert because _ was pouring the food in the aquarium."
+- **Options** — (1) Neil (2) Robert
+- **Answer** — **Robert**: fish swim towards the person feeding them.

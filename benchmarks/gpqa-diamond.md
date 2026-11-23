@@ -2,20 +2,22 @@
 id: benchmark/gpqa-diamond
 type: benchmark
 slug: gpqa-diamond
-schema_version: 1.0
+schema_version: 3.1
 title: "GPQA Diamond"
 name: GPQA Diamond
 category: Knowledge & Academic Reasoning
 description: "The 198-question highest-quality subset of GPQA: expert-written biology, physics and chemistry questions that both expert validators answered correctly and most non-experts did not."
-what_is_it: "GPQA Diamond is the subset that the GPQA authors (Rein et al., 2023) call their highest-quality one. It includes only questions where both expert validators answer correctly (or the second makes a demonstrable mistake) and the majority of non-expert validators answer incorrectly. GPQA's experts have or are pursuing PhDs in the field."
+what_is_it: "GPQA Diamond is the subset that the GPQA authors (David Rein, Samuel R. Bowman and colleagues at New York University, Cohere and Anthropic, 2023) call their highest-quality one. It includes only questions where both expert validators answer correctly and the majority of non-expert validators answer incorrectly. GPQA's question writers and expert validators have or are pursuing PhDs in the field."
 why_people_use_it: "GPQA was built for scalable-oversight experiments: its questions are hard for skilled non-experts even with unrestricted web access ('Google-proof'). The diamond set keeps the questions with the strongest expert agreement."
 examples:
-  - "A graduate physics item on the quantum-mechanical selection rules for an electric-dipole transition between two specified atomic states, with four expert-written options where the distractors correspond to plausible but incorrect rule applications."
+  - "No item is reproduced: the authors ask that GPQA examples not be revealed in plain text or images online. Each item is an expert-written graduate-level biology, physics or chemistry question with four answer options, one correct."
 method: "Four-option multiple choice. The paper's baselines use zero-shot, few-shot, zero-shot chain-of-thought and few-shot chain-of-thought prompting; the chosen letter is compared with the key."
-metric: "Accuracy (% correct); random choice scores 25%."
+metric: "Accuracy = correct answers / 198 questions; random choice scores 25%."
 format: "Four-option multiple choice in biology, physics and chemistry, 198 questions."
 limitations: "198 questions, so each question moves the score by about half a percentage point. Three science domains only, in multiple-choice form. The paper reports expert validator accuracy of 81.3% on the diamond set but notes that validator accuracies on it are skewed by the selection rule. The dataset carries a canary string so training corpora can filter it out."
 citation: "https://arxiv.org/abs/2311.12022"
+openness: open
+openness_note: "The 198 Diamond questions ship with the rest of GPQA (CC BY 4.0) on Hugging Face after accepting access conditions and in a password-protected archive on GitHub; the authors ask that items not be posted online in plain text."
 worked_examples:
   - task_type: "Graduate physics — atomic electric-dipole selection rules"
     input: "For an electric-dipole (E1) transition in atomic hydrogen, which of the following is allowed?"
@@ -93,25 +95,29 @@ worked_examples:
     checks: "Applying the correct free-energy spontaneity criterion rather than the total-entropy statement of the second law."
     scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, reasoning, science, multiple-choice, frontier, google-proof]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2311.12022", title: "GPQA: A Graduate-Level Google-Proof Q&A Benchmark (Rein et al., 2023)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2311.12022", title: "GPQA, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://huggingface.co/datasets/Idavidrein/gpqa", title: "GPQA dataset (Idavidrein/gpqa, includes gpqa_diamond)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/Idavidrein/gpqa", title: "GPQA dataset card (Idavidrein/gpqa; CC BY 4.0, access conditions)", trust: 0.9 }
+  - { url: "https://github.com/idavidrein/gpqa", title: "idavidrein/gpqa — official repository (data archive, baseline code)", trust: 0.9 }
 related: [benchmark/gpqa, benchmark/supergpqa, benchmark/mmlu-pro]
 ---
 
 ## What It Tests
 **Graduate-level science questions** in biology, physics and chemistry, written by domain experts.
 
-- **Google-proof** — on GPQA (448 questions), skilled non-expert validators reached 34% despite over 30 minutes with unrestricted web access (2023 paper).
-- **Highest quality** — Diamond keeps questions where both expert validators agree and at most one in three non-experts answered correctly.
+- **Google-proof** — on GPQA (448 questions), skilled non-expert validators reached 34% despite spending 37 minutes per question on average with full internet access (2023 paper).
+- **Highest quality** — Diamond keeps questions where both expert validators answered correctly and the majority of non-expert validators answered incorrectly.
+- **Makers** — Rein, Bowman and colleagues (New York University, Cohere, Anthropic), 2023.
 
 ## How It Scores
-**Accuracy** on 198 four-option questions; random choice scores 25%. The paper's own sets are extended (546), main (448) and diamond (198).
+**Accuracy** = correct answers / 198 questions; random choice scores 25%. The paper's own sets are extended (546), main (448) and diamond (198).
 
 ## Format
-Four-option multiple choice. The paper's baselines include zero-shot, few-shot and chain-of-thought prompting; the final letter is compared with the key.
+Four-option multiple choice. The paper's baselines include zero-shot, few-shot and chain-of-thought prompting (the model reasons step by step first); the final letter is compared with the key.
+
+- **Data** — the Diamond set ships with GPQA under CC BY 4.0: on Hugging Face behind an access agreement, and in a password-protected archive in the GitHub repository.
 
 ## Limitations
 - **Small set.** One question is about 0.5 percentage points.
@@ -119,4 +125,6 @@ Four-option multiple choice. The paper's baselines include zero-shot, few-shot a
 - **Selection effect.** Validator accuracies on Diamond are skewed by how it was selected, as the paper notes.
 
 ## Example
-The dataset carries a canary string so training corpora can filter it out, so no question is reproduced here. Each item is a question with four options written by a PhD-level expert; the model answers with one letter, scored against the key.
+**No GPQA Diamond item is shown here.** The authors request that people "do not reveal examples from this dataset in plain text or images online", and the files carry a canary string so training corpora can filter them out.
+
+As the paper describes the task, each item is a biology, physics or chemistry question written by a PhD-level expert, with **four answer options**, one correct. The model answers with one letter, scored against the key. The illustrative examples on this page are site-written, not dataset items.

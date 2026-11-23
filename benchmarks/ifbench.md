@@ -2,7 +2,7 @@
 id: benchmark/ifbench
 type: benchmark
 slug: ifbench
-schema_version: 1.0
+schema_version: 3.1
 title: "IFBench"
 name: IFBench
 category: Instruction Following & Chat
@@ -10,12 +10,14 @@ description: "A benchmark of 300 prompts that tests precise instruction followin
 what_is_it: "IFBench (Pyatkin et al., 2025; Allen Institute for Artificial Intelligence and University of Washington) tests whether precise instruction following generalizes to unseen output constraints. Its 58 verifiable constraints, in seven categories (count, ratio, words, sentence, format, custom, copy), are added to held-out WildChat prompts, and each comes with a verification function."
 why_people_use_it: "The authors found that most models strongly overfit on the small set of verifiable constraints in existing benchmarks and do not generalize well to unseen ones (2025 paper). IFBench combines unseen prompts with unseen constraints to measure that generalization."
 examples:
-  - "Prompt: 'Explain photosynthesis. Every sentence must contain exactly one word in all capital letters, and the response must end with the exact phrase: That is all.' — a Python verifier checks both constraints mechanically."
-method: "Constraints are added to unseen WildChat prompts; every instance was checked by a human annotator for prompt-constraint compatibility. A verification function per constraint checks the output. Two settings: single-turn (task and constraints in one prompt) and multi-turn (the third turn asks to rewrite an earlier answer to meet the constraint)."
-metric: "Prompt-level accuracy, strict or loose; loose accuracy first removes first/last lines and certain font modifiers from the output. The paper reports prompt-level loose accuracy."
+  - "From the IFBench_test set on Hugging Face (ODC-BY): Is it plausible that frequent hardship can make a society more resilient? Include exactly 2 numbers in the response. (constraint: count:numbers)"
+method: "Constraints are added to unseen WildChat prompts; every instance was checked by a human annotator for prompt-constraint compatibility. A verification function per constraint checks the output. Two settings: single-turn (task and constraints in one prompt) and multi-turn (the third turn asks to rewrite an earlier answer to meet the constraint). The repository's run_eval script scores a file of responses; the paper generated at temperature 0 and stripped reasoning chains before scoring."
+metric: "Prompt-level accuracy = prompts whose response satisfies all of their constraints / prompts, strict or loose; loose accuracy first removes first/last lines and certain font modifiers from the output. The paper reports prompt-level loose accuracy."
 format: "300 prompts, each with one or two verifiable output constraints; checked by code, not by a judge model."
 limitations: "Only constraints a function can verify are covered, so it tests compliance, not answer quality. Strict and loose accuracy differ, so the variant must be stated with a score."
 citation: "https://arxiv.org/abs/2507.02833"
+openness: open
+openness_note: "The 300 test prompts (and a multi-turn version) are public on Hugging Face under ODC-BY-1.0, and the verification code is public on GitHub under Apache 2.0."
 worked_examples:
   - task_type: "Verifiable instruction following (stacked output constraints)"
     input: "Explain photosynthesis. Every sentence must contain exactly one word in all capital letters, and the response must end with the exact phrase: That is all."
@@ -68,12 +70,12 @@ worked_examples:
     checks: "Whether the model tracks an ordered structural rule across all lines of the output."
     scoring: "Prompt-level loose accuracy — the ordered-initial constraint must hold for every line."
 tags: [instruction-following, verifiable, constraints, chat]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2507.02833", title: "Generalizing Verifiable Instruction Following (Pyatkin et al., 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2507.02833", title: "Generalizing Verifiable Instruction Following, full text (arXiv HTML)", trust: 0.95 }
   - { url: "https://huggingface.co/datasets/allenai/IFBench_test", title: "IFBench test set (allenai/IFBench_test, 300 prompts)", trust: 0.9 }
-  - { url: "https://github.com/allenai/IFBench", title: "IFBench GitHub repository", trust: 0.85 }
+  - { url: "https://github.com/allenai/IFBench", title: "IFBench GitHub repository (code Apache 2.0, data ODC-BY-1.0)", trust: 0.9 }
 related: [benchmark/ifeval, benchmark/multichallenge]
 ---
 
@@ -90,11 +92,20 @@ Whether **precise instruction following generalizes** to output constraints a mo
 - **Loose** — first/last lines and certain font modifiers removed first; the paper reports this one.
 
 ## Format
-300 prompts with one or two constraints each, in a single-turn setting (task plus constraints) or a multi-turn setting (rewrite an earlier answer to meet the constraint).
+300 prompts with **one or two constraints** each, in a single-turn setting (task plus constraints) or a multi-turn setting (rewrite an earlier answer to meet the constraint).
+
+- **Row fields** — `key`, `prompt`, `instruction_id_list` (constraint names) and `kwargs` (their arguments).
+- **Data and code** — `allenai/IFBench_test` and `IFBench_multi-turn` on Hugging Face (ODC-BY-1.0); scoring code in `allenai/IFBench` (Apache 2.0).
+- **Companion training set** — the authors also release 29 training constraints (IFTrain), separate from the 58 test constraints.
 
 ## Limitations
 - **Verifiable only.** Constraints a function can check; answer quality is not scored.
 - **Variant matters.** Strict and loose accuracy differ; state which.
 
 ## Example
-A constraint named in the paper: "Maintain a 2:1 ratio of declarative to interrogative sentences." It is appended to a held-out WildChat prompt, and the verification function counts the sentence types in the response to decide pass or fail.
+From the public `IFBench_test` set on Hugging Face (ODC-BY-1.0): "Is it plausible that frequent hardship can make a society more resilient? **Include exactly 2 numbers in the response.**"
+
+- **Constraint** — `count:numbers`, one of the count category.
+- **Verification** — code counts the numbers in the response; anything other than exactly two fails the prompt.
+
+Another constraint named in the paper: "Maintain a 2:1 ratio of declarative to interrogative sentences."

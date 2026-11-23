@@ -5,6 +5,14 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 
 ## [Unreleased]
 
+### Schema 3.1 (benchmark openness; additive)
+
+- **Added** optional `openness` (`open`, `partly-open`, `closed`) and `openness_note` (one sourced
+  sentence: what is public and what is not) to `benchmark.schema.json`, the template and
+  CONVENTIONS. Optional fields loosen nothing, so existing records stay valid.
+- **Changed** every `benchmark` record sets both fields from its maker's own paper, page or
+  repository, and moves to `schema_version: 3.1`.
+
 ### Content (leaderboard accuracy pass)
 
 - **Changed** the seven `leaderboard` records, each checked against the board's own site: who
@@ -133,3 +141,4 @@ All notable changes to `ai-evaluation-content`. Grouped by schema version / rele
 - **2.1** — `leaderboard`, `evaluation-framework` and `evaluation-metric` types.
 - **2.2** — three new benchmark categories (additive).
 - **3.0** — `evaluation-metric` reshaped (breaking for that type, which had no records); `standard` type.
+- **3.1** — optional `openness` and `openness_note` on `benchmark` (additive).

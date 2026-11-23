@@ -2,36 +2,23 @@
 id: benchmark/gpqa
 type: benchmark
 slug: gpqa
-schema_version: 1.0
+schema_version: 3.1
 title: "GPQA"
 name: GPQA
 category: Knowledge & Academic Reasoning
 description: "A Graduate-Level Google-Proof Q&A benchmark: 448 multiple-choice questions in biology, physics and chemistry written by domain experts."
-what_is_it: "GPQA was introduced by Rein et al. (2023). Its main set has 448 multiple-choice questions written by domain experts in biology, physics and chemistry; the full set (GPQA Extended) has 546 questions and the highest-quality subset (GPQA Diamond) has 198. In the paper, experts with or pursuing PhDs in the field reached 65% accuracy (74% after discounting mistakes they identified in retrospect), while skilled non-experts reached 34% despite spending over 30 minutes per question with unrestricted web access."
+what_is_it: "GPQA was introduced by David Rein, Samuel R. Bowman and colleagues at New York University, Cohere and Anthropic (2023). 61 contractors hired through Upwork, each with or pursuing a PhD in their field, wrote and validated the questions. Its main set has 448 multiple-choice questions in biology, physics and chemistry; the full set (GPQA Extended) has 546 questions and the highest-quality subset (GPQA Diamond) has 198. In the paper, experts reached 65% accuracy (74% after discounting mistakes they identified in retrospect), while skilled non-experts reached 34% despite spending 37 minutes per question on average with full internet access."
 why_people_use_it: "The authors made the questions hard enough that searching the web does not answer them (\"Google-proof\"), to support scalable-oversight experiments in which humans must supervise AI answers they cannot check easily."
 examples:
-  - "Why does the proton have a mass of ~938 MeV/c^2 despite being made of quarks with a combined bare mass of only ~9 MeV/c^2? (multiple choice; correct answer attributes ~99% of the mass to QCD binding energy)"
-method: "Multiple choice: the model chooses one of four options per question, zero-shot or few-shot, with or without step-by-step reasoning. Reports name the subset used (main, Extended or Diamond)."
-metric: "Accuracy (% correct)."
+  - "No item is reproduced: the authors ask that GPQA examples not be revealed in plain text or images online. Each item is an expert-written graduate-level biology, physics or chemistry question with four answer options, one correct."
+method: "Multiple choice: the model chooses one of four options per question. The paper's closed-book baselines use zero-shot, few-shot, zero-shot chain-of-thought and few-shot chain-of-thought prompting, and an open-book baseline gives the model a web-search tool. Reports name the subset used (main, Extended or Diamond)."
+metric: "Accuracy = correct answers / total questions in the chosen set; random guessing scores 25%."
 format: "Multiple choice, four options."
-limitations: "The sets are small (198 to 546 questions), so scores have wide uncertainty. The authors estimate that 74% of GPQA Extended questions have uncontroversially correct answers, expecting a higher rate on the main and Diamond subsets. Results on different subsets are not comparable; GPQA Diamond has its own record."
+limitations: "The sets are small (198 to 546 questions), so scores have wide uncertainty. The authors estimate that 74% of GPQA Extended questions have uncontroversially correct answers. Results on different subsets are not comparable; GPQA Diamond has its own record."
 citation: "https://arxiv.org/abs/2311.12022"
+openness: open
+openness_note: "All question sets are downloadable (CC BY 4.0) from Hugging Face after accepting access conditions and from a password-protected archive in the GitHub repository, with baseline code; the authors ask that items not be posted online in plain text."
 worked_examples:
-  - task_type: "Graduate physics (QCD)"
-    input: "In quantum chromodynamics the proton weighs ~938 MeV/c², yet its three valence quarks have a combined bare mass of only ~9 MeV/c². What accounts for ~99% of the proton's mass?"
-    options:
-      - "the Higgs mechanism"
-      - "QCD binding energy — the gluon field and virtual quark–antiquark pairs"
-      - "electromagnetic self-energy of the charged quarks"
-      - "the relativistic kinetic mass of the valence quarks"
-    success:
-      answer: "B — QCD binding energy — the gluon field and virtual quark–antiquark pairs"
-      why: "The dynamical energy of the confined gluon field and sea quarks, confirmed by first-principles lattice-QCD, supplies almost all nucleon mass; the bare quark masses contribute only ~1%."
-    failure:
-      answer: "A — the Higgs mechanism"
-      why: "A sophisticated near-miss: the Higgs mechanism sets the quarks' small bare masses but not the emergent mass of the bound state — it conflates the origin of quark mass with the origin of hadron mass."
-    checks: "Separating emergent, dynamical QCD mass from a pattern-match of 'mass' to 'Higgs' — a distinction only expert physics reasoning makes reliably."
-    scoring: "Accuracy (% correct) on GPQA Diamond."
   - task_type: "Graduate organic chemistry (pericyclic reactions)"
     input: "A thermal [4+2] Diels–Alder cycloaddition proceeds suprafacial–suprafacial and is symmetry-allowed. Under the Woodward–Hoffmann rules, what makes the thermal reaction allowed?"
     options:
@@ -93,24 +80,32 @@ worked_examples:
     checks: "Applying the homotopic/enantiotopic/diastereotopic hierarchy to predict NMR inequivalence."
     scoring: "Accuracy (% correct) on GPQA Diamond."
 tags: [science, expert-questions, multiple-choice, reasoning]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2311.12022", title: "GPQA: A Graduate-Level Google-Proof Q&A Benchmark (Rein et al., 2023)", trust: 0.95 }
-  - { url: "https://ar5iv.labs.arxiv.org/html/2311.12022", title: "GPQA paper, full text (ar5iv)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2311.12022", title: "GPQA paper, full text (arXiv HTML)", trust: 0.95 }
+  - { url: "https://github.com/idavidrein/gpqa", title: "idavidrein/gpqa — official repository (data archive, baseline code)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/Idavidrein/gpqa", title: "Idavidrein/gpqa — dataset card (CC BY 4.0, access conditions)", trust: 0.9 }
 related: [benchmark/gpqa-diamond, benchmark/mmlu-pro]
 ---
 
 ## What It Tests
-**Graduate-level science** in biology, physics and chemistry that a skilled non-expert cannot answer with a web search.
+**Graduate-level science** in biology, physics and chemistry that a skilled non-expert cannot answer with a web search ("Google-proof").
+
+- **Makers** — Rein, Bowman and colleagues (New York University, Cohere, Anthropic), 2023.
+- **Writers** — 61 Upwork contractors with or pursuing a PhD in their field wrote and cross-validated the questions.
 
 ## How It Scores
-**Accuracy** on multiple-choice questions. Paper baselines:
+**Accuracy** = correct answers / total questions in the chosen set; random guessing scores 25%. Paper baselines:
 
 - **Experts** — 65% (74% discounting clear mistakes).
-- **Skilled non-experts with web access** — 34%.
+- **Skilled non-experts with web access** — 34%, after 37 minutes per question on average.
 
 ## Format
-Four-option multiple choice. Three sets: Extended (546), main (448) and Diamond (198).
+Four-option multiple choice. Three sets: Extended (546), main (448, the authors' recommended primary set) and Diamond (198).
+
+- **Paper's prompts** — zero-shot, few-shot, and chain-of-thought (the model reasons step by step first); plus an open-book run with web search.
+- **Data** — CC BY 4.0, on Hugging Face behind an access agreement and in a password-protected archive in the GitHub repository; the files carry a canary string so training pipelines can filter them out.
 
 ## Limitations
 - **Small.** Wide confidence intervals.
@@ -118,7 +113,6 @@ Four-option multiple choice. Three sets: Extended (546), main (448) and Diamond 
 - **Subset matters.** Always state which set a score is on.
 
 ## Example
-"In quantum chromodynamics, why does the proton weigh ~938 MeV/c² when its three valence quarks have
-a combined bare mass of only ~9 MeV/c²?" The correct answer attributes ~99% of the mass to QCD
-binding energy (gluon field and virtual quark-antiquark pairs), confirmed by lattice-QCD
-first-principles calculations — not to the bare quark masses.
+**No GPQA item is shown here.** The authors request that people "do not reveal examples from this dataset in plain text or images online", to keep them out of model training data.
+
+As the paper describes the task, each item is a question written by a PhD-level expert in biology, physics or chemistry, with **four answer options**, one correct. The model answers with a letter, which is compared with the key. The illustrative examples on this page are site-written, not GPQA items.

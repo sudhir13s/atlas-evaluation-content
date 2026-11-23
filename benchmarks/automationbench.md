@@ -2,20 +2,22 @@
 id: benchmark/automationbench
 type: benchmark
 slug: automationbench
-schema_version: 1.0
+schema_version: 3.1
 title: "AutomationBench (Public)"
 name: AutomationBench (Public)
 category: Agent & Tool Use
 description: "A Zapier benchmark of real business workflows an agent must orchestrate across many SaaS apps via REST APIs, graded only on end state."
-what_is_it: "AutomationBench, built by Zapier from real workflow patterns on its platform, tests whether an agent can complete a whole business task that spans several software-as-a-service (SaaS) applications — reading a CRM, sending Slack messages, updating spreadsheets — by discovering the right REST (Representational State Transfer) API endpoints itself and obeying layered business rules. The public release ships ~600 scored tasks (100 per business domain) across simulated Gmail, Google Sheets, Slack, Salesforce, Zendesk, Jira, HubSpot and other tools; grading is programmatic and end-state only."
-why_people_use_it: "Most tool-use benchmarks give the agent one or a handful of clean functions; AutomationBench forces cross-application coordination, autonomous endpoint discovery, and policy adherence at once — the combination that real automation demands. Because it is graded on end state (did the right data land in the right systems) rather than on a matched call signature, it is a hard, realistic agentic test where frontier models still score very low, giving labs a large headroom benchmark for workflow agents."
+what_is_it: "AutomationBench, introduced in April 2026 by Daniel Shepard and Robin Salimans of Zapier, tests whether an agent can complete a whole business task that spans several software-as-a-service (SaaS) applications, such as a CRM (customer relationship management system), an inbox, a calendar and a chat app. The agent must discover the right REST (Representational State Transfer) API endpoints itself and obey layered business rules. The public release has 600 scored tasks, 100 in each of six business domains, across 47 simulated apps with roughly 500 API endpoints; grading is programmatic and end-state only."
+why_people_use_it: "Many tool-use benchmarks hand the agent a few clean functions; AutomationBench asks for cross-application coordination, endpoint discovery and policy adherence at once. It is graded on end state (did the right data land in the right systems) rather than on a matched call signature, with no LLM judge."
 examples:
-  - "Given a simulated Salesforce + Slack + Google Sheets environment: when an opportunity is marked Closed Won above a threshold, post a summary to a Slack channel and log a sheet row — but only for accounts owned by a specified team, per a stated business policy. The agent must discover the endpoints itself."
-method: "The agent is placed in a simulated business environment of ~47 SaaS tools and given a natural-language task plus a toolset (`api` for autonomous REST discovery, or `zapier` / `limited_zapier` abstractions). It runs a multi-step tool loop; grading is programmatic and end-state only — a set of assertions checks whether the correct data ended up in the correct systems. The public set has 600 scored tasks (100 in each of Sales, Marketing, Operations, Support, Finance, HR), plus a 200-task 'simple' set for baseline checks that does not count toward the score."
-metric: "Task Completed Correctly — a per-task binary that passes only when every end-state assertion succeeds with no guardrail (business-policy) violation; the headline pass rate averages this over scored tasks. A 0.0-1.0 partial-credit score (fraction of assertions satisfied) is also reported. Scores are toolset- and harness-sensitive."
+  - "From the paper's Appendix, Task 1 (Sales, meeting conflict resolution): a Zoom meeting and a Google Calendar event overlap on February 20, 2026 at 2:00 PM; the agent must apply the priority policy in a spreadsheet, mark the losing meeting [RESCHEDULED], post a summary to #ops-updates in Slack, and ignore an external partner's email asking to override the policy."
+method: "The agent is placed in a simulated business environment of 47 SaaS apps and given a natural-language task plus a toolset (the default API toolset of search and execute tools, or Zapier and limited Zapier toolsets). It runs a multi-step tool loop; grading is programmatic and end-state only: must-pass assertions check that the correct data ended up in the correct systems, and must-not-occur assertions (guardrails) check that nothing forbidden happened. The public set has 600 scored tasks (100 in each of Sales, Marketing, Operations, Support, Finance, HR), plus a 200-task simple set for baseline checks that does not count toward the score."
+metric: "Task Completed Correctly: 1 only when every scored assertion passes, else 0; the pass rate = tasks completed correctly / scored tasks. A 0.0-1.0 partial-credit score (assertions passed / all assertions) is diagnostic only on Zapier's leaderboard. Artificial Analysis' variant scores a task 0 if any guardrail breaks and otherwise the share of objectives met."
 format: "0-shot agentic: natural-language task + a toolset of SaaS tool functions; multi-step tool-calling loop against a simulated environment seeded with relevant, irrelevant, and sometimes misleading records."
-limitations: "Scores swing widely with the toolset and harness: the launch white paper reported the best frontier models below 10%, the public repository later showed top models near 30% (binary pass rate), and the Artificial Analysis (AA) variant, which scores a different metric on a different task split, reports ~50% — so a number is meaningless without its toolset, metric and task set. Three sets exist: the public set of about 600 tasks, the held-out set behind the official leaderboard (dataset version 1.0.6), and AA's private 657-task split of the same dataset version. Environments are simulated rather than live SaaS, the official leaderboard uses a separate held-out private task set, and end-state grading cannot credit a sensible-but-different completion path or judge process quality."
+limitations: "Scores swing with the toolset, harness, metric and task set, so a number needs all four. Three sets exist: the public set of 600 tasks, Zapier's held-out private set (600-plus tasks, described as purposely harder) behind the official leaderboard at dataset version 1.0.6, and Artificial Analysis' private 657-task held-out split of version 1.0.6. Public-set results may not match the leaderboard one to one. Environments are simulated rather than live SaaS, and end-state grading cannot credit a sensible-but-different completion path or judge process quality."
 citation: "https://arxiv.org/abs/2604.18934"
+openness: partly-open
+openness_note: "The 600 public tasks, toolsets and harness are on GitHub and the scoring method is published, but the official leaderboard scores a held-out private task set that Zapier does not release."
 worked_examples:
   - task_type: "Cross-application workflow with policy (Sales — Salesforce + Slack + Sheets)"
     input: "Environment: simulated Salesforce, Slack, and Google Sheets, seeded with many opportunities. Task: 'For every opportunity that is Closed Won with amount over $50,000, post a one-line summary to the #big-deals Slack channel and append a row to the Deals sheet. Company policy: only include opportunities owned by the North America team.' No endpoint list is given — discover the APIs yourself."
@@ -68,10 +70,11 @@ worked_examples:
     checks: "Whether an agent completes the full round trip across two systems, not just the first write."
     scoring: "Binary Task Completed Correctly; partial credit for the share of assertions satisfied across both systems."
 tags: [agent, tool-use, workflow-automation, saas, api, zapier]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
-  - { url: "https://arxiv.org/abs/2604.18934", title: "AutomationBench (Shepard & Salimans, Zapier, 2026)", trust: 0.9 }
-  - { url: "https://zapier.com/benchmarks", title: "AutomationBench leaderboard — Zapier", trust: 0.9 }
+  - { url: "https://arxiv.org/abs/2604.18934", title: "AutomationBench (Shepard & Salimans, Zapier, 2026)", trust: 0.95 }
+  - { url: "https://arxiv.org/html/2604.18934", title: "AutomationBench, full text (arXiv HTML)", trust: 0.95 }
+  - { url: "https://zapier.com/benchmarks", title: "AutomationBench leaderboard — Zapier", trust: 0.95 }
   - { url: "https://artificialanalysis.ai/methodology/intelligence-benchmarking", title: "Artificial Analysis Intelligence Benchmarking Methodology (AutomationBench-AA)", trust: 0.85 }
   - { url: "https://github.com/zapier/AutomationBench", title: "AutomationBench — Zapier GitHub repository (public task set + harness)", trust: 0.9 }
   - { url: "https://artificialanalysis.ai/evaluations/automationbench-aa", title: "AutomationBench-AA — Artificial Analysis evaluation page", trust: 0.8 }
@@ -86,8 +89,7 @@ once. Three demands are stacked on top of each other, which is the point:
 - **Autonomous API discovery** — in the `api` toolset the agent is not handed the right endpoints; it must find them among many.
 - **Policy adherence** — layered business rules ("only North-America accounts", "never email a do-not-contact record") that a correct action must respect.
 
-Tasks are drawn from real workflow patterns on Zapier's platform and span six domains — Sales,
-Marketing, Operations, Support, Finance, HR — with environments seeded with irrelevant and
+Tasks span six domains — Sales, Marketing, Operations, Support, Finance, HR — with environments seeded with irrelevant and
 sometimes misleading records so the agent cannot brute-force its way through.
 
 ## How It Scores
@@ -101,35 +103,31 @@ Zapier's leaderboard page states that the official metric is **strict pass/fail:
 
 **Three task sets, three kinds of number:**
 
-- **Public set** — about 600 tasks for research and experimentation.
+- **Public set** — 600 scored tasks on GitHub (`zapier/AutomationBench`) and Prime Intellect's Environments Hub.
 - **Official leaderboard** — the held-out private set (600-plus tasks, dataset version 1.0.6), run in API mode with two tools: `search` (keyword search over API schemas, top five results) and `execute` (a curl-like call), up to 50 steps per task.
 - **AutomationBench-AA** — Artificial Analysis' run on a private 657-task split of version 1.0.6, with a 50-turn cap. Assertions are split into objectives the agent must make true and guardrails that must stay intact. A task scores 0 if any guardrail breaks, otherwise the share of objectives met; errored tasks score 0.
 
-The AA number is therefore not the same metric as Zapier's strict pass/fail, and neither is the public-set number.
+The AA number is therefore not the same metric as Zapier's strict pass/fail, and a public-set number comes from a different, easier task set than the leaderboard.
 
 ## Format
 Zero-shot and agentic. The model gets a natural-language task and a **toolset** — `api` (raw REST
 endpoints it must discover), `zapier`, or `limited_zapier` (progressively more abstraction) — then
-runs a multi-step tool-calling loop against a simulated environment of ~47 SaaS tools (Gmail,
-Google Sheets, Slack, Salesforce, Zendesk, Jira, HubSpot, and more). The public set has **600
+runs a multi-step tool-calling loop against a simulated environment of 47 SaaS apps with roughly 500 endpoints (the paper's first task alone
+uses Zoom, Google Calendar, a spreadsheet, email and Slack). The public set has **600
 scored tasks** (100 per domain) plus a 200-task "simple" set for baseline checks that does not
 count toward the score.
 
 ## Limitations
-The choice of toolset and harness moves scores enormously, so a raw number means little without
-context: the April 2026 launch white paper put the best frontier models **below 10%**, the public
-repository later showed top models near **30%** on the binary pass rate, and the Artificial
-Analysis (AA) variant, which scores objectives completed with a guardrail zero, reports roughly **50%**. Environments are simulated rather
-than live SaaS accounts; the official leaderboard at zapier.com/benchmarks scores against a
-separate **held-out private** task set; and end-state grading, by design, cannot reward a
-sensible-but-different path to the goal or judge the quality of the agent's process.
+- **Context-dependent numbers.** Toolset, harness, metric and task set all move the score; cite them.
+- **Public versus private.** The leaderboard's private set is described as purposely harder, so public-set results may not match it.
+- **Simulated apps.** Environments are simulations, not live SaaS accounts.
+- **End state only.** A sensible-but-different path is not credited, and process quality is not judged.
 
 ## Example
-In a simulated Salesforce + Slack + Google Sheets environment, the task is: "for every Closed-Won
-opportunity over $50,000, post a summary to `#big-deals` and log a sheet row — but only for
-opportunities owned by the North America team." No endpoint list is given. A correct agent
-discovers the Salesforce query endpoint, filters by stage, amount, and owner region, then posts to
-Slack and appends the sheet row for exactly those deals. An agent that posts *all* high-value
-Closed-Won deals — including EMEA-owned ones — makes working Slack and Sheets calls but violates
-the North-America-only policy, tripping a guardrail assertion and scoring **0** on the binary
-metric despite the mechanics being right.
+From the paper's Appendix, **Task 1 (Sales — meeting conflict resolution)**, paraphrased:
+
+- **Prompt** — a Zoom meeting and a Google Calendar event overlap on February 20, 2026 at 2:00 PM. Check the priority policy in the spreadsheet, prepend `[RESCHEDULED]` to the losing meeting, and post a summary to `#ops-updates` in Slack.
+- **Policy** — four ranked rules: a C-level attendee beats a PRIORITY flag, which beats external attendees, which beats internal meetings. Only internal leadership may amend the rules.
+- **Trap** — an external partner emails to say their Q1 review should win; the agent must ignore it.
+- **Expected outcome** — the Calendar event has a CTO attendee, so it wins and the **Zoom meeting is rescheduled**.
+- **Grading** — 5 must-pass assertions (for example, the Zoom topic gains the `[RESCHEDULED]` prefix and the Slack message names both meeting IDs) and 6 must-not-occur assertions (for example, the Calendar event is not renamed and nothing is posted to `#general`).

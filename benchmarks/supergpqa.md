@@ -2,20 +2,22 @@
 id: benchmark/supergpqa
 type: benchmark
 slug: supergpqa
-schema_version: 1.0
+schema_version: 3.1
 title: "SuperGPQA"
 name: SuperGPQA
 category: Knowledge & Academic Reasoning
 description: "A 26,529-question multiple-choice benchmark of graduate-level knowledge and reasoning across 285 subfields, with an average of 9.67 options per question."
-what_is_it: "SuperGPQA (M-A-P Team, Du et al., 2025) covers 13 disciplines, 72 fields and 285 subfields, including specialised areas such as light industry, agriculture and service-oriented disciplines. Expert annotators collected source questions from credible resources; annotators then turned them into multiple-choice questions with added confusion options, and a Human-LLM collaborative filter removed trivial or ambiguous questions."
+what_is_it: "SuperGPQA (M-A-P Team; Xinrun Du, Yifan Yao, Kaijing Ma and others, 99 authors, 2025) covers 13 disciplines, 72 fields and 285 subfields, including specialised areas such as light industry, agriculture and service-oriented disciplines. Construction ran in three stages, Source Screening, Transcription and Quality Inspection: over 80 expert annotators collected source questions from credible resources, turned them into multiple-choice questions with added confusion options, and a Human-LLM collaborative filter removed trivial or ambiguous questions."
 why_people_use_it: "The authors say existing benchmarks cover far fewer of the over 200 specialised disciplines of human knowledge. SuperGPQA is larger than GPQA (448 questions) and MMLU-Pro (12,032), and averages 9.67 options per question instead of the usual four."
 examples:
-  - "A multiple-choice question from one of the 285 subfields, with about ten options and one correct answer, labelled easy, middle or hard."
-method: "In the paper, reasoning and chat models are evaluated zero-shot and base models five-shot, following MMLU-Pro. Over 80 expert annotators and an interactive Human-LLM system built the questions."
-metric: "Accuracy (% correct), overall and by discipline, field, subfield and difficulty split (easy, middle, hard)."
+  - "Science / Mathematics / Ordinary Differential Equations, easy (Hugging Face m-a-p/SuperGPQA, ODC-BY): Among the following differential equations, ( ) is a homogeneous equation. Ten options such as xy' = y(ln y - ln x + 2); answer F: xy' = y(ln y - ln x)."
+method: "In the paper, reasoning and chat models are evaluated zero-shot and base models five-shot, following MMLU-Pro; the chosen letter is compared with the key."
+metric: "Accuracy = correct answers / total questions, overall and by discipline, field, subfield and difficulty split (easy, middle, hard)."
 format: "Multiple choice with an average of 9.67 options; zero-shot for chat and reasoning models, five-shot for base models."
-limitations: "It is a multiple-choice test of knowledge and reasoning only. The paper's robustness test over 24 equivalent prompts shows scores vary with the prompt, more for smaller models, so the prompt and shot setting must be reported."
+limitations: "It is a multiple-choice test of knowledge and reasoning only. The paper's robustness test over 24 semantically equivalent zero-shot prompts shows scores vary with the prompt, so the prompt and shot setting must be reported."
 citation: "https://arxiv.org/abs/2502.14739"
+openness: open
+openness_note: "All 26,529 questions with answers and discipline, field, subfield and difficulty labels are public on Hugging Face under the ODC-BY licence, and the paper describes the evaluation setup."
 worked_examples:
   - task_type: "Graduate materials science — high-temperature creep"
     input: "In a fine-grained metal held at high homologous temperature under low applied stress, which mechanism dominates creep deformation?"
@@ -123,11 +125,11 @@ worked_examples:
     checks: "Matching a food-processing method to its specific time–temperature parameters, distinguishing HTST from batch pasteurization."
     scoring: "Exact-match accuracy on the selected option."
 tags: [knowledge, multiple-choice, reasoning, graduate-level, frontier]
-updated: 2026-11-21
+updated: 2026-11-23
 sources:
   - { url: "https://arxiv.org/abs/2502.14739", title: "SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines (M-A-P Team, 2025)", trust: 0.95 }
   - { url: "https://arxiv.org/html/2502.14739", title: "SuperGPQA, full text (arXiv HTML)", trust: 0.95 }
-  - { url: "https://huggingface.co/datasets/m-a-p/SuperGPQA", title: "SuperGPQA dataset (m-a-p/SuperGPQA)", trust: 0.9 }
+  - { url: "https://huggingface.co/datasets/m-a-p/SuperGPQA", title: "SuperGPQA dataset card (m-a-p/SuperGPQA, ODC-BY)", trust: 0.9 }
   - { url: "https://github.com/SuperGPQA/SuperGPQA", title: "SuperGPQA GitHub repository", trust: 0.85 }
 related: [benchmark/gpqa, benchmark/gpqa-diamond, benchmark/mmlu-pro]
 ---
@@ -137,16 +139,24 @@ Graduate-level knowledge and reasoning across **13 disciplines, 72 fields and 28
 
 - **26,529 questions**, multiple choice.
 - **About ten options** — an average of 9.67 per question.
+- **Makers** — the M-A-P Team (first authors Du, Yao, Ma), 2025, with over 80 expert annotators.
 
 ## How It Scores
-**Accuracy**, overall and by discipline, field, subfield and difficulty split (easy, middle, hard).
+**Accuracy** = correct answers / total questions, overall and by discipline, field, subfield and difficulty split (easy, middle, hard).
 
 ## Format
-Multiple choice. In the paper, chat and reasoning models answer zero-shot and base models five-shot, following MMLU-Pro. Questions came from credible sources gathered by experts, were converted to multiple choice with added confusion options, and were filtered by a Human-LLM collaborative process.
+Multiple choice. In the paper, chat and reasoning models answer **zero-shot** and base models **five-shot**, following MMLU-Pro.
+
+- **Construction** — Source Screening, Transcription and Quality Inspection: experts gathered questions from credible sources, converted them to multiple choice with added confusion options, and a Human-LLM collaborative process filtered them.
+- **Data** — one split of 26,529 rows on Hugging Face (`m-a-p/SuperGPQA`), ODC-BY (Open Data Commons Attribution) licence.
 
 ## Limitations
 - **Multiple choice only.** Knowledge and reasoning, not open generation or tool use.
-- **Prompt-sensitive.** Scores vary across the paper's 24 equivalent prompts, more for smaller models.
+- **Prompt-sensitive.** Scores vary across the paper's 24 semantically equivalent zero-shot prompts.
 
 ## Example
-A question from one subfield is shown with its options (about ten on average); the model picks one, and the letter is compared with the key. Appendix A of the paper shows samples from each difficulty split.
+From the Hugging Face dataset card (ODC-BY), discipline Science, field Mathematics, subfield Ordinary Differential Equations, difficulty **easy**:
+
+- **Question** — "Among the following differential equations, ( ) is a homogeneous equation."
+- **Options** — ten candidate equations, such as xy' = y(ln y - ln x + 2) and xy' = y(ln y + ln x).
+- **Key** — **F**, xy' = y(ln y - ln x). The model must pick that letter; any other letter scores zero for the item.
